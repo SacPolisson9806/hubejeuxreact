@@ -9,7 +9,6 @@ export default function StartQuizz() {
   const selectedTheme = selectedThemes?.[0] || "Minecraft";
   const backgroundImage = `/background/${selectedTheme.toLowerCase()}-panorama.jpg`;
 
-
   const [questions, setQuestions] = useState([]);
   const [index, setIndex] = useState(0);
   const [score, setScore] = useState(0);
@@ -17,6 +16,18 @@ export default function StartQuizz() {
   const [timeLeft, setTimeLeft] = useState(timePerQuestion || 30);
   const [loading, setLoading] = useState(true);
 
+  // Appliquer le fond panoramique dynamiquement
+  useEffect(() => {
+    document.body.style.backgroundImage = `url("${backgroundImage}")`;
+    document.body.style.backgroundRepeat = 'repeat-x';
+    document.body.style.backgroundSize = 'auto 100%';
+    document.body.style.animation = 'scrollBackground 60s linear infinite';
+    document.body.style.fontFamily = 'Arial, sans-serif';
+    document.body.style.color = '#333';
+    document.body.style.textAlign = 'center';
+  }, [backgroundImage]);
+
+  // Charger les questions
   useEffect(() => {
     const path = `/${selectedTheme.toLowerCase()}.json`;
 
@@ -44,12 +55,12 @@ export default function StartQuizz() {
       .trim()
       .toLowerCase()
       .normalize('NFD')
-      .replace(/[\u0300-\u036f]/g, '') // accents
-      .replace(/[^\w\s]|_/g, '')       // ponctuation
-      .replace(/\s+/g, ' ')            // espaces multiples → un seul espace
-      .split(' ')                      // découpe en mots
-      .map(word => word.length === 1 ? word : word.replace(/\s+/g, '')) // garde les vrais mots
-      .join('');                       // colle tout pour ignorer les espaces entre lettres
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/[^\w\s]|_/g, '')
+      .replace(/\s+/g, ' ')
+      .split(' ')
+      .map(word => word.length === 1 ? word : word.replace(/\s+/g, ''))
+      .join('');
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -116,66 +127,54 @@ export default function StartQuizz() {
   return (
     <>
       <style>{`
-  @keyframes scrollBackground {
-    from { background-position: 0 0; }
-    to { background-position: -3000px 0; } /* Ajuste selon la largeur de ton image */
-  }
+        @keyframes scrollBackground {
+          from { background-position: 0 0; }
+          to { background-position: -3000px 0; }
+        }
 
-  body {
-    font-family: Arial, sans-serif;
-    background: url('${backgroundImage}') repeat-x;
-    background-size: auto 100%;
-    animation: scrollBackground 60s linear infinite;
-    color: #333;
-    margin: 0;
-    padding: 0;
-    text-align: center;
-  }
+        .container {
+          max-width: 700px;
+          margin: 50px auto;
+          background: rgba(255, 255, 255, 0.9);
+          padding: 30px 20px;
+          border-radius: 12px;
+          box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        }
 
-  .container {
-    max-width: 700px;
-    margin: 50px auto;
-    background: rgba(255, 255, 255, 0.9);
-    padding: 30px 20px;
-    border-radius: 12px;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
-  }
+        h1 {
+          color: #0c00f6;
+          margin-bottom: 15px;
+        }
 
-  h1 {
-    color: #0c00f6;
-    margin-bottom: 15px;
-  }
+        h2 {
+          color: #0c00f6;
+          margin: 20px 0 10px 0;
+        }
 
-  h2 {
-    color: #0c00f6;
-    margin: 20px 0 10px 0;
-  }
+        input[type="text"], input[type="radio"] {
+          font-size: 16px;
+          margin: 5px 0;
+        }
 
-  input[type="text"], input[type="radio"] {
-    font-size: 16px;
-    margin: 5px 0;
-  }
+        button {
+          padding: 10px 20px;
+          margin-top: 10px;
+          background: #0c00f6;
+          color: white;
+          border: none;
+          border-radius: 6px;
+          cursor: pointer;
+        }
 
-  button {
-    padding: 10px 20px;
-    margin-top: 10px;
-    background: #0c00f6;
-    color: white;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-  }
+        button:hover {
+          background: #0a00d0;
+        }
 
-  button:hover {
-    background: #0a00d0;
-  }
-
-  img {
-    max-width: 300px;
-    margin: 10px 0;
-  }
-`}</style>
-
+        img {
+          max-width: 300px;
+          margin: 10px 0;
+        }
+      `}</style>
 
       <div className="container">
         <h1>Quiz : {selectedTheme}</h1>
@@ -218,8 +217,7 @@ export default function StartQuizz() {
                   marginTop: '10px',
                   borderRadius: '6px',
                   border: '1px solid #ccc',
-                  fontSize: '16px',
-                  letterSpacing: 'normal'
+                  fontSize: '16px'
                 }}
               />
             )}

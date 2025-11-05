@@ -4,15 +4,11 @@ import { useNavigate } from 'react-router-dom';
 export default function Quizz() {
   const navigate = useNavigate();
 
-  // Liste des thèmes disponibles
   const themes = ['Minecraft', 'HarryPotter', 'StarWars', 'Marvel', 'Geographie'];
-
-  // États pour les paramètres du quiz
   const [selectedTheme, setSelectedTheme] = useState('');
   const [pointsToWin, setPointsToWin] = useState(100);
   const [timePerQuestion, setTimePerQuestion] = useState(30);
 
-  // Soumission du formulaire
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!selectedTheme) {
@@ -20,19 +16,18 @@ export default function Quizz() {
       return;
     }
 
-    // Redirection vers la page du quiz avec les paramètres
     navigate('/startquizz', {
       state: {
-        selectedThemes: [selectedTheme], // Doit être un tableau pour StartQuizz
+        selectedThemes: [selectedTheme],
         pointsToWin,
         timePerQuestion
       }
     });
   };
 
-  // Style global
   useEffect(() => {
-    document.body.style.background = '#f0f4f8';
+    document.body.style.backgroundImage = 'none';
+    document.body.style.backgroundColor = '#f0f4f8';
     document.body.style.fontFamily = 'Arial, sans-serif';
     document.body.style.color = '#333';
     document.body.style.textAlign = 'center';
@@ -49,18 +44,21 @@ export default function Quizz() {
           border-radius: 10px;
           box-shadow: 0 5px 15px rgba(0,0,0,0.1);
         }
+
         h1 {
           font-size: 32px;
           color: #0c00f6;
           margin-bottom: 30px;
           font-weight: bold;
         }
+
         label {
           display: block;
           font-weight: bold;
           margin-bottom: 10px;
           text-align: left;
         }
+
         select {
           width: 100%;
           padding: 10px;
@@ -69,6 +67,7 @@ export default function Quizz() {
           border: 1px solid #ccc;
           font-size: 16px;
         }
+
         button {
           padding: 12px 25px;
           background: #0c00f6;
@@ -80,6 +79,7 @@ export default function Quizz() {
           cursor: pointer;
           transition: background 0.3s;
         }
+
         button:hover {
           background: #0a00d0;
         }
