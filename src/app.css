@@ -1,0 +1,53 @@
+/* Reset de base */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Corps de la page */
+body {
+  font-family: 'Segoe UI', Arial, sans-serif;
+  background-color: white; /* ✅ Fond blanc */
+  color: #333;
+  min-height: 100vh;
+}
+
+/* Liens */
+a {
+  color: #0c00f6;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* Titres */
+h1, h2, h3 {
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+/* Paragraphes */
+p {
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+/* Boutons génériques */
+button, .btn {
+  padding: 10px 20px;
+  background-color: #0c00f6;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background 0.3s, transform 0.2s;
+}
+
+button:hover, .btn:hover {
+  background-color: #0500a8;
+  transform: scale(1.05);
+}

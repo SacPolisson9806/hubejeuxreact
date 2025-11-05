@@ -1,0 +1,120 @@
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+
+export default function Quizz() {
+  const navigate = useNavigate();
+
+  // Liste des thèmes disponibles
+  const themes = ['Minecraft', 'HarryPotter', 'StarWars', 'Marvel', 'Geographie'];
+
+  // États pour les paramètres du quiz
+  const [selectedTheme, setSelectedTheme] = useState('');
+  const [pointsToWin, setPointsToWin] = useState(100);
+  const [timePerQuestion, setTimePerQuestion] = useState(30);
+
+  // Soumission du formulaire
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (!selectedTheme) {
+      alert('Choisis un thème !');
+      return;
+    }
+
+    // Redirection vers la page du quiz avec les paramètres
+    navigate('/startquizz', {
+      state: {
+        selectedThemes: [selectedTheme], // Doit être un tableau pour StartQuizz
+        pointsToWin,
+        timePerQuestion
+      }
+    });
+  };
+
+  // Style global
+  useEffect(() => {
+    document.body.style.background = '#f0f4f8';
+    document.body.style.fontFamily = 'Arial, sans-serif';
+    document.body.style.color = '#333';
+    document.body.style.textAlign = 'center';
+  }, []);
+
+  return (
+    <>
+      <style>{`
+        .container {
+          max-width: 600px;
+          margin: 50px auto;
+          background: white;
+          padding: 40px 20px;
+          border-radius: 10px;
+          box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        h1 {
+          font-size: 32px;
+          color: #0c00f6;
+          margin-bottom: 30px;
+          font-weight: bold;
+        }
+        label {
+          display: block;
+          font-weight: bold;
+          margin-bottom: 10px;
+          text-align: left;
+        }
+        select {
+          width: 100%;
+          padding: 10px;
+          margin-bottom: 20px;
+          border-radius: 6px;
+          border: 1px solid #ccc;
+          font-size: 16px;
+        }
+        button {
+          padding: 12px 25px;
+          background: #0c00f6;
+          color: white;
+          border: none;
+          border-radius: 6px;
+          font-size: 16px;
+          font-weight: bold;
+          cursor: pointer;
+          transition: background 0.3s;
+        }
+        button:hover {
+          background: #0a00d0;
+        }
+      `}</style>
+
+      <div className="container">
+        <h1>Configurer votre Quiz</h1>
+        <form onSubmit={handleSubmit}>
+          <label>Choisir le thème :</label>
+          <select value={selectedTheme} onChange={(e) => setSelectedTheme(e.target.value)} required>
+            <option value="">-- Sélectionner --</option>
+            {themes.map((theme) => (
+              <option key={theme} value={theme}>{theme}</option>
+            ))}
+          </select>
+
+          <label>Nombre de points à atteindre :</label>
+          <select value={pointsToWin} onChange={(e) => setPointsToWin(parseInt(e.target.value))}>
+            {[...Array(10)].map((_, i) => {
+              const val = 50 + i * 50;
+              return <option key={val} value={val}>{val}</option>;
+            })}
+          </select>
+
+          <label>Temps par question (secondes) :</label>
+          <select value={timePerQuestion} onChange={(e) => setTimePerQuestion(parseInt(e.target.value))}>
+            {[...Array(12)].map((_, i) => {
+              const val = 5 + i * 5;
+              return <option key={val} value={val}>{val} secondes</option>;
+            })}
+          </select>
+
+          <button type="submit">Lancer le Quiz</button>
+        </form>
+      </div>
+    </>
+  );
+}
