@@ -15,8 +15,10 @@ export default function StartQuizz() {
   const [showAnswer, setShowAnswer] = useState(false);
   const [timeLeft, setTimeLeft] = useState(timePerQuestion || 30);
   const [loading, setLoading] = useState(true);
+  const [userAnswer, setUserAnswer] = useState('');
+  const [feedback, setFeedback] = useState('');
 
-  // Appliquer le fond panoramique dynamiquement
+  // 🎨 Style du fond panoramique
   useEffect(() => {
     document.body.style.backgroundImage = `url("${backgroundImage}")`;
     document.body.style.backgroundRepeat = 'repeat-x';
@@ -27,7 +29,7 @@ export default function StartQuizz() {
     document.body.style.textAlign = 'center';
   }, [backgroundImage]);
 
-  // Charger les questions
+  // 🧠 Chargement du fichier JSON du thème
   useEffect(() => {
     const path = `/${selectedTheme.toLowerCase()}.json`;
 
@@ -50,6 +52,7 @@ export default function StartQuizz() {
 
   const currentQuestion = questions[index];
 
+  // 🔡 Fonction de normalisation de texte (sans accents, etc.)
   const normalize = (text) =>
     text
       .trim()
@@ -57,37 +60,54 @@ export default function StartQuizz() {
       .normalize('NFD')
       .replace(/[\u0300-\u036f]/g, '')
       .replace(/[^\w\s]|_/g, '')
-      .replace(/\s+/g, ' ')
-      .split(' ')
-      .map(word => word.length === 1 ? word : word.replace(/\s+/g, ''))
-      .join('');
+      .replace(/\s+/g, ' ');
 
+  // ✅ Gestion de la validation d'une réponse
   const handleSubmit = (e) => {
     e.preventDefault();
+
     const formData = new FormData(e.target);
-    const answer = formData.get('answer');
+    const rawAnswer = formData.get('answer');
 
     const correctAnswers = Array.isArray(currentQuestion.answer)
       ? currentQuestion.answer
       : [currentQuestion.answer];
 
     const isCorrect = correctAnswers.some(
-      (a) => normalize(a) === normalize(answer)
+      (a) => normalize(a) === normalize(rawAnswer)
     );
+
+    const isQCM = Array.isArray(currentQuestion.options);
 
     if (isCorrect) {
       const pointsGained = Math.max(1, Math.round(10 * (timeLeft / timePerQuestion)));
       setScore((prev) => prev + pointsGained);
+      setFeedback('');
+      setShowAnswer(true);
+      setTimeout(() => {
+        setShowAnswer(false);
+        setIndex((prev) => prev + 1);
+        setTimeLeft(timePerQuestion);
+        setUserAnswer('');
+      }, 2000);
+    } else {
+      if (isQCM) {
+        setFeedback('');
+        setShowAnswer(true);
+        setTimeout(() => {
+          setShowAnswer(false);
+          setIndex((prev) => prev + 1);
+          setTimeLeft(timePerQuestion);
+          setUserAnswer('');
+        }, 2000);
+      } else {
+        setFeedback('❌ Mauvaise réponse, essaie encore !');
+        setUserAnswer('');
+      }
     }
-
-    setShowAnswer(true);
-    setTimeout(() => {
-      setShowAnswer(false);
-      setIndex((prev) => prev + 1);
-      setTimeLeft(timePerQuestion);
-    }, 2000);
   };
 
+  // ⏳ Gestion du compte à rebours
   useEffect(() => {
     if (!currentQuestion || showAnswer) return;
 
@@ -96,11 +116,13 @@ export default function StartQuizz() {
       setTimeLeft((prev) => {
         if (prev <= 1) {
           clearInterval(interval);
+          setFeedback('');
           setShowAnswer(true);
           setTimeout(() => {
             setShowAnswer(false);
             setIndex((prev) => prev + 1);
             setTimeLeft(timePerQuestion);
+            setUserAnswer('');
           }, 2000);
           return 0;
         }
@@ -111,6 +133,7 @@ export default function StartQuizz() {
     return () => clearInterval(interval);
   }, [index, showAnswer, currentQuestion, timePerQuestion]);
 
+  // 🏁 Fin du quiz ou victoire
   useEffect(() => {
     if (score >= pointsToWin) {
       alert(`🎉 Vous avez gagné avec ${score} points !`);
@@ -121,6 +144,7 @@ export default function StartQuizz() {
     }
   }, [score, index, questions.length, pointsToWin, navigate]);
 
+  // 🧭 États d’attente
   if (loading) return <p style={{ textAlign: 'center' }}>Chargement des questions...</p>;
   if (!currentQuestion) return <p style={{ textAlign: 'center' }}>Aucune question trouvée.</p>;
 
@@ -141,14 +165,9 @@ export default function StartQuizz() {
           box-shadow: 0 8px 20px rgba(0,0,0,0.1);
         }
 
-        h1 {
+        h1, h2 {
           color: #0c00f6;
           margin-bottom: 15px;
-        }
-
-        h2 {
-          color: #0c00f6;
-          margin: 20px 0 10px 0;
         }
 
         input[type="text"], input[type="radio"] {
@@ -173,6 +192,13 @@ export default function StartQuizz() {
         img {
           max-width: 300px;
           margin: 10px 0;
+          border-radius: 8px;
+        }
+
+        .feedback {
+          color: red;
+          font-weight: bold;
+          margin-top: 10px;
         }
       `}</style>
 
@@ -195,10 +221,32 @@ export default function StartQuizz() {
           </>
         ) : (
           <form onSubmit={handleSubmit}>
+            {/* ✅ Correction : affichage fiable de l’image des questions input */}
+            {!Array.isArray(currentQuestion.options) &&
+              typeof currentQuestion.image === 'string' &&
+              currentQuestion.image.trim() !== '' && (
+                <img
+                  src={`${process.env.PUBLIC_URL}${
+                    currentQuestion.image.startsWith('/')
+                      ? currentQuestion.image
+                      : '/' + currentQuestion.image
+                  }`}
+                  alt="question"
+                  onError={(e) => {
+                    console.error('❌ Image introuvable :', e.target.src);
+                    e.target.style.display = 'none';
+                  }}
+                  style={{
+                    border: '2px solid #aaa',
+                    maxWidth: '300px',
+                    marginBottom: '10px',
+                    borderRadius: '10px'
+                  }}
+                />
+              )}
+
             <p style={{ fontWeight: 'bold' }}>{currentQuestion.question}</p>
-            {currentQuestion.image && (
-              <img src={currentQuestion.image} alt="question" />
-            )}
+
             {Array.isArray(currentQuestion.options) && currentQuestion.options.length > 0 ? (
               currentQuestion.options.map((opt, i) => (
                 <div key={i} style={{ textAlign: 'left', margin: '5px 0' }}>
@@ -206,21 +254,27 @@ export default function StartQuizz() {
                 </div>
               ))
             ) : (
-              <input
-                type="text"
-                name="answer"
-                placeholder="Votre réponse..."
-                required
-                style={{
-                  width: '100%',
-                  padding: '10px',
-                  marginTop: '10px',
-                  borderRadius: '6px',
-                  border: '1px solid #ccc',
-                  fontSize: '16px'
-                }}
-              />
+              <>
+                <input
+                  type="text"
+                  name="answer"
+                  value={userAnswer}
+                  onChange={(e) => setUserAnswer(e.target.value)}
+                  placeholder="Votre réponse..."
+                  required
+                  style={{
+                    width: '100%',
+                    padding: '10px',
+                    marginTop: '10px',
+                    borderRadius: '6px',
+                    border: '1px solid #ccc',
+                    fontSize: '16px'
+                  }}
+                />
+                {feedback && <div className="feedback">{feedback}</div>}
+              </>
             )}
+
             <button type="submit">Valider</button>
           </form>
         )}

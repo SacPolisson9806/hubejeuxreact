@@ -140,14 +140,14 @@
         "question": "Quel est le nom de ce mob ?",
         "options": [],
         "answer": ["Allay"],
-        "image": "Minecraftimage/Allay.webp"
+        "image": "/Minecraftimage/Allay.webp"
     },
     {
         "type": "input",
         "question": "Quel est le nom de ce mob ?",
         "options": [],
         "answer": ["âne"],
-        "image": "Minecraftimage/ane.webp"
+        "image": "/Minecraftimage/ane.webp"
     },
     {
         "type": "qcm",
@@ -160,7 +160,7 @@
         "question": "Quel est le nom de ce mob ?",
         "options": [],
         "answer": ["champimeuh"],
-        "image": "Minecraftimage/champimeuh.webp"
+        "image": "/Minecraftimage/champimeuh.webp"
     },
     {
         "type": "qcm",
@@ -179,7 +179,7 @@
         "question": "Quel est le nom de ce mob ?",
         "options": [],
         "answer": ["cheval-squelette"],
-        "image": "Minecraftimage/cheval-squelette.webp"
+        "image": "/Minecraftimage/cheval-squelette.webp"
     },
     {
         "type": "qcm",
@@ -192,14 +192,14 @@
         "question": "Quel est le nom de ce mob ?",
         "options": [],
         "answer": ["dromadaire"],
-        "image": "Minecraftimage/dromadaire.webp"
+        "image": "/Minecraftimage/dromadaire.webp"
     },
   {
     "type": "input",
     "question": "Quel est le nom de la mise à jour dans laquelle le Ghast joyeux a été ajouté ? (Anglais ou Francais)",
     "options": [],
     "answer": ["chase the skies", "Chassez les cieux"],
-    "image": "Minecraftimage/Ghast joyeux.webp"
+    "image": "/Minecraftimage/Ghast joyeux.webp"
   },
   {
     "type": "qcm",
@@ -212,21 +212,21 @@
     "question": "Quel est le nom de ce mob ?",
     "options": [],
     "answer": ["grenouille"],
-    "image": "Minecraftimage/grenouille.webp"
+    "image": "/Minecraftimage/grenouille.webp"
   },
   {
     "type": "input",
     "question": "Quel est le nom du mob qui droppe cet objet ?",
     "options": [],
     "answer": ["lapin"],
-    "image": "Minecraftimage/cuire de lapin.webp"
+    "image": "/Minecraftimage/cuire de lapin.webp"
   },
   {
     "type": "input",
     "question": "Quel est le nom du mob qui spawn avec deux lamas ?",
     "options": [],
     "answer": ["marchand ambulant"],
-    "image": "Minecraftimage/marchand ambulant.webp"
+    "image": "/Minecraftimage/marchand ambulant.webp"
   },
   {
     "type": "qcm",
@@ -239,14 +239,14 @@
     "question": "Quel est le nom de ce mob ?",
     "options": [],
     "answer": ["ocelot"],
-    "image": "Minecraftimage/ocelot.webp"
+    "image": "/Minecraftimage/ocelot.webp"
   },
   {
     "type": "input",
     "question": "Quel animal meure si on lui donne du cacao ?",
     "options": [],
     "answer": ["perroquet"],
-    "image": "Minecraftimage/perroquet.webp"
+    "image": "/Minecraftimage/perroquet.webp"
   },
   {
     "type": "qcm",
@@ -265,49 +265,49 @@
     "question": "Quel est le nom de ce mob ?",
     "options": [],
     "answer": ["pouple"],
-    "image": "Minecraftimage/pouple.webp"
+    "image": "/Minecraftimage/pouple.webp"
   },
   {
     "type": "input",
     "question": "Quel est le nom de ce mob ?",
     "options": [],
     "answer": ["pouple luisant"],
-    "image": "Minecraftimage/pouple luisant.webp"
+    "image": "/Minecraftimage/pouple luisant.webp"
   },
   {
     "type": "input",
     "question": "Quel est le nom de ce mob ?",
     "options": [],
     "answer": ["renard"],
-    "image": "Minecraftimage/renard.webp"
+    "image": "/Minecraftimage/renard.webp"
   },
   {
     "type": "input",
     "question": "Quel est le nom de ce mob ?",
     "options": [],
     "answer": ["sniffer"],
-    "image": "Minecraftimage/sniffer.webp"
+    "image": "/Minecraftimage/sniffer.webp"
   },
   {
     "type": "input",
     "question": "Quel mob donne cet objet lorsqu’on le brosse avec un pinceau ?",
     "options": [],
     "answer": ["tatou"],
-    "image": "Minecraftimage/tatou.webp"
+    "image": "/Minecraftimage/tatou.webp"
   },
   {
     "type": "input",
     "question": "Quel mob peut être mis dans ce seau ?",
     "options": [],
     "answer": ["têtard"],
-    "image": "Minecraftimage/seau de têtard.webp"
+    "image": "/Minecraftimage/seau de têtard.webp"
   },
   {
     "type": "input",
     "question": "Quel est le nom du mob ?",
     "options": [],
     "answer": ["tortue"],
-    "image": "Minecraftimage/tortue.webp"
+    "image": "/Minecraftimage/tortue.webp"
   },
   {
     "type": "qcm",
@@ -320,7 +320,7 @@
     "question": "Quel est le nom du mob ?",
     "options": [],
     "answer": ["abeille"],
-    "image": "Minecraftimage/abeille.webp"
+    "image": "/Minecraftimage/abeille.webp"
   },
   {
     "type": "input",
@@ -333,21 +333,21 @@
     "question": "De quel mob a-t-on besoin pour accomplir le progrès : Éclaireur des mers ?",
     "options": [],
     "answer": ["dauphin"],
-    "image": "Minecraftimage/dauphin.webp"
+    "image": "/Minecraftimage/dauphin.webp"
   },
   {
     "type": "input",
     "question": "Quel est le nom du mob ?",
     "options": [],
     "answer": ["golem de fer"],
-    "image": "Minecraftimage/golem de fer.webp"
+    "image": "/Minecraftimage/golem de fer.webp"
   },
   {
     "type": "input",
     "question": "Quel est le nom du mob ?",
     "options": [],
     "answer": ["lama"],
-    "image": "Minecraftimage/lama.webp"
+    "image": "/Minecraftimage/lama.webp"
   },
   {
     "type": "qcm",
@@ -360,7 +360,7 @@
     "question": "Quel est le nom du mob qui droppe de la morue ?",
     "options": [],
     "answer": ["ourse blanc"],
-    "image": "Minecraftimage/ourseblanc.webp"
+    "image": "/Minecraftimage/ourseblanc.webp"
   },
   {
     "type": "qcm",
@@ -453,28 +453,28 @@
     "question": "Quel est le nom de ce mob ?",
     "options": [],
     "answer": ["araignée chevauchée"],
-    "image": "Minecraftimage/araignée chevauchée.webp"
+    "image": "/Minecraftimage/araignée chevauchée.webp"
   },
   {
     "type": "input",
     "question": "Quel mob droppe cet objet ?",
     "options": [],
     "answer": ["blaze"],
-    "image": "Minecraftimage/baton de blaze.webp"
+    "image": "/Minecraftimage/baton de blaze.webp"
   },
   {
     "type": "input",
     "question": "Quel est le nom de ce mob ?",
     "options": [],
     "answer": ["breeze"],
-    "image": "Minecraftimage/breeze.webp"
+    "image": "/Minecraftimage/breeze.webp"
   },
   {
     "type": "input",
     "question": "Quel est le nom de ce mob ?",
     "options": [],
     "answer": ["creaking"],
-    "image": "Minecraftimage/creaking.webp"
+    "image": "/Minecraftimage/creaking.webp"
   },
   {
     "type": "qcm",
@@ -487,14 +487,14 @@
     "question": "Quel est le nom de ce mob ?",
     "options": [],
     "answer": ["cube de magma"],
-    "image": "Minecraftimage/cube de magma.webp"
+    "image": "/Minecraftimage/cube de magma.webp"
   },
   {
         "type": "input",
         "question": "Quel est le nom de ce mob ?",
         "options": [],
         "answer": ["embourbé"],
-        "image": "Minecraftimage/embourbé.webp"
+        "image": "/Minecraftimage/embourbé.webp"
     },
     {
         "type": "qcm",
@@ -519,21 +519,21 @@
         "question": "Quel est le nom de ce mob ?",
         "options": [],
         "answer": ["gardien"],
-        "image": "Minecraftimage/gardien.webp"
+        "image": "/Minecraftimage/gardien.webp"
     },
     {
         "type": "input",
         "question": "Quel est le nom de ce mob ?",
         "options": [],
         "answer": ["hoglin"],
-        "image": "Minecraftimage/hoglin.webp"
+        "image": "/Minecraftimage/hoglin.webp"
     },
     {
         "type": "input",
         "question": "Quel est le nom de ce mob?",
         "options": [],
         "answer": ["pilliard"],
-        "image": "Minecraftimage/pillard.webp"
+        "image": "/Minecraftimage/pillard.webp"
     },
     {
         "type": "input",
@@ -546,7 +546,7 @@
     "question": "Quel est le nom de ce mob ?",
     "options": [],
     "answer": ["piglin barbare"],
-    "image": "Minecraftimage/piglin barbare.webp"
+    "image": "/Minecraftimage/piglin barbare.webp"
   },
   {
     "type": "input",
@@ -565,7 +565,7 @@
     "question": "Quel est le nom de ce mob ?",
     "options": [],
     "answer": ["ravageur"],
-    "image": "Minecraftimage/ravageur.webp"
+    "image": "/Minecraftimage/ravageur.webp"
   },
   {
     "type": "input",
@@ -596,14 +596,14 @@
     "question": "Quel est le nom de ce mob ?",
     "options": [],
     "answer": ["vex"],
-    "image": "Minecraftimage/vex.webp"
+    "image": "/Minecraftimage/vex.webp"
   },
   {
     "type": "input",
     "question": "Quel est le nom de ce mob ?",
     "options": [],
     "answer": ["vindicateur"],
-    "image": "Minecraftimage/vindicateur.webp"
+    "image": "/Minecraftimage/vindicateur.webp"
   },
   {
     "type": "qcm",
@@ -616,35 +616,35 @@
     "question": "Quel est le nom de ce mob ?",
     "options": [],
     "answer": ["zoglin"],
-    "image": "Minecraftimage/zoglin.webp"
+    "image": "/Minecraftimage/zoglin.webp"
   },
   {
     "type": "input",
     "question": "Quel est le nom de ce mob ?",
     "options": [],
     "answer": ["zombie momifié"],
-    "image": "Minecraftimage/zombie momifié.webp"
+    "image": "/Minecraftimage/zombie momifié.webp"
   },
   {
     "type": "input",
     "question": "Quel est le nom de ce mob ?",
     "options": [],
     "answer": ["zombie villageois"],
-    "image": "Minecraftimage/zombie villageois.webp"
+    "image": "/Minecraftimage/zombie villageois.webp"
   },
   {
     "type": "input",
     "question": "Quel est le nom de ce mob ?",
     "options": [],
     "answer": ["warden"],
-    "image": "Minecraftimage/warden.webp"
+    "image": "/Minecraftimage/warden.webp"
   },
   {
     "type": "input",
     "question": "Quel est le nom de ce mob ?",
     "options": [],
     "answer": ["wither"],
-    "image": "Minecraftimage/wither.webp"
+    "image": "/Minecraftimage/wither.webp"
   },
   {
     "type": "qcm",
@@ -917,147 +917,147 @@
         "question": "Quel est le nom de cette potion ?",
         "options": [],
         "answer": "Potion de dégâts",
-        "image": "Minecraftimage/Potion de dégâts.webp"
+        "image": "/Minecraftimage/Potion de dégâts.webp"
     },
     {
         "type": "input",
         "question": "Quel est le nom de cette potion ?",
         "options": [],
         "answer": "Potion de respiration aquatique",
-        "image": "Minecraftimage/Potion de respiration aquatique.webp"
+        "image": "/Minecraftimage/Potion de respiration aquatique.webp"
     },
     {
         "type": "input",
         "question": "Quel est le nom de cette potion ?",
         "options": [],
         "answer": "Potion de régénération",
-        "image": "Minecraftimage/Potion de régénération.webp"
+        "image": "/Minecraftimage/Potion de régénération.webp"
     },
     {
         "type": "input",
         "question": "Quel est le nom de cette potion ?",
         "options": [],
         "answer": "Potion de rapidité",
-        "image": "Minecraftimage/Potion de rapidité.webp"
+        "image": "/Minecraftimage/Potion de rapidité.webp"
     },
     {
         "type": "input",
         "question": "Quel est le nom de cette potion ?",
         "options": [],
         "answer": "Potion de résistance au feu",
-        "image": "Minecraftimage/Potion de résistance au feu.webp"
+        "image": "/Minecraftimage/Potion de résistance au feu.webp"
     },
     {
         "type": "input",
         "question": "Quel est le nom de cette potion ?",
         "options": [],
         "answer": "Potion de soin",
-        "image": "Minecraftimage/Potion de soin.webp"
+        "image": "/Minecraftimage/Potion de soin.webp"
     },
     {
         "type": "input",
         "question": "Quel est le nom de cette potion ?",
         "options": [],
         "answer": "Potion de vision nocturne",
-        "image": "Minecraftimage/Potion de vision nocturne.webp"
+        "image": "/Minecraftimage/Potion de vision nocturne.webp"
     },
     {
         "type": "input",
         "question": "Quel est le nom de cette potion ?",
         "options": [],
         "answer": "Potion de force",
-        "image": "Minecraftimage/Potion de force.webp"
+        "image": "/Minecraftimage/Potion de force.webp"
     },
     {
         "type": "input",
         "question": "Quel est le nom de cette potion ?",
         "options": [],
         "answer": "Potion de saut",
-        "image": "Minecraftimage/Potion de saut.webp"
+        "image": "/Minecraftimage/Potion de saut.webp"
     },
     {
         "type": "input",
         "question": "Quel est le nom de cette potion ?",
         "options": [],
         "answer": "Potion d'invisibilité",
-        "image": "Minecraftimage/Potion d'invisibilité.webp"
+        "image": "/Minecraftimage/Potion d'invisibilité.webp"
     },
     {
         "type": "input",
         "question": "Quel est le nom de cette potion ?",
         "options": [],
         "answer": "Potion de chute lente",
-        "image": "Minecraftimage/Potion de chute lente.webp"
+        "image": "/Minecraftimage/Potion de chute lente.webp"
     },
     {
         "type": "input",
         "question": "Quel est le nom de cette potion ?",
         "options": [],
         "answer": "Potion de chance",
-        "image": "Minecraftimage/Potion de chance.webp"
+        "image": "/Minecraftimage/Potion de chance.webp"
     },
     {
         "type": "input",
         "question": "Quel est le nom de cette potion ?",
         "options": [],
         "answer": "Potion de poison",
-        "image": "Minecraftimage/Potion de poison.webp"
+        "image": "/Minecraftimage/Potion de poison.webp"
     },
     {
         "type": "input",
         "question": "Quel est le nom de cette potion ?",
         "options": [],
         "answer": "Potion de faiblesse",
-        "image": "Minecraftimage/Potion de faiblesse.webp"
+        "image": "/Minecraftimage/Potion de faiblesse.webp"
     },
     {
         "type": "input",
         "question": "Quel est le nom de cette potion ?",
         "options": [],
         "answer": "Potion de lenteur",
-        "image": "Minecraftimage/Potion de lenteur.webp"
+        "image": "/Minecraftimage/Potion de lenteur.webp"
     },
     {
         "type": "input",
         "question": "Quel est le nom de cette potion ?",
         "options": [],
         "answer": "Potion du Maître Tortue",
-        "image": "Minecraftimage/Potion du Maître Tortue.webp"
+        "image": "/Minecraftimage/Potion du Maître Tortue.webp"
     },
     {
         "type": "input",
         "question": "Quel est le nom de cette potion ?",
         "options": [],
         "answer": "Potion d'infestation",
-        "image": "Minecraftimage/Potion d'infestation.webp"
+        "image": "/Minecraftimage/Potion d'infestation.webp"
     },
     {
         "type": "input",
         "question": "Quel est le nom de cette potion ?",
         "options": [],
         "answer": "Potion de flétrissure",
-        "image": "Minecraftimage/Potion de flétrissure.webp"
+        "image": "/Minecraftimage/Potion de flétrissure.webp"
     },
     {
         "type": "input",
         "question": "Quel est le nom de cette potion ?",
         "options": [],
         "answer": "Potion de souffle",
-        "image": "Minecraftimage/Potion de souffle.webp"
+        "image": "/Minecraftimage/Potion de souffle.webp"
     },
     {
         "type": "input",
         "question": "Quel est le nom de cette potion ?",
         "options": [],
         "answer": "Potion de tissage",
-        "image": "Minecraftimage/Potion de tissage.webp"
+        "image": "/Minecraftimage/Potion de tissage.webp"
     },
     {
         "type": "input",
         "question": "Quel est le nom de cette potion ?",
         "options": [],
         "answer": "Potion de viscosité",
-        "image": "Minecraftimage/Potion de viscosité.webp"
+        "image": "/Minecraftimage/Potion de viscosité.webp"
     },
 
 
@@ -1072,490 +1072,490 @@
         "question": "Quel est le nom de ce biome ?",
         "options": [],
         "answer": "Plaine",
-        "image": "Minecraftimage/Plaine.webp"
+        "image": "/Minecraftimage/Plaine.webp"
     },
     {
         "type": "input",
         "question": "Quel est le nom de ce biome ?",
         "options": [],
         "answer": "Plaine fleurie",
-        "image": "Minecraftimage/Plaine fleurie.webp"
+        "image": "/Minecraftimage/Plaine fleurie.webp"
     },
     {
         "type": "input",
         "question": "Quel est le nom de ce biome ?",
         "options": [],
         "answer": "Forêt",
-        "image": "Minecraftimage/Forêt.webp"
+        "image": "/Minecraftimage/Forêt.webp"
     },
     {
         "type": "input",
         "question": "Quel est le nom de ce biome ?",
         "options": [],
         "answer": "Forêt de bouleaux",
-        "image": "Minecraftimage/Forêt de bouleaux.webp"
+        "image": "/Minecraftimage/Forêt de bouleaux.webp"
     },
     {
         "type": "input",
         "question": "Quel est le nom de ce biome ?",
         "options": [],
         "answer": "Forêt ancienne de bouleaux",
-        "image": "Minecraftimage/Forêt ancienne de bouleaux.webp"
+        "image": "/Minecraftimage/Forêt ancienne de bouleaux.webp"
     },
     {
         "type": "input",
         "question": "Quel est le nom de ce biome ?",
         "options": [],
         "answer": "Forêt sombre",
-        "image": "Minecraftimage/Forêt sombre.webp"
+        "image": "/Minecraftimage/Forêt sombre.webp"
     },
     {
         "type": "input",
         "question": "Quel est le nom de ce biome ?",
         "options": [],
         "answer": "Taïga",
-        "image": "Minecraftimage/Taïga.webp"
+        "image": "/Minecraftimage/Taïga.webp"
     },
     {
         "type": "input",
         "question": "Quel est le nom de ce biome ?",
         "options": [],
         "answer": "Taïga enneigée",
-        "image": "Minecraftimage/Taïga enneigée.webp"
+        "image": "/Minecraftimage/Taïga enneigée.webp"
     },
     {
         "type": "input",
         "question": "Quel est le nom de ce biome ?",
         "options": [],
         "answer": "Taïga ancienne de pins",
-        "image": "Minecraftimage/Taïga ancienne de pins.webp"
+        "image": "/Minecraftimage/Taïga ancienne de pins.webp"
     },
     {
         "type": "input",
         "question": "Quel est le nom de ce biome ?",
         "options": [],
         "answer": "Taïga ancienne de sapins",
-        "image": "Minecraftimage/Taïga ancienne de sapins.webp"
+        "image": "/Minecraftimage/Taïga ancienne de sapins.webp"
     },
     {
         "type": "input",
         "question": "Quel est le nom de ce biome ?",
         "options": [],
         "answer": "Savane",
-        "image": "Minecraftimage/Savane.webp"
+        "image": "/Minecraftimage/Savane.webp"
     },
     {
         "type": "input",
         "question": "Quel est le nom de ce biome ?",
         "options": [],
         "answer": "Plateau de savane",
-        "image": "Minecraftimage/Plateau de savane.webp"
+        "image": "/Minecraftimage/Plateau de savane.webp"
     },
     {
         "type": "input",
         "question": "Quel est le nom de ce biome ?",
         "options": [],
         "answer": "Savane venteuse",
-        "image": "Minecraftimage/Savane venteuse.webp"
+        "image": "/Minecraftimage/Savane venteuse.webp"
     },
     {
         "type": "input",
         "question": "Quel est le nom de ce biome ?",
         "options": [],
         "answer": "Désert",
-        "image": "Minecraftimage/Désert.webp"
+        "image": "/Minecraftimage/Désert.webp"
     },
     {
         "type": "input",
         "question": "Quel est le nom de ce biome ?",
         "options": [],
         "answer": "Marais",
-        "image": "Minecraftimage/Marais.webp"
+        "image": "/Minecraftimage/Marais.webp"
     },
     {
         "type": "input",
         "question": "Quel est le nom de ce biome ?",
         "options": [],
         "answer": "Marais de mangrove",
-        "image": "Minecraftimage/Marais de mangrove.webp"
+        "image": "/Minecraftimage/Marais de mangrove.webp"
     },
     {
         "type": "input",
         "question": "Quel est le nom de ce biome ?",
         "options": [],
         "answer": "Jungle",
-        "image": "Minecraftimage/Jungle.webp"
+        "image": "/Minecraftimage/Jungle.webp"
     },
     {
         "type": "input",
         "question": "Quel est le nom de ce biome ?",
         "options": [],
         "answer": "Jungle clairsemée",
-        "image": "Minecraftimage/Jungle clairsemée.webp"
+        "image": "/Minecraftimage/Jungle clairsemée.webp"
     },
     {
         "type": "input",
         "question": "Quel est le nom de ce biome ?",
         "options": [],
         "answer": "Jungle de bambous",
-        "image": "Minecraftimage/Jungle de bambous.webp"
+        "image": "/Minecraftimage/Jungle de bambous.webp"
     },
     {
         "type": "input",
         "question": "Quel est le nom de ce biome ?",
         "options": [],
         "answer": "Badlands",
-        "image": "Minecraftimage/Badlands.webp"
+        "image": "/Minecraftimage/Badlands.webp"
     },
     {
         "type": "input",
         "question": "Quel est le nom de ce biome ?",
         "options": [],
         "answer": "Badlands boisés",
-        "image": "Minecraftimage/Badlands boisés.webp"
+        "image": "/Minecraftimage/Badlands boisés.webp"
     },
     {
         "type": "input",
         "question": "Quel est le nom de ce biome ?",
         "options": [],
         "answer": "Badlands érodés",
-        "image": "Minecraftimage/Badlands érodées.webp"
+        "image": "/Minecraftimage/Badlands érodées.webp"
     },
   {
     "type": "input",
     "question": "Quel est le nom de ce biome ?",
     "options": [],
     "answer": ["Montagnes"],
-    "image": "Minecraftimage/Montagnes.webp"
+    "image": "/Minecraftimage/Montagnes.webp"
   },
   {
     "type": "input",
     "question": "Quel est le nom de ce biome ?",
     "options": [],
     "answer": ["Pics gelés"],
-    "image": "Minecraftimage/Pics gelés.webp"
+    "image": "/Minecraftimage/Pics gelés.webp"
   },
   {
     "type": "input",
     "question": "Quel est le nom de ce biome ?",
     "options": [],
     "answer": ["Pics rocheux"],
-    "image": "Minecraftimage/Pics rocheux.webp"
+    "image": "/Minecraftimage/Pics rocheux.webp"
   },
   {
     "type": "input",
     "question": "Quel est le nom de ce biome ?",
     "options": [],
     "answer": ["Plage"],
-    "image": "Minecraftimage/Plage.webp"
+    "image": "/Minecraftimage/Plage.webp"
   },
   {
     "type": "input",
     "question": "Quel est le nom de ce biome ?",
     "options": [],
     "answer": ["Plage enneigée"],
-    "image": "Minecraftimage/Plage enneigée.webp"
+    "image": "/Minecraftimage/Plage enneigée.webp"
   },
   {
     "type": "input",
     "question": "Quel est le nom de ce biome ?",
     "options": [],
     "answer": ["Rivière"],
-    "image": "Minecraftimage/Rivière.webp"
+    "image": "/Minecraftimage/Rivière.webp"
   },
   {
     "type": "input",
     "question": "Quel est le nom de ce biome ?",
     "options": [],
     "answer": ["Lac"],
-    "image": "Minecraftimage/Lac.webp"
+    "image": "/Minecraftimage/Lac.webp"
   },
   {
     "type": "input",
     "question": "Quel est le nom de ce biome ?",
     "options": [],
     "answer": ["Grotte luxuriante"],
-    "image": "Minecraftimage/Grotte luxuriante.webp"
+    "image": "/Minecraftimage/Grotte luxuriante.webp"
   },
   {
     "type": "input",
     "question": "Quel est le nom de ce biome ?",
     "options": [],
     "answer": ["Cavernes de spéléothèmes"],
-    "image": "Minecraftimage/Cavernes de spéléothèmes.webp"
+    "image": "/Minecraftimage/Cavernes de spéléothèmes.webp"
   },
   {
     "type": "input",
     "question": "Quel est le nom de ce biome ?",
     "options": [],
     "answer": ["Océan"],
-    "image": "Minecraftimage/Océan.webp"
+    "image": "/Minecraftimage/Océan.webp"
   },
   {
     "type": "input",
     "question": "Quel est le nom de ce biome ?",
     "options": [],
     "answer": ["Océan profond"],
-    "image": "Minecraftimage/Océan profond.webp"
+    "image": "/Minecraftimage/Océan profond.webp"
   },
   {
     "type": "input",
     "question": "Quel est le nom de ce biome ?",
     "options": [],
     "answer": ["Océan froid"],
-    "image": "Minecraftimage/Océan froid.webp"
+    "image": "/Minecraftimage/Océan froid.webp"
   },
   {
     "type": "input",
     "question": "Quel est le nom de ce biome ?",
     "options": [],
     "answer": ["Océan froid profond"],
-    "image": "Minecraftimage/Océan froid profond.webp"
+    "image": "/Minecraftimage/Océan froid profond.webp"
   },
   {
     "type": "input",
     "question": "Quel est le nom de ce biome ?",
     "options": [],
     "answer": ["Océan gelé"],
-    "image": "Minecraftimage/Océan gelé.webp"
+    "image": "/Minecraftimage/Océan gelé.webp"
   },
   {
     "type": "input",
     "question": "Quel est le nom de ce biome ?",
     "options": [],
     "answer": ["Océan gelé profond"],
-    "image": "Minecraftimage/Océan gelé profond.webp"
+    "image": "/Minecraftimage/Océan gelé profond.webp"
   },
   {
     "type": "input",
     "question": "Quel est le nom de ce biome ?",
     "options": [],
     "answer": ["Océan chaud"],
-    "image": "Minecraftimage/Océan chaud.webp"
+    "image": "/Minecraftimage/Océan chaud.webp"
   },
   {
     "type": "input",
     "question": "Quel est le nom de ce biome ?",
     "options": [],
     "answer": ["Océan chaud profond"],
-    "image": "Minecraftimage/Océan chaud profond.webp"
+    "image": "/Minecraftimage/Océan chaud profond.webp"
   },
   {
     "type": "input",
     "question": "Quel est le nom de ce biome ?",
     "options": [],
     "answer": ["Océan tiède"],
-    "image": "Minecraftimage/Océan tiède.webp"
+    "image": "/Minecraftimage/Océan tiède.webp"
   },
   {
     "type": "input",
     "question": "Quel est le nom de ce biome ?",
     "options": [],
     "answer": ["Océan tiède profond"],
-    "image": "Minecraftimage/Océan tiède profond.webp"
+    "image": "/Minecraftimage/Océan tiède profond.webp"
   },
   {
     "type": "input",
     "question": "Quel est le nom de ce biome ?",
     "options": [],
     "answer": ["Nether"],
-    "image": "Minecraftimage/Nether.webp"
+    "image": "/Minecraftimage/Nether.webp"
   },
   {
     "type": "input",
     "question": "Quel est le nom de ce biome ?",
     "options": [],
     "answer": ["Forêt carmin"],
-    "image": "Minecraftimage/Forêt carmin.webp"
+    "image": "/Minecraftimage/Forêt carmin.webp"
   },
   {
     "type": "input",
     "question": "Quel est le nom de ce biome ?",
     "options": [],
     "answer": ["Forêt biscornue"],
-    "image": "Minecraftimage/Forêt biscornue.webp"
+    "image": "/Minecraftimage/Forêt biscornue.webp"
   },
   {
     "type": "input",
     "question": "Quel est le nom de ce biome ?",
     "options": [],
     "answer": ["Vallée des âmes"],
-    "image": "Minecraftimage/Vallée des âmes.webp"
+    "image": "/Minecraftimage/Vallée des âmes.webp"
   },
   {
     "type": "input",
     "question": "Quel est le nom de ce biome ?",
     "options": [],
     "answer": ["Deltas de basalte"],
-    "image": "Minecraftimage/Deltas de basalte.webp"
+    "image": "/Minecraftimage/Deltas de basalte.webp"
   },
   {
     "type": "input",
     "question": "Quel est le nom de ce biome ?",
     "options": [],
     "answer": ["L’End"],
-    "image": "Minecraftimage/L’End.webp"
+    "image": "/Minecraftimage/L’End.webp"
   },
   {
     "type": "input",
     "question": "Quel est le nom de ce biome ?",
     "options": [],
     "answer": ["Hautes terres de l’End"],
-    "image": "Minecraftimage/Hautes terres de l’End.webp"
+    "image": "/Minecraftimage/Hautes terres de l’End.webp"
   },
   {
     "type": "input",
     "question": "Quel est le nom de ce biome ?",
     "options": [],
     "answer": ["Terres moyennes de l’End"],
-    "image": "Minecraftimage/Terres moyennes de l’End.webp"
+    "image": "/Minecraftimage/Terres moyennes de l’End.webp"
   },
   {
     "type": "input",
     "question": "Quel est le nom de ce biome ?",
     "options": [],
     "answer": ["Terres stériles de l'End"],
-    "image": "Minecraftimage/Terres stériles de l'End.webp"
+    "image": "/Minecraftimage/Terres stériles de l'End.webp"
   },
   {
     "type": "input",
     "question": "Quel est le nom de ce biome ?",
     "options": [],
     "answer": ["Petites îles de l’End"],
-    "image": "Minecraftimage/Petites îles de l’End.webp"
+    "image": "/Minecraftimage/Petites îles de l’End.webp"
   },
   {
     "type": "input",
     "question": "Quel est le nom de ce biome ?",
     "options": [],
     "answer": ["Champs de champignons"],
-    "image": "Minecraftimage/Champs de champignons.webp"
+    "image": "/Minecraftimage/Champs de champignons.webp"
   },
   {
     "type": "input",
     "question": "Quel est le nom de ce biome ?",
     "options": [],
     "answer": ["Pics dentelés"],
-    "image": "Minecraftimage/Pics dentelés.webp"
+    "image": "/Minecraftimage/Pics dentelés.webp"
   },
   {
     "type": "input",
     "question": "Quel est le nom de ce biome ?",
     "options": [],
     "answer": ["Prairie"],
-    "image": "Minecraftimage/Prairie.webp"
+    "image": "/Minecraftimage/Prairie.webp"
   },
   {
     "type": "input",
     "question": "Quel est le nom de ce biome ?",
     "options": [],
     "answer": ["Bosquet de cerisiers"],
-    "image": "Minecraftimage/Bosquet de cerisiers.webp"
+    "image": "/Minecraftimage/Bosquet de cerisiers.webp"
   },
   {
     "type": "input",
     "question": "Quel est le nom de ce biome ?",
     "options": [],
     "answer": ["Bosquet"],
-    "image": "Minecraftimage/Bosquet.webp"
+    "image": "/Minecraftimage/Bosquet.webp"
   },
   {
     "type": "input",
     "question": "Quel est le nom de ce biome ?",
     "options": [],
     "answer": ["Pentes enneigées"],
-    "image": "Minecraftimage/Pentes enneigées.webp"
+    "image": "/Minecraftimage/Pentes enneigées.webp"
   },
   {
     "type": "input",
     "question": "Quel est le nom de ce biome ?",
     "options": [],
     "answer": ["Collines venteuses"],
-    "image": "Minecraftimage/Collines venteuses.webp"
+    "image": "/Minecraftimage/Collines venteuses.webp"
   },
   {
     "type": "input",
     "question": "Quel est le nom de ce biome ?",
     "options": [],
     "answer": ["Collines graveleuses venteuses"],
-    "image": "Minecraftimage/Collines graveleuses venteuses.webp"
+    "image": "/Minecraftimage/Collines graveleuses venteuses.webp"
   },
   {
     "type": "input",
     "question": "Quel est le nom de ce biome ?",
     "options": [],
     "answer": ["Forêt venteuse"],
-    "image": "Minecraftimage/Forêt venteuse.webp"
+    "image": "/Minecraftimage/Forêt venteuse.webp"
   },
   {
     "type": "input",
     "question": "Quel est le nom de ce biome ?",
     "options": [],
     "answer": ["Forêt fleurie"],
-    "image": "Minecraftimage/Forêt fleurie.webp"
+    "image": "/Minecraftimage/Forêt fleurie.webp"
   },
   {
     "type": "input",
     "question": "Quel est le nom de ce biome ?",
     "options": [],
     "answer": ["Jardin pâle"],
-    "image": "Minecraftimage/Jardin pâle.webp"
+    "image": "/Minecraftimage/Jardin pâle.webp"
   },
   {
     "type": "input",
     "question": "Quel est le nom de ce biome ?",
     "options": [],
     "answer": ["Rivière gelée"],
-    "image": "Minecraftimage/Rivière gelée.webp"
+    "image": "/Minecraftimage/Rivière gelée.webp"
   },
   {
     "type": "input",
     "question": "Quel est le nom de ce biome ?",
     "options": [],
     "answer": ["Côte rocheuse"],
-    "image": "Minecraftimage/Côte rocheuse.webp"
+    "image": "/Minecraftimage/Côte rocheuse.webp"
   },
   {
     "type": "input",
     "question": "Quel est le nom de ce biome ?",
     "options": [],
     "answer": ["Plaines de tournesols"],
-    "image": "Minecraftimage/Plaines de tournesols.webp"
+    "image": "/Minecraftimage/Plaines de tournesols.webp"
   },
   {
     "type": "input",
     "question": "Quel est le nom de ce biome ?",
     "options": [],
     "answer": ["Plaines enneigées"],
-    "image": "Minecraftimage/Plaines enneigées.webp"
+    "image": "/Minecraftimage/Plaines enneigées.webp"
   },
   {
     "type": "input",
     "question": "Quel est le nom de ce biome ?",
     "options": [],
     "answer": ["Stalagmites de glace"],
-    "image": "Minecraftimage/Stalagmites de glace.webp"
+    "image": "/Minecraftimage/Stalagmites de glace.webp"
   },
   {
     "type": "input",
     "question": "Quel est le nom de ce biome ?",
     "options": [],
     "answer": ["Abîmes"],
-    "image": "Minecraftimage/Abîmes.webp"
+    "image": "/Minecraftimage/Abîmes.webp"
   },
   {
     "type": "input",
     "question": "Quel est le nom de ce biome ?",
     "options": [],
     "answer": ["Le vide"],
-    "image": "Minecraftimage/Vide.webp"
+    "image": "/Minecraftimage/Vide.webp"
   },
   {
     "type": "input",
     "question": "Quel est le nom de ce biome ?",
     "options": [],
     "answer": ["Terres désolées du Nether"],
-    "image": "Minecraftimage/Terres désolées du Nether.webp"
+    "image": "/Minecraftimage/Terres désolées du Nether.webp"
   },
 
 
@@ -1601,7 +1601,7 @@
         "question": "Quel objet permet d’ouvrir un portail vers l’End ?",
         "options": ["Œil de l’End", "Ender Pearl", "Blaze Rod", "Eye of Nether"],
         "answer": "Œil de l’End",
-        "image": "images/EyeOfEnd.jpg"
+        "image": "/images/EyeOfEnd.jpg"
     },
 
 
