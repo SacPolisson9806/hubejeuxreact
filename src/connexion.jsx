@@ -6,7 +6,7 @@ const routesJeux = {
   Arrowrushaccueil: '/arrowrushaccueil',
   Cemantix: '/cemantix',
   Jeuxpendu: '/jeuxpendu',
-  QuizzSolo: '/quizzsolo',       // ✅ Page solo
+  QuizzSolo: '/quizzSolo',       // ✅ Page solo
   QuizzMulti: '/quizzmulti',     // ✅ Page multi
   Codecrackerindex: '/codecrackerindex',
   Sudokuaccueil: '/sudokuaccueil',
