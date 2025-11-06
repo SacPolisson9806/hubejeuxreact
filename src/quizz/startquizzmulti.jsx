@@ -16,6 +16,7 @@ export default function StartQuizzMulti() {
   const [showAnswer, setShowAnswer] = useState(false);
   const [correctAnswer, setCorrectAnswer] = useState('');
   const [scores, setScores] = useState([]);
+  const [players, setPlayers] = useState([]); // ✅ Ajouté
   const [timeLeft, setTimeLeft] = useState(timePerQuestion || 30);
   const [currentQuestion, setCurrentQuestion] = useState(null);
 
@@ -24,6 +25,10 @@ export default function StartQuizzMulti() {
     setSocket(newSocket);
 
     newSocket.emit('joinGame', { room, username });
+
+    newSocket.on('updatePlayers', (playerList) => {
+      setPlayers(playerList); // ✅ Ajouté
+    });
 
     newSocket.on('startQuestions', ({ questions }) => {
       setQuestions(questions);
@@ -210,6 +215,15 @@ export default function StartQuizzMulti() {
           <ul>
             {scores.map((p, i) => (
               <li key={i}>{p.username} : {p.score} pts</li>
+            ))}
+          </ul>
+        </div>
+
+        <div className="scores">
+          <h3>👥 Joueurs connectés :</h3>
+          <ul>
+            {players.map((name, i) => (
+              <li key={i}>{name}</li>
             ))}
           </ul>
         </div>
