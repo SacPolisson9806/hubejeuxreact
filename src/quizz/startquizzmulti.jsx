@@ -74,7 +74,11 @@ export default function StartQuizzMulti() {
       setTimeLeft((prev) => {
         if (prev <= 1) {
           clearInterval(interval);
-          socket.emit('timeout', { room, questionIndex: index });
+          if (socket) {
+            socket.emit('timeout', { room, questionIndex: index });
+          } else {
+            console.warn("⚠️ socket est null dans le timer");
+          }
           return 0;
         }
         return prev - 1;
@@ -86,7 +90,7 @@ export default function StartQuizzMulti() {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!socket) {
-      console.warn("⚠️ Socket non défini, émission annulée");
+      console.warn("⚠️ socket est null dans handleSubmit");
       return;
     }
     socket.emit('submitAnswer', {
