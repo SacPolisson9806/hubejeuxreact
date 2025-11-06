@@ -24,10 +24,10 @@ export default function QuizzMulti() {
     document.body.style.backgroundColor = '#eef3ff';
 
     const newSocket = io('https://server-rv2z.onrender.com');
-    setSocket(newSocket);
+    transports: ['polling']
 
     newSocket.on('connect', () => {
-      console.log('🟢 Connecté au serveur Socket.io');
+    console.log("✅ Socket connecté avec polling :", newSocket.id);
 
       if (type === 'create') {
         newSocket.emit('createRoom', { username, room });

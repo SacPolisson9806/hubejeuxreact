@@ -22,7 +22,8 @@ export default function StartQuizzMulti() {
 
   useEffect(() => {
     const newSocket = io('https://server-rv2z.onrender.com');
-    setSocket(newSocket);
+     transports: ['polling']
+    
     console.log("🔌 Socket connecté :", newSocket.connected);
 
 
