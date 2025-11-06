@@ -23,8 +23,10 @@ export default function QuizzMulti() {
   useEffect(() => {
     document.body.style.backgroundColor = '#eef3ff';
 
-    const newSocket = io('https://server-rv2z.onrender.com');
-    transports: ['polling']
+    const newSocket = io('https://server-rv2z.onrender.com', {
+   transports: ['polling'],
+   upgrade: false
+   });
 
     newSocket.on('connect', () => {
     console.log("✅ Socket connecté avec polling :", newSocket.id);
