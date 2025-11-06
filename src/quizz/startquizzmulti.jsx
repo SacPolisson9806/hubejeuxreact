@@ -21,33 +21,28 @@ export default function StartQuizzMulti() {
   const [timeLeft, setTimeLeft] = useState(timePerQuestion || 30);
   const [currentQuestion, setCurrentQuestion] = useState(null);
 
-  useEffect(() => {
-  const newSocket = io('https://server-rv2z.onrender.com', {
-    transports: ['polling'],
-    upgrade: false
-  });
-
-  const proxySocket = new Proxy(newSocket, {
-    get(target, prop) {
-      if (prop === 'emit') {
-        if (!target) {
-          console.error("🔥 Tentative d'appel à emit sur socket null !");
-        }
-      }
-      return target[prop];
+  const safeEmit = (event, payload) => {
+    if (socketReady && socketRef.current) {
+      socketRef.current.emit(event, payload);
+    } else {
+      console.warn(`⛔️ Emit bloqué : socket pas prêt pour "${event}"`);
+      console.trace();
     }
-  });
+  };
 
-  socketRef.current = proxySocket;
+  useEffect(() => {
+    const newSocket = io('https://server-rv2z.onrender.com', {
+      transports: ['polling'],
+      upgrade: false
+    });
 
-  newSocket.on('connect', () => {
-    console.log("✅ Socket connecté :", newSocket.id);
-    setSocketReady(true);
-    newSocket.emit('joinGame', { room, username });
-  });
+    socketRef.current = newSocket;
 
-  
-
+    newSocket.on('connect', () => {
+      console.log("✅ Socket connecté :", newSocket.id);
+      setSocketReady(true);
+      safeEmit('joinGame', { room, username });
+    });
 
     newSocket.on('updatePlayers', (playerList) => {
       setPlayers(playerList);
@@ -91,9 +86,7 @@ export default function StartQuizzMulti() {
       setTimeLeft((prev) => {
         if (prev <= 1) {
           clearInterval(interval);
-          if (socketReady && socketRef.current) {
-            socketRef.current.emit('timeout', { room, questionIndex: index });
-          }
+          safeEmit('timeout', { room, questionIndex: index });
           return 0;
         }
         return prev - 1;
@@ -104,11 +97,7 @@ export default function StartQuizzMulti() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!socketReady || !socketRef.current) {
-      console.warn("⚠️ socket pas prêt dans handleSubmit");
-      return;
-    }
-    socketRef.current.emit('submitAnswer', {
+    safeEmit('submitAnswer', {
       room,
       username,
       questionIndex: index,
@@ -120,6 +109,56 @@ export default function StartQuizzMulti() {
 
   return (
     <>
+      <div className="container">
+        <h1>Quiz Multijoueur : {selectedTheme}</h1>
+        <p>Temps restant : {timeLeft} secondes</p>
+
+        <div className="scores">
+          <h3>Scores :</h3>
+          <ul>
+            {scores.map((p, i) => (
+              <li key={i}>{p.username} : {p.score} pts</li>
+            ))}
+          </ul>
+        </div>
+
+        <div className="scores">
+          <h3>👥 Joueurs connectés :</h3>
+          <ul>
+            {players.map((name, i) => (
+              <li key={i}>{name}</li>
+            ))}
+          </ul>
+        </div>
+
+        {showAnswer ? (
+          <p>✅ La bonne réponse était : <strong>{Array.isArray(correctAnswer) ? correctAnswer.join(' / ') : correctAnswer}</strong></p>
+        ) : (
+          <form onSubmit={handleSubmit}>
+            {currentQuestion.image && (
+              <img src={`/${currentQuestion.image}`} alt="question" />
+            )}
+            <p>{currentQuestion.question}</p>
+            {Array.isArray(currentQuestion.options) ? (
+              currentQuestion.options.map((opt, i) => (
+                <label key={i}>
+                  <input type="radio" name="answer" value={opt} required /> {opt}
+                </label>
+              ))
+            ) : (
+              <input
+                type="text"
+                name="answer"
+                value={userAnswer}
+                onChange={(e) => setUserAnswer(e.target.value)}
+                required
+              />
+            )}
+            <button type="submit">Valider</button>
+          </form>
+        )}
+      </div>
+
       <style>{`
         body {
           margin: 0;
@@ -142,11 +181,6 @@ export default function StartQuizzMulti() {
           max-width: 600px;
           text-align: center;
           animation: fadeIn 0.6s ease-in-out;
-        }
-
-        @keyframes fadeIn {
-          from { opacity: 0; transform: translateY(20px); }
-          to { opacity: 1; transform: translateY(0); }
         }
 
         h1 {
@@ -234,56 +268,6 @@ export default function StartQuizzMulti() {
           border-radius: 10px;
         }
       `}</style>
-
-      <div className="container">
-        <h1>Quiz Multijoueur : {selectedTheme}</h1>
-        <p>Temps restant : {timeLeft} secondes</p>
-
-        <div className="scores">
-          <h3>Scores :</h3>
-          <ul>
-            {scores.map((p, i) => (
-              <li key={i}>{p.username} : {p.score} pts</li>
-            ))}
-          </ul>
-        </div>
-
-        <div className="scores">
-          <h3>👥 Joueurs connectés :</h3>
-          <ul>
-            {players.map((name, i) => (
-              <li key={i}>{name}</li>
-            ))}
-          </ul>
-        </div>
-
-        {showAnswer ? (
-          <p>✅ La bonne réponse était : <strong>{Array.isArray(correctAnswer) ? correctAnswer.join(' / ') : correctAnswer}</strong></p>
-        ) : (
-          <form onSubmit={handleSubmit}>
-            {currentQuestion.image && (
-              <img src={`/${currentQuestion.image}`} alt="question" />
-            )}
-            <p>{currentQuestion.question}</p>
-            {Array.isArray(currentQuestion.options) ? (
-              currentQuestion.options.map((opt, i) => (
-                <label key={i}>
-                  <input type="radio" name="answer" value={opt} required /> {opt}
-                </label>
-              ))
-            ) : (
-              <input
-                type="text"
-                name="answer"
-                value={userAnswer}
-                onChange={(e) => setUserAnswer(e.target.value)}
-                required
-              />
-            )}
-            <button type="submit">Valider</button>
-          </form>
-        )}
-      </div>
     </>
   );
 }
