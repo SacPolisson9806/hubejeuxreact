@@ -29,7 +29,7 @@ export default function App() {
       <Routes>
         <Route path="/" element={<Hubjeux />} />
         <Route path="/connexion" element={<Connexion />} />
-        <Route path="/quizzsolo" element={<QuizzSolo />} />
+        <Route path="/quizzSolo" element={<QuizzSolo />} />
         <Route path="/quizzMulti" element={<QuizzMulti />} />
         <Route path="/Startquizzsolo" element={<StartquizzSolo />} />
         <Route path="/Startquizzmulti" element={<StartquizzMulti />} />
