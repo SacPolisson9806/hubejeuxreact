@@ -44,10 +44,24 @@ export default function QuizzMulti() {
       console.log('💬', msg);
     });
 
+    // ✅ Écoute du signal de démarrage envoyé par le serveur
+    newSocket.on('launchGame', () => {
+      navigate('/startquizzmulti', {
+        state: {
+          selectedThemes: [selectedTheme],
+          pointsToWin,
+          timePerQuestion,
+          mode: 'multi',
+          username,
+          room
+        }
+      });
+    });
+
     return () => {
       newSocket.disconnect();
     };
-  }, [username, room, type]);
+  }, [username, room, type, selectedTheme, pointsToWin, timePerQuestion, navigate]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
