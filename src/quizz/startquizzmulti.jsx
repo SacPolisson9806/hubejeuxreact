@@ -85,7 +85,10 @@ export default function StartQuizzMulti() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!socket) return;
+    if (!socket) {
+      console.warn("⚠️ Socket non défini, émission annulée");
+      return;
+    }
     socket.emit('submitAnswer', {
       room,
       username,
