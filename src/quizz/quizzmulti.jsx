@@ -85,7 +85,7 @@ export default function QuizzMulti() {
           background: white;
           padding: 40px 30px;
           border-radius: 12px;
-          box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+          box-shadow: 0 5px 15px rgba(34, 17, 223, 0.1);
         }
         h1 {
           font-size: 28px;

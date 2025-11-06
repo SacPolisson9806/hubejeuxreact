@@ -2,8 +2,10 @@ import React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Hubjeux from "./hubjeux";
 import Connexion from "./connexion";
-import Quizz from "./quizz/quizz";
-import Startquizz from "./quizz/startquizz";
+import QuizzSolo from "./quizz/quizzSolo";
+import QuizzMulti from "./quizz/quizzmulti";
+import StartquizzSolo from "./quizz/startquizzsolo";
+import StartquizzMulti from "./quizz/startquizzmulti";
 import Jeuxpendu from "./jeuxpendu/jeuxpendu";
 import Voiture from "./voiture/voiture";
 import Accueil from "./voiture/accueil";
@@ -27,8 +29,10 @@ export default function App() {
       <Routes>
         <Route path="/" element={<Hubjeux />} />
         <Route path="/connexion" element={<Connexion />} />
-        <Route path="/quizz" element={<Quizz />} />
-        <Route path="/Startquizz" element={<Startquizz />} />
+        <Route path="/quizzsolo" element={<QuizzSolo />} />
+        <Route path="/quizzMulti" element={<QuizzMulti />} />
+        <Route path="/Startquizzsolo" element={<StartquizzSolo />} />
+        <Route path="/Startquizzmulti" element={<StartquizzMulti />} />
         <Route path="/Jeuxpendu" element={<Jeuxpendu />} />
         <Route path="/voiture" element={<Voiture />} />
         <Route path="/Accueil" element={<Accueil />} />
