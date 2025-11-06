@@ -64,26 +64,27 @@ export default function StartQuizz() {
 
   // ✅ Gestion de la validation d'une réponse
   const handleSubmit = (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    const formData = new FormData(e.target);
-    const rawAnswer = formData.get('answer');
+  const formData = new FormData(e.target);
+  const rawAnswer = formData.get('answer');
 
-    const correctAnswers = Array.isArray(currentQuestion.answer)
-      ? currentQuestion.answer
-      : [currentQuestion.answer];
+  const correctAnswers = Array.isArray(currentQuestion.answer)
+    ? currentQuestion.answer
+    : [currentQuestion.answer];
 
-    const isCorrect = correctAnswers.some(
-      (a) => normalize(a) === normalize(rawAnswer)
-    );
+  const isCorrect = correctAnswers.some(
+    (a) => normalize(a) === normalize(rawAnswer)
+  );
 
-    const isQCM = Array.isArray(currentQuestion.options);
-
+  // Si c'est une question input
+  if (currentQuestion.type === 'input') {
     if (isCorrect) {
       const pointsGained = Math.max(1, Math.round(10 * (timeLeft / timePerQuestion)));
       setScore((prev) => prev + pointsGained);
       setFeedback('');
       setShowAnswer(true);
+
       setTimeout(() => {
         setShowAnswer(false);
         setIndex((prev) => prev + 1);
@@ -91,21 +92,29 @@ export default function StartQuizz() {
         setUserAnswer('');
       }, 2000);
     } else {
-      if (isQCM) {
-        setFeedback('');
-        setShowAnswer(true);
-        setTimeout(() => {
-          setShowAnswer(false);
-          setIndex((prev) => prev + 1);
-          setTimeLeft(timePerQuestion);
-          setUserAnswer('');
-        }, 2000);
-      } else {
-        setFeedback('❌ Mauvaise réponse, essaie encore !');
-        setUserAnswer('');
-      }
+      setFeedback('❌ Réponse fausse, essaie encore !');
+      setShowAnswer(false); // on reste sur la même question
+      setUserAnswer('');
     }
-  };
+  } 
+  // Si c'est une question QCM
+  else if (currentQuestion.type === 'qcm') {
+    if (isCorrect) {
+      const pointsGained = Math.max(1, Math.round(10 * (timeLeft / timePerQuestion)));
+      setScore((prev) => prev + pointsGained);
+    }
+    setFeedback(''); // on peut afficher la réponse ou pas
+    setShowAnswer(true);
+
+    setTimeout(() => {
+      setShowAnswer(false);
+      setIndex((prev) => prev + 1);
+      setTimeLeft(timePerQuestion);
+      setUserAnswer('');
+    }, 2000);
+  }
+};
+
 
   // ⏳ Gestion du compte à rebours
   useEffect(() => {
@@ -222,11 +231,10 @@ export default function StartQuizz() {
         ) : (
           <form onSubmit={handleSubmit}>
             {/* ✅ Correction : affichage fiable de l’image des questions input */}
-            {!Array.isArray(currentQuestion.options) &&
-              typeof currentQuestion.image === 'string' &&
+           {typeof currentQuestion.image === 'string' &&
               currentQuestion.image.trim() !== '' && (
                 <img
-                  src={`${process.env.PUBLIC_URL}${
+                  src={`${
                     currentQuestion.image.startsWith('/')
                       ? currentQuestion.image
                       : '/' + currentQuestion.image

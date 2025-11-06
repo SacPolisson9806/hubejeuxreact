@@ -1,13 +1,56 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { io } from 'socket.io-client';
 
 export default function Quizz() {
   const navigate = useNavigate();
+  const location = useLocation();
+
+  // ✅ récupération des infos venant de Connexion.jsx
+  const searchParams = new URLSearchParams(location.search);
+  const mode = searchParams.get('mode') || 'solo';
+  const username = searchParams.get('username') || '';
+  const room = searchParams.get('room') || '';
+  const type = searchParams.get('type') || '';
+
+  // 🔌 socket
+  const [socket, setSocket] = useState(null);
 
   const themes = ['Minecraft', 'HarryPotter', 'StarWars', 'Marvel', 'Geographie'];
   const [selectedTheme, setSelectedTheme] = useState('');
   const [pointsToWin, setPointsToWin] = useState(100);
   const [timePerQuestion, setTimePerQuestion] = useState(30);
+
+  useEffect(() => {
+    document.body.style.backgroundImage = 'none';
+    document.body.style.backgroundColor = '#f0f4f8';
+    document.body.style.fontFamily = 'Arial, sans-serif';
+    document.body.style.color = '#333';
+    document.body.style.textAlign = 'center';
+
+    if (mode === 'multi') {
+      const newSocket = io('http://localhost:4000');
+      setSocket(newSocket);
+
+      newSocket.on('connect', () => {
+        console.log('🟢 Connecté au serveur multijoueur');
+
+        if (type === 'create') {
+          newSocket.emit('createRoom', { username, room });
+        } else {
+          newSocket.emit('joinRoom', { username, room });
+        }
+      });
+
+      newSocket.on('message', (msg) => {
+        console.log('💬', msg);
+      });
+
+      return () => {
+        newSocket.disconnect();
+      };
+    }
+  }, [mode, username, room, type]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -16,22 +59,18 @@ export default function Quizz() {
       return;
     }
 
+    // 🔁 Envoie des infos de configuration + mode de jeu
     navigate('/startquizz', {
       state: {
         selectedThemes: [selectedTheme],
         pointsToWin,
-        timePerQuestion
+        timePerQuestion,
+        mode,
+        username,
+        room
       }
     });
   };
-
-  useEffect(() => {
-    document.body.style.backgroundImage = 'none';
-    document.body.style.backgroundColor = '#f0f4f8';
-    document.body.style.fontFamily = 'Arial, sans-serif';
-    document.body.style.color = '#333';
-    document.body.style.textAlign = 'center';
-  }, []);
 
   return (
     <>
@@ -83,10 +122,27 @@ export default function Quizz() {
         button:hover {
           background: #0a00d0;
         }
+
+        .multi-info {
+          background: #e6f0ff;
+          padding: 10px;
+          border-radius: 8px;
+          margin-bottom: 20px;
+          border: 1px solid #c3daff;
+        }
       `}</style>
 
       <div className="container">
         <h1>Configurer votre Quiz</h1>
+
+        {mode === 'multi' && (
+          <div className="multi-info">
+            👥 Mode multijoueur activé<br />
+            <strong>{type === 'create' ? 'Salon créé :' : 'Salon rejoint :'}</strong> {room}<br />
+            <strong>Joueur :</strong> {username}
+          </div>
+        )}
+
         <form onSubmit={handleSubmit}>
           <label>Choisir le thème :</label>
           <select value={selectedTheme} onChange={(e) => setSelectedTheme(e.target.value)} required>

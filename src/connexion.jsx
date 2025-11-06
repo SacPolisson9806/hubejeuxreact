@@ -22,6 +22,7 @@ export default function Connexion() {
   const [mode, setMode] = useState('solo');
   const [username, setUsername] = useState('');
   const [room, setRoom] = useState('');
+  const [multiAction, setMultiAction] = useState('join'); // ✅ nouveau : "join" ou "create"
 
   useEffect(() => {
     if (!jeu || !route) {
@@ -34,13 +35,13 @@ export default function Connexion() {
     e.preventDefault();
 
     if (mode === 'multi' && (!username || !room)) {
-      alert("Remplis ton pseudo et le nom de la partie !");
+      alert("Remplis ton pseudo et le code du salon !");
       return;
     }
 
     let url = `${route}?mode=${mode}`;
     if (mode === 'multi') {
-      url += `&username=${encodeURIComponent(username)}&room=${encodeURIComponent(room)}`;
+      url += `&username=${encodeURIComponent(username)}&room=${encodeURIComponent(room)}&type=${multiAction}`;
     }
 
     navigate(url);
@@ -141,6 +142,17 @@ export default function Connexion() {
 
           {mode === 'multi' && (
             <div id="multiFields">
+              {/* ✅ Choix : créer ou rejoindre */}
+              <label htmlFor="multiAction">Action multijoueur :</label>
+              <select
+                id="multiAction"
+                value={multiAction}
+                onChange={(e) => setMultiAction(e.target.value)}
+              >
+                <option value="join">Rejoindre un salon</option>
+                <option value="create">Créer un salon</option>
+              </select>
+
               <input
                 type="text"
                 id="username"
@@ -151,7 +163,7 @@ export default function Connexion() {
               <input
                 type="text"
                 id="room"
-                placeholder="Nom de la partie"
+                placeholder={multiAction === 'create' ? 'Code du salon à créer' : 'Code du salon à rejoindre'}
                 value={room}
                 onChange={(e) => setRoom(e.target.value)}
               />
