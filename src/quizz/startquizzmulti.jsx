@@ -22,18 +22,32 @@ export default function StartQuizzMulti() {
   const [currentQuestion, setCurrentQuestion] = useState(null);
 
   useEffect(() => {
-    const newSocket = io('https://server-rv2z.onrender.com', {
-      transports: ['polling'],
-      upgrade: false
-    });
+  const newSocket = io('https://server-rv2z.onrender.com', {
+    transports: ['polling'],
+    upgrade: false
+  });
 
-    socketRef.current = newSocket;
+  const proxySocket = new Proxy(newSocket, {
+    get(target, prop) {
+      if (prop === 'emit') {
+        if (!target) {
+          console.error("🔥 Tentative d'appel à emit sur socket null !");
+        }
+      }
+      return target[prop];
+    }
+  });
 
-    newSocket.on('connect', () => {
-      console.log("✅ Socket connecté :", newSocket.id);
-      setSocketReady(true);
-      newSocket.emit('joinGame', { room, username });
-    });
+  socketRef.current = proxySocket;
+
+  newSocket.on('connect', () => {
+    console.log("✅ Socket connecté :", newSocket.id);
+    setSocketReady(true);
+    newSocket.emit('joinGame', { room, username });
+  });
+
+  
+
 
     newSocket.on('updatePlayers', (playerList) => {
       setPlayers(playerList);
