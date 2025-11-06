@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { io } from 'socket.io-client';
 
@@ -9,7 +9,8 @@ export default function StartQuizzMulti() {
   const { selectedThemes, pointsToWin, timePerQuestion, username, room } = location.state || {};
   const selectedTheme = selectedThemes?.[0] || "Minecraft";
 
-  const [socket, setSocket] = useState(null);
+  const socketRef = useRef(null);
+  const [socketReady, setSocketReady] = useState(false);
   const [questions, setQuestions] = useState([]);
   const [index, setIndex] = useState(0);
   const [userAnswer, setUserAnswer] = useState('');
@@ -26,17 +27,19 @@ export default function StartQuizzMulti() {
       upgrade: false
     });
 
-    console.log("🔌 Socket connecté :", newSocket.connected);
-    setSocket(newSocket);
+    socketRef.current = newSocket;
 
-    newSocket.emit('joinGame', { room, username });
+    newSocket.on('connect', () => {
+      console.log("✅ Socket connecté :", newSocket.id);
+      setSocketReady(true);
+      newSocket.emit('joinGame', { room, username });
+    });
 
     newSocket.on('updatePlayers', (playerList) => {
       setPlayers(playerList);
     });
 
     newSocket.on('startQuestions', ({ questions }) => {
-      console.log("📥 Questions reçues :", questions.length);
       setQuestions(questions);
       setCurrentQuestion(questions[0]);
       setIndex(0);
@@ -66,18 +69,16 @@ export default function StartQuizzMulti() {
     });
 
     return () => newSocket.disconnect();
-  }, [room, username, navigate, timePerQuestion, index, questions]);
+  }, [room, username, navigate, timePerQuestion]);
 
   useEffect(() => {
-    if (!currentQuestion || showAnswer || !socket) return;
+    if (!currentQuestion || showAnswer || !socketReady || !socketRef.current) return;
     const interval = setInterval(() => {
       setTimeLeft((prev) => {
         if (prev <= 1) {
           clearInterval(interval);
-          if (socket) {
-            socket.emit('timeout', { room, questionIndex: index });
-          } else {
-            console.warn("⚠️ socket est null dans le timer");
+          if (socketReady && socketRef.current) {
+            socketRef.current.emit('timeout', { room, questionIndex: index });
           }
           return 0;
         }
@@ -85,15 +86,15 @@ export default function StartQuizzMulti() {
       });
     }, 1000);
     return () => clearInterval(interval);
-  }, [currentQuestion, showAnswer, socket, room, index]);
+  }, [currentQuestion, showAnswer, socketReady, room, index]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!socket) {
-      console.warn("⚠️ socket est null dans handleSubmit");
+    if (!socketReady || !socketRef.current) {
+      console.warn("⚠️ socket pas prêt dans handleSubmit");
       return;
     }
-    socket.emit('submitAnswer', {
+    socketRef.current.emit('submitAnswer', {
       room,
       username,
       questionIndex: index,
