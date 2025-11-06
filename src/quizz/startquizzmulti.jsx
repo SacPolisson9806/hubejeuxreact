@@ -16,26 +16,27 @@ export default function StartQuizzMulti() {
   const [showAnswer, setShowAnswer] = useState(false);
   const [correctAnswer, setCorrectAnswer] = useState('');
   const [scores, setScores] = useState([]);
-  const [players, setPlayers] = useState([]); // ✅ Ajouté
+  const [players, setPlayers] = useState([]);
   const [timeLeft, setTimeLeft] = useState(timePerQuestion || 30);
   const [currentQuestion, setCurrentQuestion] = useState(null);
 
   useEffect(() => {
     const newSocket = io('https://server-rv2z.onrender.com', {
-   transports: ['polling'],
-   upgrade: false
-   });
-   
-    console.log("🔌 Socket connecté :", newSocket.connected);
+      transports: ['polling'],
+      upgrade: false
+    });
 
+    console.log("🔌 Socket connecté :", newSocket.connected);
+    setSocket(newSocket);
 
     newSocket.emit('joinGame', { room, username });
 
     newSocket.on('updatePlayers', (playerList) => {
-      setPlayers(playerList); // ✅ Ajouté
+      setPlayers(playerList);
     });
 
     newSocket.on('startQuestions', ({ questions }) => {
+      console.log("📥 Questions reçues :", questions.length);
       setQuestions(questions);
       setCurrentQuestion(questions[0]);
       setIndex(0);
@@ -68,7 +69,7 @@ export default function StartQuizzMulti() {
   }, [room, username, navigate, timePerQuestion, index, questions]);
 
   useEffect(() => {
-    if (!currentQuestion || showAnswer) return;
+    if (!currentQuestion || showAnswer || !socket) return;
     const interval = setInterval(() => {
       setTimeLeft((prev) => {
         if (prev <= 1) {
@@ -84,6 +85,7 @@ export default function StartQuizzMulti() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    if (!socket) return;
     socket.emit('submitAnswer', {
       room,
       username,
