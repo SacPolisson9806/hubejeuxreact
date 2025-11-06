@@ -29,7 +29,7 @@ export default function Quizz() {
     document.body.style.textAlign = 'center';
 
     if (mode === 'multi') {
-      const newSocket = io('http://localhost:4000');
+      const newSocket = io('https://server-rv2z.onrender.com');
       setSocket(newSocket);
 
       newSocket.on('connect', () => {
