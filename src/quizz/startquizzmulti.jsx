@@ -23,6 +23,8 @@ export default function StartQuizzMulti() {
   useEffect(() => {
     const newSocket = io('https://server-rv2z.onrender.com');
     setSocket(newSocket);
+    console.log("🔌 Socket connecté :", newSocket.connected);
+
 
     newSocket.emit('joinGame', { room, username });
 
