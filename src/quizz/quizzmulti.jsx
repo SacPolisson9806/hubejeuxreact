@@ -24,12 +24,14 @@ export default function QuizzMulti() {
     document.body.style.backgroundColor = '#eef3ff';
 
     const newSocket = io('https://server-rv2z.onrender.com', {
-   transports: ['polling'],
-   upgrade: false
-   });
+      transports: ['polling'],
+      upgrade: false
+    });
+
+    setSocket(newSocket); // ✅ Stocker le socket
 
     newSocket.on('connect', () => {
-    console.log("✅ Socket connecté avec polling :", newSocket.id);
+      console.log("✅ Socket connecté avec polling :", newSocket.id);
 
       if (type === 'create') {
         newSocket.emit('createRoom', { username, room });
@@ -46,7 +48,6 @@ export default function QuizzMulti() {
       console.log('💬', msg);
     });
 
-    // ✅ Écoute du signal de démarrage envoyé par le serveur
     newSocket.on('launchGame', () => {
       navigate('/startquizzmulti', {
         state: {
@@ -75,6 +76,11 @@ export default function QuizzMulti() {
 
     if (!selectedTheme) {
       alert('Choisis un thème !');
+      return;
+    }
+
+    if (!socket) {
+      console.warn("⚠️ socket est null dans handleSubmit");
       return;
     }
 
