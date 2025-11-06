@@ -6,7 +6,8 @@ const routesJeux = {
   Arrowrushaccueil: '/arrowrushaccueil',
   Cemantix: '/cemantix',
   Jeuxpendu: '/jeuxpendu',
-  Quizz: '/quizz',
+  QuizzSolo: '/quizzsolo',       // ✅ Page solo
+  QuizzMulti: '/quizzmulti',     // ✅ Page multi
   Codecrackerindex: '/codecrackerindex',
   Sudokuaccueil: '/sudokuaccueil',
   Index2048: '/index2048',
@@ -16,20 +17,19 @@ const routesJeux = {
 export default function Connexion() {
   const [searchParams] = useSearchParams();
   const jeu = searchParams.get('jeu');
-  const route = routesJeux[jeu];
   const navigate = useNavigate();
 
   const [mode, setMode] = useState('solo');
   const [username, setUsername] = useState('');
   const [room, setRoom] = useState('');
-  const [multiAction, setMultiAction] = useState('join'); // ✅ nouveau : "join" ou "create"
+  const [multiAction, setMultiAction] = useState('join'); // ✅ "join" ou "create"
 
   useEffect(() => {
-    if (!jeu || !route) {
+    if (!jeu) {
       alert("Jeu inconnu ou non sélectionné.");
       navigate('/');
     }
-  }, [jeu, route, navigate]);
+  }, [jeu, navigate]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -39,17 +39,18 @@ export default function Connexion() {
       return;
     }
 
-    let url = `${route}?mode=${mode}`;
-    if (mode === 'multi') {
-      url += `&username=${encodeURIComponent(username)}&room=${encodeURIComponent(room)}&type=${multiAction}`;
+    // 🔹 Redirection selon le mode choisi
+    if (mode === 'solo') {
+      navigate(`/quizzsolo?mode=solo&jeu=${jeu}`);
+    } else {
+      navigate(
+        `/quizzmulti?mode=multi&jeu=${jeu}&username=${encodeURIComponent(username)}&room=${encodeURIComponent(room)}&type=${multiAction}`
+      );
     }
-
-    navigate(url);
   };
 
   return (
     <>
-      {/* 🔸 Style intégré */}
       <style>{`
         body {
           margin: 0;
@@ -135,14 +136,18 @@ export default function Connexion() {
 
         <form onSubmit={handleSubmit}>
           <label htmlFor="mode">Mode de jeu :</label>
-          <select id="mode" value={mode} onChange={(e) => setMode(e.target.value)} required>
+          <select
+            id="mode"
+            value={mode}
+            onChange={(e) => setMode(e.target.value)}
+            required
+          >
             <option value="solo">Solo</option>
             <option value="multi">Multijoueur</option>
           </select>
 
           {mode === 'multi' && (
             <div id="multiFields">
-              {/* ✅ Choix : créer ou rejoindre */}
               <label htmlFor="multiAction">Action multijoueur :</label>
               <select
                 id="multiAction"
@@ -163,7 +168,11 @@ export default function Connexion() {
               <input
                 type="text"
                 id="room"
-                placeholder={multiAction === 'create' ? 'Code du salon à créer' : 'Code du salon à rejoindre'}
+                placeholder={
+                  multiAction === 'create'
+                    ? 'Code du salon à créer'
+                    : 'Code du salon à rejoindre'
+                }
                 value={room}
                 onChange={(e) => setRoom(e.target.value)}
               />
