@@ -1,121 +1,167 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 export default function StartQuizzSolo() {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const { selectedThemes, pointsToWin, timePerQuestion, username } = location.state || {};
-  const selectedTheme = selectedThemes?.[0] || "Minecraft";
-
+  const { selectedThemes, pointsToWin, timePerQuestion } = location.state || {};
   const [questions, setQuestions] = useState([]);
+  const [currentThemeIndex, setCurrentThemeIndex] = useState(0);
   const [index, setIndex] = useState(0);
+  const [score, setScore] = useState(0);
   const [userAnswer, setUserAnswer] = useState('');
   const [showAnswer, setShowAnswer] = useState(false);
   const [correctAnswer, setCorrectAnswer] = useState('');
-  const [score, setScore] = useState(0);
-  const [timeLeft, setTimeLeft] = useState(timePerQuestion || 30);
+  const [timeLeft, setTimeLeft] = useState(timePerQuestion);
   const [currentQuestion, setCurrentQuestion] = useState(null);
 
-  // ✅ Questions mockées localement
-  const mockQuestions = [
-    {
-      question: "Quel est le bloc le plus dur dans Minecraft ?",
-      options: ["Pierre", "Bedrock", "Obsidienne", "Fer"],
-      answer: "Bedrock"
-    },
-    {
-      question: "Qui est le sorcier principal dans Harry Potter ?",
-      options: ["Ron", "Voldemort", "Dumbledore", "Harry"],
-      answer: "Dumbledore"
-    },
-    {
-      question: "Quelle planète est la plus proche du Soleil ?",
-      options: ["Mars", "Terre", "Mercure", "Vénus"],
-      answer: "Mercure"
-    }
-  ];
-
+  // Charger les questions du thème en cours
   useEffect(() => {
-    setQuestions(mockQuestions);
-    setCurrentQuestion(mockQuestions[0]);
-    setTimeLeft(timePerQuestion);
-  }, [timePerQuestion]);
+  const loadQuestions = async () => {
+    try {
+      const theme = selectedThemes[currentThemeIndex];
+      const response = await fetch(`/${theme}.json`);
+      if (!response.ok) {
+        throw new Error(
+          `Impossible de charger le fichier JSON pour le thème "${theme}".`
+        );
+      }
+      const data = await response.json();
+      if (!Array.isArray(data) || data.length === 0) {
+        throw new Error(`Le fichier JSON pour le thème "${theme}" est vide ou invalide.`);
+      }
 
+      // Mélanger les questions
+      const shuffled = data.sort(() => Math.random() - 0.5);
+
+      setQuestions(shuffled);
+      setIndex(0);
+      setCurrentQuestion(shuffled[0]);
+      setTimeLeft(timePerQuestion);
+    } catch (error) {
+      console.error('Erreur de chargement des questions :', error);
+      alert(`Erreur de chargement des questions : ${error.message}`);
+    }
+  };
+
+  if (selectedThemes && selectedThemes.length > 0) {
+    loadQuestions();
+  }
+}, [currentThemeIndex, selectedThemes, timePerQuestion]);
+
+
+  // Timer
   useEffect(() => {
     if (!currentQuestion || showAnswer) return;
+
     const interval = setInterval(() => {
       setTimeLeft((prev) => {
         if (prev <= 1) {
           clearInterval(interval);
-          handleTimeout();
+          handleTimeOut();
           return 0;
         }
         return prev - 1;
       });
     }, 1000);
+
     return () => clearInterval(interval);
   }, [currentQuestion, showAnswer]);
 
+  const handleTimeOut = () => {
+    setShowAnswer(true);
+    setCorrectAnswer(currentQuestion.answer);
+    setTimeout(nextQuestion, 3000);
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    const correct = currentQuestion.answer;
-    setCorrectAnswer(correct);
     setShowAnswer(true);
-    if (userAnswer === correct) setScore((prev) => prev + 10);
-
-    setTimeout(() => {
-      const nextIndex = index + 1;
-      if (nextIndex < questions.length) {
-        setIndex(nextIndex);
-        setCurrentQuestion(questions[nextIndex]);
-        setTimeLeft(timePerQuestion);
-        setUserAnswer('');
-        setShowAnswer(false);
-      } else {
-        alert(`Fin du quiz ! Score final : ${score} pts`);
-        navigate('/quizz');
-      }
-    }, 3000);
-  };
-
-  const handleTimeout = () => {
     setCorrectAnswer(currentQuestion.answer);
-    setShowAnswer(true);
-    setTimeout(() => {
-      const nextIndex = index + 1;
-      if (nextIndex < questions.length) {
-        setIndex(nextIndex);
-        setCurrentQuestion(questions[nextIndex]);
-        setTimeLeft(timePerQuestion);
-        setUserAnswer('');
-        setShowAnswer(false);
-      } else {
-        alert(`Fin du quiz ! Score final : ${score} pts`);
-        navigate('/quizz');
-      }
-    }, 3000);
+
+    const correct =
+      Array.isArray(currentQuestion.answer)
+        ? currentQuestion.answer.includes(userAnswer.trim())
+        : userAnswer.trim().toLowerCase() === currentQuestion.answer.toLowerCase();
+
+    if (correct) {
+      setScore((prev) => prev + 10);
+    }
+
+    setTimeout(nextQuestion, 3000);
   };
 
-  if (!currentQuestion) return <p style={{ textAlign: 'center' }}>Chargement des questions...</p>;
+  const nextQuestion = () => {
+    setShowAnswer(false);
+    setUserAnswer('');
+    setTimeLeft(timePerQuestion);
+
+    const nextIndex = index + 1;
+    if (nextIndex < questions.length) {
+      setIndex(nextIndex);
+      setCurrentQuestion(questions[nextIndex]);
+    } else if (currentThemeIndex + 1 < selectedThemes.length) {
+      setCurrentThemeIndex((prev) => prev + 1);
+    } else {
+      alert(`🎉 Fin du quiz !\nScore final : ${score} points`);
+      navigate('/quizz');
+    }
+  };
+
+  if (!currentQuestion)
+    return <p style={{ textAlign: 'center' }}>Chargement des questions...</p>;
 
   return (
     <>
       <div className="container">
-        <h1>Quiz Solo : {selectedTheme}</h1>
+        <h1>🎯 Quiz Solo - {selectedThemes[currentThemeIndex]}</h1>
+        <p>Score : {score} / {pointsToWin}</p>
         <p>Temps restant : {timeLeft} secondes</p>
-        <p>Score : {score} pts</p>
 
         {showAnswer ? (
-          <p>✅ La bonne réponse était : <strong>{correctAnswer}</strong></p>
+          <p>
+            ✅ La bonne réponse était :{' '}
+            <strong>
+              {Array.isArray(correctAnswer)
+                ? correctAnswer.join(' / ')
+                : correctAnswer}
+            </strong>
+          </p>
         ) : (
           <form onSubmit={handleSubmit}>
+            {currentQuestion.image && (
+              <img
+                src={`/${currentQuestion.image}`}
+                alt="question"
+                className="question-image"
+              />
+            )}
             <p>{currentQuestion.question}</p>
-            {currentQuestion.options.map((opt, i) => (
-              <label key={i}>
-                <input type="radio" name="answer" value={opt} required onChange={(e) => setUserAnswer(e.target.value)} /> {opt}
-              </label>
-            ))}
+
+            {Array.isArray(currentQuestion.options) ? (
+              currentQuestion.options.map((opt, i) => (
+                <label key={i}>
+                  <input
+                    type="radio"
+                    name="answer"
+                    value={opt}
+                    onChange={(e) => setUserAnswer(e.target.value)}
+                    required
+                  />{' '}
+                  {opt}
+                </label>
+              ))
+            ) : (
+              <input
+                type="text"
+                name="answer"
+                value={userAnswer}
+                onChange={(e) => setUserAnswer(e.target.value)}
+                required
+              />
+            )}
+
             <button type="submit">Valider</button>
           </form>
         )}
@@ -138,10 +184,11 @@ export default function StartQuizzSolo() {
           background-color: #2c2c3c;
           padding: 40px 50px;
           border-radius: 16px;
-          box-shadow: 0 0 30px rgba(253, 253, 253, 0.96);
+          box-shadow: 0 0 30px rgba(0,0,0,0.6);
           width: 100%;
           max-width: 600px;
           text-align: center;
+          animation: fadeIn 0.6s ease-in-out;
         }
 
         h1 {
@@ -167,8 +214,18 @@ export default function StartQuizzSolo() {
           color: #ccc;
         }
 
-        input[type="radio"] {
-          margin-right: 10px;
+        input[type="text"], input[type="radio"] {
+          padding: 10px;
+          border: none;
+          border-radius: 8px;
+          background-color: #3c3c4c;
+          color: #fff;
+          font-size: 16px;
+        }
+
+        input:focus {
+          outline: none;
+          box-shadow: 0 0 8px #00bfff;
         }
 
         button {
@@ -180,10 +237,18 @@ export default function StartQuizzSolo() {
           font-size: 16px;
           font-weight: bold;
           cursor: pointer;
+          transition: background-color 0.3s ease, transform 0.2s ease;
         }
 
         button:hover {
           background-color: #0099cc;
+          transform: scale(1.05);
+        }
+
+        .question-image {
+          max-width: 300px;
+          margin-bottom: 10px;
+          border-radius: 10px;
         }
       `}</style>
     </>
