@@ -125,6 +125,7 @@ export default function StartQuizzSolo() {
   if (!currentQuestion) return <p>Aucune question trouvée.</p>;
 
   return (
+    <>
     <div className="container">
       <h1>Quiz : {selectedTheme}</h1>
       <p>Score : {score} / {pointsToWin}</p>
@@ -158,5 +159,116 @@ export default function StartQuizzSolo() {
         </form>
       )}
     </div>
+    <style>{`
+    body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: white;
+  color: #000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+
+.container {
+  max-width: 600px;
+  margin: 50px auto;
+  background: white;
+  padding: 40px 20px;
+  border-radius: 10px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+  text-align: center;
+}
+
+h1 {
+  font-size: 32px;
+  margin-bottom: 30px;
+  color: #0c00f6;
+  font-weight: bold;
+}
+
+p {
+  font-size: 16px;
+  margin-bottom: 10px;
+  color: #000;
+}
+
+.scores {
+  background: #f5f5f5;
+  padding: 15px;
+  border-radius: 10px;
+  margin-bottom: 25px;
+  box-shadow: inset 0 0 10px rgba(0,0,0,0.1);
+}
+
+.scores h3 {
+  margin-bottom: 10px;
+  color: #0c00f6;
+}
+
+.scores ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.scores li {
+  margin: 6px 0;
+  font-weight: bold;
+  color: #333;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+label {
+  font-weight: bold;
+  text-align: left;
+  color: #000;
+}
+
+input[type="text"], input[type="radio"] {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background-color: white;
+  color: #000;
+  font-size: 16px;
+}
+
+input:focus {
+  outline: none;
+  box-shadow: 0 0 8px #0c00f6;
+}
+
+button {
+  padding: 12px 25px;
+  background: #0c00f6;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+button:hover {
+  background: #0a00d0;
+}
+
+img {
+  max-width: 300px;
+  margin-bottom: 10px;
+  border-radius: 10px;
+}
+`}</style>
+
+      </>
   );
 }
