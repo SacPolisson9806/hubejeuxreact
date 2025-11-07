@@ -7,7 +7,6 @@ export default function StartQuizzSolo() {
 
   const { selectedThemes, pointsToWin, timePerQuestion } = location.state || {};
   const [questions, setQuestions] = useState([]);
-  const [usedQuestions, setUsedQuestions] = useState([]); // 🧠 Questions déjà posées
   const [currentThemeIndex, setCurrentThemeIndex] = useState(0);
   const [index, setIndex] = useState(0);
   const [score, setScore] = useState(0);
@@ -17,16 +16,7 @@ export default function StartQuizzSolo() {
   const [timeLeft, setTimeLeft] = useState(timePerQuestion);
   const [currentQuestion, setCurrentQuestion] = useState(null);
   const [inputError, setInputError] = useState('');
-
-  // Mélange sans doublons
-  const shuffleArray = (array) => {
-    const newArray = [...array];
-    for (let i = newArray.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
-    }
-    return newArray;
-  };
+  const [usedQuestions, setUsedQuestions] = useState([]);
 
   // Charger les questions du thème en cours
   useEffect(() => {
@@ -42,10 +32,10 @@ export default function StartQuizzSolo() {
           throw new Error(`Le fichier JSON pour le thème "${theme}" est vide ou invalide.`);
         }
 
-        // Mélange aléatoire et filtrage pour exclure les questions déjà utilisées
-        const shuffled = shuffleArray(data).filter(
-          (q) => !usedQuestions.some((u) => u.question === q.question)
-        );
+        // Mélanger et filtrer les questions déjà utilisées
+        const shuffled = data
+          .sort(() => Math.random() - 0.5)
+          .filter((q) => !usedQuestions.some((u) => u.question === q.question));
 
         if (shuffled.length === 0) {
           alert("🎉 Tu as répondu à toutes les questions disponibles !");
@@ -106,13 +96,11 @@ export default function StartQuizzSolo() {
 
     const isInputQuestion = !Array.isArray(currentQuestion.options);
 
-    // Normalisation des réponses
     const userAnswerNormalized = normalizeAnswer(userAnswer);
     const correctAnswerNormalized = Array.isArray(currentQuestion.answer)
       ? currentQuestion.answer.map((ans) => normalizeAnswer(ans))
       : normalizeAnswer(currentQuestion.answer);
 
-    // Comparaison avec normalisation
     const correct = Array.isArray(currentQuestion.answer)
       ? correctAnswerNormalized.includes(userAnswerNormalized)
       : correctAnswerNormalized === userAnswerNormalized;
@@ -126,10 +114,20 @@ export default function StartQuizzSolo() {
     setShowAnswer(true);
     setCorrectAnswer(currentQuestion.answer);
 
+    let scoreForThisQuestion = 0;
     if (correct) {
-      let scoreForThisQuestion = Math.ceil((timeLeft / timePerQuestion) * 10);
+      scoreForThisQuestion = Math.ceil((timeLeft / timePerQuestion) * 10);
       if (timeLeft === timePerQuestion) scoreForThisQuestion += 2;
-      setScore((prev) => prev + scoreForThisQuestion);
+      const newScore = score + scoreForThisQuestion;
+
+      // ✅ Vérifie victoire ici AVANT de mettre à jour le state
+      if (newScore >= pointsToWin) {
+        alert(`🏆 Bravo ! Tu as atteint ${newScore} points et remporté la partie !`);
+        navigate('/quizz');
+        return;
+      }
+
+      setScore(newScore);
     }
 
     setInputError('');

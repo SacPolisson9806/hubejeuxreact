@@ -25,7 +25,7 @@ import "./app.css";
 
 export default function App() {
   return (
-    
+
       <Routes>
         <Route path="/" element={<Hubjeux />} />
         <Route path="/connexion" element={<Connexion />} />
