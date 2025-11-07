@@ -7,6 +7,7 @@ export default function StartQuizzSolo() {
 
   const { selectedThemes, pointsToWin, timePerQuestion } = location.state || {};
   const [questions, setQuestions] = useState([]);
+  const [usedQuestions, setUsedQuestions] = useState([]); // 🧠 Questions déjà posées
   const [currentThemeIndex, setCurrentThemeIndex] = useState(0);
   const [index, setIndex] = useState(0);
   const [score, setScore] = useState(0);
@@ -15,42 +16,57 @@ export default function StartQuizzSolo() {
   const [correctAnswer, setCorrectAnswer] = useState('');
   const [timeLeft, setTimeLeft] = useState(timePerQuestion);
   const [currentQuestion, setCurrentQuestion] = useState(null);
+  const [inputError, setInputError] = useState('');
+
+  // Mélange sans doublons
+  const shuffleArray = (array) => {
+    const newArray = [...array];
+    for (let i = newArray.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+    }
+    return newArray;
+  };
 
   // Charger les questions du thème en cours
   useEffect(() => {
-  const loadQuestions = async () => {
-    try {
-      const theme = selectedThemes[currentThemeIndex];
-      const response = await fetch(`/${theme}.json`);
-      if (!response.ok) {
-        throw new Error(
-          `Impossible de charger le fichier JSON pour le thème "${theme}".`
+    const loadQuestions = async () => {
+      try {
+        const theme = selectedThemes[currentThemeIndex];
+        const response = await fetch(`/${theme}.json`);
+        if (!response.ok) {
+          throw new Error(`Impossible de charger le fichier JSON pour le thème "${theme}".`);
+        }
+        const data = await response.json();
+        if (!Array.isArray(data) || data.length === 0) {
+          throw new Error(`Le fichier JSON pour le thème "${theme}" est vide ou invalide.`);
+        }
+
+        // Mélange aléatoire et filtrage pour exclure les questions déjà utilisées
+        const shuffled = shuffleArray(data).filter(
+          (q) => !usedQuestions.some((u) => u.question === q.question)
         );
-      }
-      const data = await response.json();
-      if (!Array.isArray(data) || data.length === 0) {
-        throw new Error(`Le fichier JSON pour le thème "${theme}" est vide ou invalide.`);
-      }
 
-      // Mélanger les questions
-      const shuffled = data.sort(() => Math.random() - 0.5);
+        if (shuffled.length === 0) {
+          alert("🎉 Tu as répondu à toutes les questions disponibles !");
+          navigate('/quizz');
+          return;
+        }
 
-      setQuestions(shuffled);
-      setIndex(0);
-      setCurrentQuestion(shuffled[0]);
-      setTimeLeft(timePerQuestion);
-    } catch (error) {
-      console.error('Erreur de chargement des questions :', error);
-      alert(`Erreur de chargement des questions : ${error.message}`);
+        setQuestions(shuffled);
+        setIndex(0);
+        setCurrentQuestion(shuffled[0]);
+        setTimeLeft(timePerQuestion);
+      } catch (error) {
+        console.error('Erreur de chargement des questions :', error);
+        alert(`Erreur de chargement des questions : ${error.message}`);
+      }
+    };
+
+    if (selectedThemes && selectedThemes.length > 0) {
+      loadQuestions();
     }
-  };
-
-  if (selectedThemes && selectedThemes.length > 0) {
-    loadQuestions();
-  }
-}, [currentThemeIndex, selectedThemes, timePerQuestion]);
-
-const [inputError, setInputError] = useState('');
+  }, [currentThemeIndex, selectedThemes, timePerQuestion, usedQuestions, navigate]);
 
   // Timer
   useEffect(() => {
@@ -76,42 +92,57 @@ const [inputError, setInputError] = useState('');
     setTimeout(nextQuestion, 3000);
   };
 
+  // Supprimer les accents et normaliser la casse
+  const normalizeAnswer = (text) => {
+    return text
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .trim();
+  };
+
   const handleSubmit = (e) => {
-  e.preventDefault();
+    e.preventDefault();
 
-  const isInputQuestion = !Array.isArray(currentQuestion.options);
+    const isInputQuestion = !Array.isArray(currentQuestion.options);
 
-  const correct =
-    Array.isArray(currentQuestion.answer)
-      ? currentQuestion.answer.includes(userAnswer.trim())
-      : userAnswer.trim().toLowerCase() === currentQuestion.answer.toLowerCase();
+    // Normalisation des réponses
+    const userAnswerNormalized = normalizeAnswer(userAnswer);
+    const correctAnswerNormalized = Array.isArray(currentQuestion.answer)
+      ? currentQuestion.answer.map((ans) => normalizeAnswer(ans))
+      : normalizeAnswer(currentQuestion.answer);
 
-  if (isInputQuestion && !correct && timeLeft > 0) {
-    // Réponse incorrecte pour input → afficher message et continuer
-    setInputError('❌ Mauvaise réponse, essayez encore.');
-    setUserAnswer('');
-    return; // ne passe pas à la question suivante
-  }
+    // Comparaison avec normalisation
+    const correct = Array.isArray(currentQuestion.answer)
+      ? correctAnswerNormalized.includes(userAnswerNormalized)
+      : correctAnswerNormalized === userAnswerNormalized;
 
-  // Réponse correcte ou question à choix multiple
-  setShowAnswer(true);
-  setCorrectAnswer(currentQuestion.answer);
+    if (isInputQuestion && !correct && timeLeft > 0) {
+      setInputError('❌ Mauvaise réponse, essayez encore.');
+      setUserAnswer('');
+      return;
+    }
 
-  if (correct) {
-    let scoreForThisQuestion = Math.ceil((timeLeft / timePerQuestion) * 10);
-    if (timeLeft === timePerQuestion) scoreForThisQuestion += 2; // bonus pour réponse immédiate
-    setScore((prev) => prev + scoreForThisQuestion);
-  }
+    setShowAnswer(true);
+    setCorrectAnswer(currentQuestion.answer);
 
-  setInputError(''); // réinitialiser l'erreur
-  setTimeout(nextQuestion, 3000);
-};
+    if (correct) {
+      let scoreForThisQuestion = Math.ceil((timeLeft / timePerQuestion) * 10);
+      if (timeLeft === timePerQuestion) scoreForThisQuestion += 2;
+      setScore((prev) => prev + scoreForThisQuestion);
+    }
 
+    setInputError('');
+    setTimeout(nextQuestion, 3000);
+  };
 
   const nextQuestion = () => {
     setShowAnswer(false);
     setUserAnswer('');
     setTimeLeft(timePerQuestion);
+
+    // 🧠 Marquer la question actuelle comme "utilisée"
+    setUsedQuestions((prev) => [...prev, currentQuestion]);
 
     const nextIndex = index + 1;
     if (nextIndex < questions.length) {
@@ -129,151 +160,214 @@ const [inputError, setInputError] = useState('');
     return <p style={{ textAlign: 'center' }}>Chargement des questions...</p>;
 
   return (
-    <>
-  <div className="container">
-    <h1>🎯 Quiz Solo - {selectedThemes[currentThemeIndex]}</h1>
-    <p>Score : {score} / {pointsToWin}</p>
-    <p>Temps restant : {timeLeft} secondes</p>
+  <>
+  <div
+    className="quiz-background"
+    style={{
+      position: 'fixed',
+      top: 0,
+      left: 0,
+      width: '100%',
+      height: '100%',
+      backgroundImage: `url(/background/${selectedThemes[currentThemeIndex]}.jpg)`,
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+      backgroundRepeat: 'no-repeat',
+      animation: 'pan 60s linear infinite',
+      zIndex: -1, // derrière tout le contenu
+    }}
+  />
+  <div className="quiz-wrapper">
+    <div className="container">
+      <h1>🎯 Quiz Solo - {selectedThemes[currentThemeIndex]}</h1>
+      <p>Score : {score} / {pointsToWin}</p>
+      <p>Temps restant : {timeLeft} secondes</p>
 
-    {showAnswer ? (
-      <p>
-        ✅ La bonne réponse était :{' '}
-        <strong>
-          {Array.isArray(correctAnswer)
-            ? correctAnswer.join(' / ')
-            : correctAnswer}
-        </strong>
-      </p>
-    ) : (
-      <form onSubmit={handleSubmit}>
-        {currentQuestion.image && (
-          <img
-            src={`/${currentQuestion.image}`}
-            alt="question"
-            className="question-image"
-          />
-        )}
-        <p>{currentQuestion.question}</p>
+      {showAnswer ? (
+        <p>
+          ✅ La bonne réponse était :{' '}
+          <strong>
+            {Array.isArray(correctAnswer)
+              ? correctAnswer.join(' / ')
+              : correctAnswer}
+          </strong>
+        </p>
+      ) : (
+        <form onSubmit={handleSubmit}>
+          {currentQuestion.image && (
+            <div className="question-image-wrapper">
+              <img
+                src={`${currentQuestion.image}`}
+                alt="question"
+                className="question-image"
+              />
+            </div>
+          )}
+          <p>{currentQuestion.question}</p>
 
-        {Array.isArray(currentQuestion.options) ? (
-          // Questions à choix multiple
-          currentQuestion.options.map((opt, i) => (
-            <label key={i}>
+          {Array.isArray(currentQuestion.options) ? (
+            // Questions à choix multiple
+            currentQuestion.options.map((opt, i) => (
+              <label key={i}>
+                <input
+                  type="radio"
+                  name="answer"
+                  value={opt}
+                  onChange={(e) => setUserAnswer(e.target.value)}
+                  required
+                />{' '}
+                {opt}
+              </label>
+            ))
+          ) : (
+            // Questions input (saisie libre)
+            <div className="input-wrapper">
               <input
-                type="radio"
+                type="text"
                 name="answer"
-                value={opt}
+                value={userAnswer}
                 onChange={(e) => setUserAnswer(e.target.value)}
                 required
-              />{' '}
-              {opt}
-            </label>
-          ))
-        ) : (
-          // Questions input (saisie libre)
-          <>
-            <input
-              type="text"
-              name="answer"
-              value={userAnswer}
-              onChange={(e) => setUserAnswer(e.target.value)}
-              required
-            />
-            {inputError && (
-              <p style={{ color: 'red', fontWeight: 'bold' }}>{inputError}</p>
-            )}
-          </>
-        )}
+                autoComplete="off"
+                spellCheck={false}
+              />
+              {inputError && (
+                <p className="input-error">{inputError}</p>
+              )}
+            </div>
+          )}
 
-        <button type="submit">Valider</button>
-      </form>
-    )}
+          <button type="submit">Valider</button>
+        </form>
+      )}
+    </div>
   </div>
 
-      <style>{`
-        body {
-          margin: 0;
-          padding: 0;
-          font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-          background: linear-gradient(135deg, #1e1e2f, #2c3e50);
-          color: #fff;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          min-height: 100vh;
-        }
+  <style>{`
+    body, html {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: #fff;
+    }
 
-        .container {
-          background-color: #2c2c3c;
-          padding: 40px 50px;
-          border-radius: 16px;
-          box-shadow: 0 0 30px rgba(0,0,0,0.6);
-          width: 100%;
-          max-width: 600px;
-          text-align: center;
-          animation: fadeIn 0.6s ease-in-out;
-        }
+    @keyframes pan {
+      0% { background-position: 0% center; }
+      100% { background-position: 100% center; }
+    }
 
-        h1 {
-          font-size: 28px;
-          margin-bottom: 20px;
-          color: #00bfff;
-        }
+    .quiz-wrapper {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh; /* plein écran */
+      width: 100%;
+      position: relative;
+      z-index: 1;
+    }
 
-        p {
-          font-size: 16px;
-          margin-bottom: 10px;
-        }
+    .container {
+      background-color: rgba(44, 44, 60, 0.85);
+      padding: 40px 50px;
+      border-radius: 16px;
+      box-shadow: 0 0 30px rgba(0,0,0,0.6);
+      width: 100%;
+      max-width: 600px;
+      text-align: center;
+    }
 
-        form {
-          display: flex;
-          flex-direction: column;
-          gap: 15px;
-        }
+    h1 {
+      font-size: 28px;
+      margin-bottom: 20px;
+      color: #00bfff;
+    }
 
-        label {
-          font-weight: bold;
-          text-align: left;
-          color: #ccc;
-        }
+    p {
+      font-size: 16px;
+      margin-bottom: 10px;
+    }
 
-        input[type="text"], input[type="radio"] {
-          padding: 10px;
-          border: none;
-          border-radius: 8px;
-          background-color: #3c3c4c;
-          color: #fff;
-          font-size: 16px;
-        }
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
 
-        input:focus {
-          outline: none;
-          box-shadow: 0 0 8px #00bfff;
-        }
+    label {
+      font-weight: bold;
+      text-align: left;
+      color: #ccc;
+    }
 
-        button {
-          padding: 14px;
-          background-color: #00bfff;
-          color: #fff;
-          border: none;
-          border-radius: 8px;
-          font-size: 16px;
-          font-weight: bold;
-          cursor: pointer;
-          transition: background-color 0.3s ease, transform 0.2s ease;
-        }
+    .question-image-wrapper {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 15px;
+    }
 
-        button:hover {
-          background-color: #0099cc;
-          transform: scale(1.05);
-        }
+    .question-image {
+      max-width: 300px;
+      max-height: 200px;
+      width: auto;
+      height: auto;
+      border-radius: 10px;
+    }
 
-        .question-image {
-          max-width: 300px;
-          margin-bottom: 10px;
-          border-radius: 10px;
-        }
-      `}</style>
-    </>
+    .input-wrapper {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 15px;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    input[type="text"] {
+      max-width: 300px;
+      width: 100%;
+      padding: 10px;
+      border: none;
+      border-radius: 8px;
+      background-color: #3c3c4c;
+      color: #fff;
+      font-size: 16px;
+      text-align: center;
+
+      text-transform: none;   /* pas de majuscules forcées */
+      letter-spacing: normal; /* pas d'espacement bizarre */
+
+    }
+
+    .input-error {
+      color: red;
+      font-weight: bold;
+      margin-top: 5px;
+      text-align: center;
+    }
+
+    input:focus {
+      outline: none;
+      box-shadow: 0 0 8px #00bfff;
+    }
+
+    button {
+      padding: 14px;
+      background-color: #00bfff;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+    }
+
+    button:hover {
+      background-color: #0099cc;
+      transform: scale(1.05);
+    }
+  `}</style>
+</>
+
   );
 }

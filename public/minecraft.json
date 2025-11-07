@@ -310,8 +310,7 @@
   {
     "type": "input",
     "question": "De quel mob a-t-on besoin pour accomplir le progrès : Éclaireur des mers ?",
-    "answer": ["dauphin"],
-    "image": "/Minecraftimage/dauphin.webp"
+    "answer": ["dauphin"]
   },
   {
     "type": "input",
@@ -495,7 +494,7 @@
         "type": "input",
         "question": "Quel est le nom de ce mob?",
         "answer": ["pilliard"],
-        "image": "/Minecraftimage/pillard.webp"
+        "image": "/Minecraftimage/pilliard.webp"
     },
     {
         "type": "input",
