@@ -31,7 +31,7 @@ export default function StartQuizzMulti() {
   };
 
   useEffect(() => {
-    const newSocket = io('https://localhost:4000/', {
+    const newSocket = io('https://localhost:4000', {
       transports: ['polling'],
       upgrade: false
     });
