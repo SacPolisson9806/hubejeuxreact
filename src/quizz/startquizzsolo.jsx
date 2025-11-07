@@ -50,6 +50,7 @@ export default function StartQuizzSolo() {
   }
 }, [currentThemeIndex, selectedThemes, timePerQuestion]);
 
+const [inputError, setInputError] = useState('');
 
   // Timer
   useEffect(() => {
@@ -76,21 +77,36 @@ export default function StartQuizzSolo() {
   };
 
   const handleSubmit = (e) => {
-    e.preventDefault();
-    setShowAnswer(true);
-    setCorrectAnswer(currentQuestion.answer);
+  e.preventDefault();
 
-    const correct =
-      Array.isArray(currentQuestion.answer)
-        ? currentQuestion.answer.includes(userAnswer.trim())
-        : userAnswer.trim().toLowerCase() === currentQuestion.answer.toLowerCase();
+  const isInputQuestion = !Array.isArray(currentQuestion.options);
 
-    if (correct) {
-      setScore((prev) => prev + 10);
-    }
+  const correct =
+    Array.isArray(currentQuestion.answer)
+      ? currentQuestion.answer.includes(userAnswer.trim())
+      : userAnswer.trim().toLowerCase() === currentQuestion.answer.toLowerCase();
 
-    setTimeout(nextQuestion, 3000);
-  };
+  if (isInputQuestion && !correct && timeLeft > 0) {
+    // Réponse incorrecte pour input → afficher message et continuer
+    setInputError('❌ Mauvaise réponse, essayez encore.');
+    setUserAnswer('');
+    return; // ne passe pas à la question suivante
+  }
+
+  // Réponse correcte ou question à choix multiple
+  setShowAnswer(true);
+  setCorrectAnswer(currentQuestion.answer);
+
+  if (correct) {
+    let scoreForThisQuestion = Math.ceil((timeLeft / timePerQuestion) * 10);
+    if (timeLeft === timePerQuestion) scoreForThisQuestion += 2; // bonus pour réponse immédiate
+    setScore((prev) => prev + scoreForThisQuestion);
+  }
+
+  setInputError(''); // réinitialiser l'erreur
+  setTimeout(nextQuestion, 3000);
+};
+
 
   const nextQuestion = () => {
     setShowAnswer(false);
@@ -114,58 +130,65 @@ export default function StartQuizzSolo() {
 
   return (
     <>
-      <div className="container">
-        <h1>🎯 Quiz Solo - {selectedThemes[currentThemeIndex]}</h1>
-        <p>Score : {score} / {pointsToWin}</p>
-        <p>Temps restant : {timeLeft} secondes</p>
+  <div className="container">
+    <h1>🎯 Quiz Solo - {selectedThemes[currentThemeIndex]}</h1>
+    <p>Score : {score} / {pointsToWin}</p>
+    <p>Temps restant : {timeLeft} secondes</p>
 
-        {showAnswer ? (
-          <p>
-            ✅ La bonne réponse était :{' '}
-            <strong>
-              {Array.isArray(correctAnswer)
-                ? correctAnswer.join(' / ')
-                : correctAnswer}
-            </strong>
-          </p>
-        ) : (
-          <form onSubmit={handleSubmit}>
-            {currentQuestion.image && (
-              <img
-                src={`/${currentQuestion.image}`}
-                alt="question"
-                className="question-image"
-              />
-            )}
-            <p>{currentQuestion.question}</p>
+    {showAnswer ? (
+      <p>
+        ✅ La bonne réponse était :{' '}
+        <strong>
+          {Array.isArray(correctAnswer)
+            ? correctAnswer.join(' / ')
+            : correctAnswer}
+        </strong>
+      </p>
+    ) : (
+      <form onSubmit={handleSubmit}>
+        {currentQuestion.image && (
+          <img
+            src={`/${currentQuestion.image}`}
+            alt="question"
+            className="question-image"
+          />
+        )}
+        <p>{currentQuestion.question}</p>
 
-            {Array.isArray(currentQuestion.options) ? (
-              currentQuestion.options.map((opt, i) => (
-                <label key={i}>
-                  <input
-                    type="radio"
-                    name="answer"
-                    value={opt}
-                    onChange={(e) => setUserAnswer(e.target.value)}
-                    required
-                  />{' '}
-                  {opt}
-                </label>
-              ))
-            ) : (
+        {Array.isArray(currentQuestion.options) ? (
+          // Questions à choix multiple
+          currentQuestion.options.map((opt, i) => (
+            <label key={i}>
               <input
-                type="text"
+                type="radio"
                 name="answer"
-                value={userAnswer}
+                value={opt}
                 onChange={(e) => setUserAnswer(e.target.value)}
                 required
-              />
+              />{' '}
+              {opt}
+            </label>
+          ))
+        ) : (
+          // Questions input (saisie libre)
+          <>
+            <input
+              type="text"
+              name="answer"
+              value={userAnswer}
+              onChange={(e) => setUserAnswer(e.target.value)}
+              required
+            />
+            {inputError && (
+              <p style={{ color: 'red', fontWeight: 'bold' }}>{inputError}</p>
             )}
-
-            <button type="submit">Valider</button>
-          </form>
+          </>
         )}
-      </div>
+
+        <button type="submit">Valider</button>
+      </form>
+    )}
+  </div>
 
       <style>{`
         body {
