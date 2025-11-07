@@ -1,274 +1,191 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 export default function StartQuizzSolo() {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const { selectedThemes, pointsToWin, timePerQuestion } = location.state || {};
+  const { selectedThemes, pointsToWin, timePerQuestion, username } = location.state || {};
   const selectedTheme = selectedThemes?.[0] || "Minecraft";
-  const backgroundImage = `/background/${selectedTheme.toLowerCase()}-panorama.jpg`;
 
   const [questions, setQuestions] = useState([]);
   const [index, setIndex] = useState(0);
-  const [score, setScore] = useState(0);
-  const [showAnswer, setShowAnswer] = useState(false);
-  const [timeLeft, setTimeLeft] = useState(timePerQuestion || 30);
-  const [loading, setLoading] = useState(true);
   const [userAnswer, setUserAnswer] = useState('');
-  const [feedback, setFeedback] = useState('');
+  const [showAnswer, setShowAnswer] = useState(false);
+  const [correctAnswer, setCorrectAnswer] = useState('');
+  const [score, setScore] = useState(0);
+  const [timeLeft, setTimeLeft] = useState(timePerQuestion || 30);
+  const [currentQuestion, setCurrentQuestion] = useState(null);
 
-  useEffect(() => {
-    document.body.style.backgroundImage = `url("${backgroundImage}")`;
-    document.body.style.backgroundRepeat = 'repeat-x';
-    document.body.style.backgroundSize = 'auto 100%';
-    document.body.style.animation = 'scrollBackground 60s linear infinite';
-  }, [backgroundImage]);
-
-  useEffect(() => {
-    const path = `/${selectedTheme.toLowerCase()}.json`;
-
-    fetch(path)
-      .then((res) => res.json())
-      .then((data) => {
-        const shuffled = data.sort(() => Math.random() - 0.5);
-        setQuestions(shuffled);
-        setLoading(false);
-      })
-      .catch(() => {
-        alert(`Impossible de charger les questions pour ${selectedTheme}.`);
-        navigate('/quizz');
-      });
-  }, [selectedTheme, navigate]);
-
-  const currentQuestion = questions[index];
-
-  const normalize = (text) =>
-    text.trim().toLowerCase().normalize('NFD')
-      .replace(/[\u0300-\u036f]/g, '')
-      .replace(/[^\w\s]|_/g, '')
-      .replace(/\s+/g, ' ');
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const rawAnswer = new FormData(e.target).get('answer');
-    const correctAnswers = Array.isArray(currentQuestion.answer)
-      ? currentQuestion.answer
-      : [currentQuestion.answer];
-    const isCorrect = correctAnswers.some((a) => normalize(a) === normalize(rawAnswer));
-
-    if (currentQuestion.type === 'input') {
-      if (isCorrect) {
-        const pointsGained = Math.max(1, Math.round(10 * (timeLeft / timePerQuestion)));
-        setScore((prev) => prev + pointsGained);
-        setFeedback('');
-        setShowAnswer(true);
-        setTimeout(() => {
-          setShowAnswer(false);
-          setIndex((prev) => prev + 1);
-          setTimeLeft(timePerQuestion);
-          setUserAnswer('');
-        }, 2000);
-      } else {
-        setFeedback('❌ Réponse fausse, essaie encore !');
-        setUserAnswer('');
-      }
-    } else {
-      if (isCorrect) {
-        const pointsGained = Math.max(1, Math.round(10 * (timeLeft / timePerQuestion)));
-        setScore((prev) => prev + pointsGained);
-      }
-      setFeedback('');
-      setShowAnswer(true);
-      setTimeout(() => {
-        setShowAnswer(false);
-        setIndex((prev) => prev + 1);
-        setTimeLeft(timePerQuestion);
-        setUserAnswer('');
-      }, 2000);
+  // ✅ Questions mockées localement
+  const mockQuestions = [
+    {
+      question: "Quel est le bloc le plus dur dans Minecraft ?",
+      options: ["Pierre", "Bedrock", "Obsidienne", "Fer"],
+      answer: "Bedrock"
+    },
+    {
+      question: "Qui est le sorcier principal dans Harry Potter ?",
+      options: ["Ron", "Voldemort", "Dumbledore", "Harry"],
+      answer: "Dumbledore"
+    },
+    {
+      question: "Quelle planète est la plus proche du Soleil ?",
+      options: ["Mars", "Terre", "Mercure", "Vénus"],
+      answer: "Mercure"
     }
-  };
+  ];
+
+  useEffect(() => {
+    setQuestions(mockQuestions);
+    setCurrentQuestion(mockQuestions[0]);
+    setTimeLeft(timePerQuestion);
+  }, [timePerQuestion]);
 
   useEffect(() => {
     if (!currentQuestion || showAnswer) return;
-    setTimeLeft(timePerQuestion);
     const interval = setInterval(() => {
       setTimeLeft((prev) => {
         if (prev <= 1) {
           clearInterval(interval);
-          setShowAnswer(true);
-          setTimeout(() => {
-            setShowAnswer(false);
-            setIndex((prev) => prev + 1);
-            setTimeLeft(timePerQuestion);
-            setUserAnswer('');
-          }, 2000);
+          handleTimeout();
           return 0;
         }
         return prev - 1;
       });
     }, 1000);
     return () => clearInterval(interval);
-  }, [index, showAnswer, currentQuestion, timePerQuestion]);
+  }, [currentQuestion, showAnswer]);
 
-  useEffect(() => {
-    if (score >= pointsToWin) {
-      alert(`🎉 Vous avez gagné avec ${score} points !`);
-      navigate('/quizz');
-    } else if (index >= questions.length && questions.length > 0) {
-      alert(`Fin du quiz ! Vous avez ${score} points.`);
-      navigate('/quizz');
-    }
-  }, [score, index, questions.length, pointsToWin, navigate]);
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const correct = currentQuestion.answer;
+    setCorrectAnswer(correct);
+    setShowAnswer(true);
+    if (userAnswer === correct) setScore((prev) => prev + 10);
 
-  if (loading) return <p>Chargement des questions...</p>;
-  if (!currentQuestion) return <p>Aucune question trouvée.</p>;
+    setTimeout(() => {
+      const nextIndex = index + 1;
+      if (nextIndex < questions.length) {
+        setIndex(nextIndex);
+        setCurrentQuestion(questions[nextIndex]);
+        setTimeLeft(timePerQuestion);
+        setUserAnswer('');
+        setShowAnswer(false);
+      } else {
+        alert(`Fin du quiz ! Score final : ${score} pts`);
+        navigate('/quizz');
+      }
+    }, 3000);
+  };
+
+  const handleTimeout = () => {
+    setCorrectAnswer(currentQuestion.answer);
+    setShowAnswer(true);
+    setTimeout(() => {
+      const nextIndex = index + 1;
+      if (nextIndex < questions.length) {
+        setIndex(nextIndex);
+        setCurrentQuestion(questions[nextIndex]);
+        setTimeLeft(timePerQuestion);
+        setUserAnswer('');
+        setShowAnswer(false);
+      } else {
+        alert(`Fin du quiz ! Score final : ${score} pts`);
+        navigate('/quizz');
+      }
+    }, 3000);
+  };
+
+  if (!currentQuestion) return <p style={{ textAlign: 'center' }}>Chargement des questions...</p>;
 
   return (
     <>
-    <div className="container">
-      <h1>Quiz : {selectedTheme}</h1>
-      <p>Score : {score} / {pointsToWin}</p>
-      <p>Temps restant : {timeLeft} secondes</p>
+      <div className="container">
+        <h1>Quiz Solo : {selectedTheme}</h1>
+        <p>Temps restant : {timeLeft} secondes</p>
+        <p>Score : {score} pts</p>
 
-      {showAnswer ? (
-        <p>✅ La bonne réponse était : <strong>{Array.isArray(currentQuestion.answer) ? currentQuestion.answer.join(' / ') : currentQuestion.answer}</strong></p>
-      ) : (
-        <form onSubmit={handleSubmit}>
-          {currentQuestion.image && <img src={`/${currentQuestion.image}`} alt="question" />}
-          <p>{currentQuestion.question}</p>
-          {Array.isArray(currentQuestion.options) ? (
-            currentQuestion.options.map((opt, i) => (
+        {showAnswer ? (
+          <p>✅ La bonne réponse était : <strong>{correctAnswer}</strong></p>
+        ) : (
+          <form onSubmit={handleSubmit}>
+            <p>{currentQuestion.question}</p>
+            {currentQuestion.options.map((opt, i) => (
               <label key={i}>
-                <input type="radio" name="answer" value={opt} required /> {opt}
+                <input type="radio" name="answer" value={opt} required onChange={(e) => setUserAnswer(e.target.value)} /> {opt}
               </label>
-            ))
-          ) : (
-            <>
-              <input
-                type="text"
-                name="answer"
-                value={userAnswer}
-                onChange={(e) => setUserAnswer(e.target.value)}
-                required
-              />
-              {feedback && <div className="feedback">{feedback}</div>}
-            </>
-          )}
-          <button type="submit">Valider</button>
-        </form>
-      )}
-    </div>
-    <style>{`
-    body {
-  margin: 0;
-  padding: 0;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background: white;
-  color: #000;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-}
+            ))}
+            <button type="submit">Valider</button>
+          </form>
+        )}
+      </div>
 
-.container {
-  max-width: 600px;
-  margin: 50px auto;
-  background: white;
-  padding: 40px 20px;
-  border-radius: 10px;
-  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-  text-align: center;
-}
+      <style>{`
+        body {
+          margin: 0;
+          padding: 0;
+          font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+          background: linear-gradient(135deg, #1e1e2f, #2c3e50);
+          color: #fff;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          min-height: 100vh;
+        }
 
-h1 {
-  font-size: 32px;
-  margin-bottom: 30px;
-  color: #0c00f6;
-  font-weight: bold;
-}
+        .container {
+          background-color: #2c2c3c;
+          padding: 40px 50px;
+          border-radius: 16px;
+          box-shadow: 0 0 30px rgba(253, 253, 253, 0.96);
+          width: 100%;
+          max-width: 600px;
+          text-align: center;
+        }
 
-p {
-  font-size: 16px;
-  margin-bottom: 10px;
-  color: #000;
-}
+        h1 {
+          font-size: 28px;
+          margin-bottom: 20px;
+          color: #00bfff;
+        }
 
-.scores {
-  background: #f5f5f5;
-  padding: 15px;
-  border-radius: 10px;
-  margin-bottom: 25px;
-  box-shadow: inset 0 0 10px rgba(0,0,0,0.1);
-}
+        p {
+          font-size: 16px;
+          margin-bottom: 10px;
+        }
 
-.scores h3 {
-  margin-bottom: 10px;
-  color: #0c00f6;
-}
+        form {
+          display: flex;
+          flex-direction: column;
+          gap: 15px;
+        }
 
-.scores ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
+        label {
+          font-weight: bold;
+          text-align: left;
+          color: #ccc;
+        }
 
-.scores li {
-  margin: 6px 0;
-  font-weight: bold;
-  color: #333;
-}
+        input[type="radio"] {
+          margin-right: 10px;
+        }
 
-form {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-}
+        button {
+          padding: 14px;
+          background-color: #00bfff;
+          color: #fff;
+          border: none;
+          border-radius: 8px;
+          font-size: 16px;
+          font-weight: bold;
+          cursor: pointer;
+        }
 
-label {
-  font-weight: bold;
-  text-align: left;
-  color: #000;
-}
-
-input[type="text"], input[type="radio"] {
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  background-color: white;
-  color: #000;
-  font-size: 16px;
-}
-
-input:focus {
-  outline: none;
-  box-shadow: 0 0 8px #0c00f6;
-}
-
-button {
-  padding: 12px 25px;
-  background: #0c00f6;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  font-size: 16px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: background 0.3s;
-}
-
-button:hover {
-  background: #0a00d0;
-}
-
-img {
-  max-width: 300px;
-  margin-bottom: 10px;
-  border-radius: 10px;
-}
-`}</style>
-
-      </>
+        button:hover {
+          background-color: #0099cc;
+        }
+      `}</style>
+    </>
   );
 }
