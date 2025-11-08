@@ -11,6 +11,9 @@ export default function Accueil() {
   const [showScores, setShowScores] = useState(false);
   const [showError, setShowError] = useState(false);
 
+  // 🔹 On récupère le pseudo automatiquement depuis le compte connecté
+  const playerName = localStorage.getItem("playerName") || "";
+
   const carOptions = [
     { src: "voitureimage/voiturerouge.png", alt: "Rouge" },
     { src: "voitureimage/voiturerose.png", alt: "Rose" },
@@ -20,6 +23,10 @@ export default function Accueil() {
   const handlePlay = () => {
     if (!selectedCar) {
       setShowError(true);
+      return;
+    }
+    if (!playerName) {
+      alert("🚨 Connecte-toi pour jouer !");
       return;
     }
     navigate(`/voiture?car=${encodeURIComponent(selectedCar)}`);
@@ -209,6 +216,7 @@ export default function Accueil() {
             <li>🏆 Tente de décrocher la première place dans l’onglet <strong>“Scores”</strong>… et surtout, <strong>défends ton trône</strong> aussi longtemps que possible !</li>
           </ul>
         </div>
+
         {/* 🏆 Scores (droite) */}
         <div className={`score-panel ${showScores ? "open" : ""}`}>
           <h2>🏆 Classement - Course d'Évitement</h2>

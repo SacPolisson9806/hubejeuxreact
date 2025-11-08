@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
+import axios from "axios"; // 🔹 pour envoyer le score au serveur
 
 export default function Voiture() {
   const canvasRef = useRef(null);
@@ -72,8 +73,18 @@ export default function Voiture() {
     clearInterval(speedLoop);
     document.getElementById('gameOver').classList.remove('hidden');
 
+    // 🔹 Envoi du score au serveur
+    const username = localStorage.getItem("playerName") || "Invité";
+    axios.post("http://localhost:5000/scores", {
+      username,
+      game: "accueil",
+      score: survivalTime
+    }).then(() => {
+      console.log("Score envoyé !");
+    }).catch(err => console.error("Erreur lors de l'envoi du score :", err));
+
     setTimeout(() => {
-      navigate('accueil');
+      navigate('../accueil');
     }, 1500);
   }
 
@@ -130,7 +141,6 @@ export default function Voiture() {
     };
   }, []);
 
-  // 🔧 Appliquer le style global au body
   useEffect(() => {
     document.body.style.margin = '0';
     document.body.style.backgroundColor = '#000';
@@ -146,7 +156,6 @@ export default function Voiture() {
 
   return (
     <>
-      {/* 🔸 Style intégré */}
       <style>{`
         canvas {
           background-color: #222;
@@ -196,36 +205,6 @@ export default function Voiture() {
 
         .hidden {
           display: none;
-        }
-
-        #carToggle {
-          background-color: #000;
-          color: #0ff;
-          border: 2px solid #0ff;
-          padding: 10px 20px;
-          margin: 10px auto;
-          font-family: 'Press Start 2P', cursive;
-          text-align: center;
-          width: fit-content;
-          box-shadow: 0 0 10px #0ff;
-          cursor: pointer;
-        }
-
-        #carSelector {
-          margin-top: 10px;
-          text-align: center;
-          font-family: 'Press Start 2P', cursive;
-          color: #0ff;
-        }
-
-        #carChoice {
-          background-color: #111;
-          color: #0ff;
-          border: 2px solid #0ff;
-          padding: 8px;
-          font-size: 14px;
-          margin-top: 10px;
-          font-family: 'Press Start 2P', cursive;
         }
       `}</style>
 
