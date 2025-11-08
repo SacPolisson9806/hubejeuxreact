@@ -73,7 +73,7 @@ export default function Voiture() {
     document.getElementById('gameOver').classList.remove('hidden');
 
     setTimeout(() => {
-      navigate('/');
+      navigate('accueil');
     }, 1500);
   }
 
