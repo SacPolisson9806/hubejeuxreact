@@ -117,7 +117,7 @@ export default function Accueil() {
           animation: pulse 0.3s ease;
         }
 
-        /* 🧭 Panneau à GAUCHE (Règles) */
+        /* 📜 Panneau des règles (gauche) */
         .rules-panel {
           position: fixed;
           top: 0;
@@ -133,16 +133,13 @@ export default function Accueil() {
           transition: transform 0.4s ease-in-out;
           overflow-y: auto;
           z-index: 1000;
-          display: flex;
-          flex-direction: column;
-          justify-content: space-between;
         }
 
         .rules-panel.open {
           transform: translateX(0);
         }
 
-        /* 🏆 Panneau à DROITE (Scores) */
+        /* 🏆 Panneau des scores (droite) */
         .score-panel {
           position: fixed;
           top: 0;
@@ -158,29 +155,10 @@ export default function Accueil() {
           transition: transform 0.4s ease-in-out;
           overflow-y: auto;
           z-index: 1000;
-          display: flex;
-          flex-direction: column;
-          justify-content: space-between;
         }
 
         .score-panel.open {
           transform: translateX(0);
-        }
-
-        .close-btn {
-          background: #0c00f6;
-          color: white;
-          border: none;
-          border-radius: 8px;
-          padding: 10px;
-          font-size: 12px;
-          cursor: pointer;
-          margin-top: 20px;
-          width: 100%;
-        }
-
-        .close-btn:hover {
-          background: #0a00d0;
         }
       `}</style>
 
@@ -197,9 +175,7 @@ export default function Accueil() {
           </div>
           <a href="/hubjeux" className="btn">↩ Retour</a>
 
-          {showError && (
-            <p className="car-error">🚫 Choisis une voiture avant de jouer !</p>
-          )}
+          {showError && <p className="car-error">🚫 Choisis une voiture avant de jouer !</p>}
         </div>
 
         {showGallery && (
@@ -222,26 +198,21 @@ export default function Accueil() {
           </div>
         )}
 
-        {/* 📜 Panneau des règles (à gauche) */}
+        {/* 📜 Règles (gauche) */}
         <div className={`rules-panel ${showRules ? "open" : ""}`}>
-          <div>
-            <h2>📜 Règles du jeu</h2>
-            <ul>
-              <li>Utilise les flèches gauche/droite pour déplacer ta voiture.</li>
-              <li>Évite les voitures rouges qui arrivent en face.</li>
-              <li>Si tu touches une voiture ennemie, c’est perdu !</li>
-            </ul>
-          </div>
-          <button className="close-btn" onClick={() => setShowRules(false)}>❌ Fermer</button>
+          <h2>📜 Règles du jeu</h2>
+          <ul>
+            <li>🚗 Choisis ta voiture préférée parmi les modèles disponibles dans l’onglet <strong>“Choisir voiture”</strong>.</li>
+            <li>🎮 Utilise les flèches <strong>← / →</strong> pour te faufiler entre les voitures ennemies.</li>
+            <li>💥 Évite à tout prix les voitures rouges — un seul choc et la partie est terminée !</li>
+            <li>🧠 Reste concentré : plus tu tiens longtemps, plus ton score grimpe !</li>
+            <li>🏆 Tente de décrocher la première place dans l’onglet <strong>“Scores”</strong>… et surtout, <strong>défends ton trône</strong> aussi longtemps que possible !</li>
+          </ul>
         </div>
-
-        {/* 🏆 Panneau des scores (à droite) */}
+        {/* 🏆 Scores (droite) */}
         <div className={`score-panel ${showScores ? "open" : ""}`}>
-          <div>
-            <h2>🏆 Classement - Course d'Évitement</h2>
-            <Leaderboard game="accueil" />
-          </div>
-          <button className="close-btn" onClick={() => setShowScores(false)}>❌ Fermer</button>
+          <h2>🏆 Classement - Course d'Évitement</h2>
+          <Leaderboard game="accueil" />
         </div>
       </div>
     </>
