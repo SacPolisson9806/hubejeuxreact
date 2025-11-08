@@ -7,35 +7,41 @@ export default function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const users = JSON.parse(localStorage.getItem("users") || "{}");
 
-    if (mode === "signup") {
-      if (!username.trim() || !password.trim()) {
-        alert("Remplis pseudo et mot de passe !");
-        return;
+    if (!username.trim() || !password.trim()) {
+      alert("Remplis pseudo et mot de passe !");
+      return;
+    }
+
+    const url = mode === "login" ? "http://localhost:5000/login" : "http://localhost:5000/signup";
+
+    try {
+      const response = await fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, password }),
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        alert(data.message);
+        if (mode === "login") {
+          localStorage.setItem("playerName", username); // garder le pseudo pour le frontend
+          navigate("/hubjeux");
+        } else {
+          setMode("login");
+          setUsername("");
+          setPassword("");
+        }
+      } else {
+        alert(data.message);
       }
-      if (users[username]) {
-        alert("Ce pseudo existe déjà !");
-        return;
-      }
-      // Créer le compte
-      users[username] = { password };
-      localStorage.setItem("users", JSON.stringify(users));
-      alert("Compte créé ! Tu peux maintenant te connecter.");
-      setMode("login");
-      setUsername("");
-      setPassword("");
-    } else {
-      // Login
-      if (!users[username] || users[username].password !== password) {
-        alert("Identifiant ou mot de passe incorrect !");
-        return;
-      }
-      // Connexion réussie
-      localStorage.setItem("playerName", username);
-      navigate("/hubjeux");
+    } catch (err) {
+      console.error(err);
+      alert("Erreur serveur, réessaie plus tard.");
     }
   };
 
@@ -43,131 +49,21 @@ export default function Login() {
     <>
       <style>{`
         /* 🌌 Reset global pour tout couvrir */
-        html, body {
-          margin: 0;
-          padding: 0;
-          height: 100%;
-          width: 100%;
-          font-family: 'Poppins', sans-serif;
-          overflow: hidden; /* empêche le scroll si gradient dépasse */
-        }
-
-        /* 🌠 Fond animé */
-        body::before {
-          content: "";
-          position: fixed;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-          background: radial-gradient(circle at top, #0a0a2a, #030314, #0a0a2a);
-          background-size: 400% 400%;
-          animation: gradientMove 15s ease infinite;
-          z-index: -1;
-        }
-
-        @keyframes gradientMove {
-          0% {background-position: 0% 50%;}
-          50% {background-position: 100% 50%;}
-          100% {background-position: 0% 50%;}
-        }
-
-        /* 🧱 Conteneur login centré */
-        .login-container {
-          height: 100vh;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          color: white;
-        }
-
-        /* 📝 Boîte login */
-        .login-box {
-          background: rgba(255, 255, 255, 0.05);
-          backdrop-filter: blur(15px);
-          border: 1px solid rgba(255, 255, 255, 0.1);
-          border-radius: 20px;
-          padding: 40px 60px;
-          box-shadow: 0 0 25px rgba(0, 0, 0, 0.5);
-          text-align: center;
-          width: 340px;
-          transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .login-box:hover {
-          transform: translateY(-5px);
-          box-shadow: 0 0 35px rgba(0, 180, 255, 0.3);
-        }
-
-        /* 🔤 Titre */
-        .login-title {
-          font-size: 28px;
-          margin-bottom: 25px;
-          background: linear-gradient(90deg, #00d4ff, #00ffaa);
-          -webkit-background-clip: text;
-          -webkit-text-fill-color: transparent;
-        }
-
-        /* ✏️ Inputs */
-        .input-group {
-          margin-bottom: 20px;
-        }
-
-        .login-input {
-          width: 100%;
-          padding: 12px;
-          border: none;
-          border-radius: 10px;
-          background-color: rgba(255, 255, 255, 0.1);
-          color: white;
-          font-size: 16px;
-          outline: none;
-          text-align: center;
-          transition: all 0.3s ease;
-          box-sizing: border-box;
-        }
-
-        .login-input:focus {
-          background-color: rgba(255, 255, 255, 0.2);
-          box-shadow: 0 0 10px #00d4ff;
-        }
-
-        /* 🔘 Bouton */
-        .login-button {
-          width: 100%;
-          padding: 12px;
-          border: none;
-          border-radius: 10px;
-          background: linear-gradient(90deg, #00d4ff, #00ffaa);
-          color: #000;
-          font-size: 17px;
-          font-weight: bold;
-          cursor: pointer;
-          transition: all 0.3s ease;
-        }
-
-        .login-button:hover {
-          background: linear-gradient(90deg, #00ffaa, #00d4ff);
-          transform: scale(1.05);
-        }
-
-        /* 🧍 Texte bas */
-        .signup-text {
-          margin-top: 20px;
-          font-size: 14px;
-          color: #ccc;
-        }
-
-        .signup-link {
-          color: #00d4ff;
-          cursor: pointer;
-          text-decoration: underline;
-          transition: color 0.3s ease;
-        }
-
-        .signup-link:hover {
-          color: #00ffaa;
-        }
+        html, body { margin: 0; padding: 0; height: 100%; width: 100%; font-family: 'Poppins', sans-serif; overflow: hidden; }
+        body::before { content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle at top, #0a0a2a, #030314, #0a0a2a); background-size: 400% 400%; animation: gradientMove 15s ease infinite; z-index: -1; }
+        @keyframes gradientMove { 0% {background-position: 0% 50%;} 50% {background-position: 100% 50%;} 100% {background-position: 0% 50%;} }
+        .login-container { height: 100vh; display: flex; justify-content: center; align-items: center; color: white; }
+        .login-box { background: rgba(255,255,255,0.05); backdrop-filter: blur(15px); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 40px 60px; box-shadow: 0 0 25px rgba(0,0,0,0.5); text-align: center; width: 340px; transition: transform 0.3s ease, box-shadow 0.3s ease; }
+        .login-box:hover { transform: translateY(-5px); box-shadow: 0 0 35px rgba(0,180,255,0.3); }
+        .login-title { font-size: 28px; margin-bottom: 25px; background: linear-gradient(90deg, #00d4ff, #00ffaa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .input-group { margin-bottom: 20px; }
+        .login-input { width: 100%; padding: 12px; border: none; border-radius: 10px; background-color: rgba(255,255,255,0.1); color: white; font-size: 16px; outline: none; text-align: center; transition: all 0.3s ease; box-sizing: border-box; }
+        .login-input:focus { background-color: rgba(255,255,255,0.2); box-shadow: 0 0 10px #00d4ff; }
+        .login-button { width: 100%; padding: 12px; border: none; border-radius: 10px; background: linear-gradient(90deg, #00d4ff, #00ffaa); color: #000; font-size: 17px; font-weight: bold; cursor: pointer; transition: all 0.3s ease; }
+        .login-button:hover { background: linear-gradient(90deg, #00ffaa, #00d4ff); transform: scale(1.05); }
+        .signup-text { margin-top: 20px; font-size: 14px; color: #ccc; }
+        .signup-link { color: #00d4ff; cursor: pointer; text-decoration: underline; transition: color 0.3s ease; }
+        .signup-link:hover { color: #00ffaa; }
       `}</style>
 
       <div className="login-container">
