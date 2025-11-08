@@ -3,16 +3,39 @@ import { useNavigate } from "react-router-dom";
 
 export default function Login() {
   const navigate = useNavigate();
+  const [mode, setMode] = useState("login"); // 'login' ou 'signup'
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleLogin = (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    if (username.trim() && password.trim()) {
+    const users = JSON.parse(localStorage.getItem("users") || "{}");
+
+    if (mode === "signup") {
+      if (!username.trim() || !password.trim()) {
+        alert("Remplis pseudo et mot de passe !");
+        return;
+      }
+      if (users[username]) {
+        alert("Ce pseudo existe déjà !");
+        return;
+      }
+      // Créer le compte
+      users[username] = { password };
+      localStorage.setItem("users", JSON.stringify(users));
+      alert("Compte créé ! Tu peux maintenant te connecter.");
+      setMode("login");
+      setUsername("");
+      setPassword("");
+    } else {
+      // Login
+      if (!users[username] || users[username].password !== password) {
+        alert("Identifiant ou mot de passe incorrect !");
+        return;
+      }
+      // Connexion réussie
       localStorage.setItem("playerName", username);
       navigate("/hubjeux");
-    } else {
-      alert("Veuillez entrer un nom d'utilisateur et un mot de passe.");
     }
   };
 
@@ -91,24 +114,23 @@ export default function Login() {
         }
 
         .login-input {
-  width: 100%;
-  padding: 12px;
-  border: none;
-  border-radius: 10px;
-  background-color: rgba(255, 255, 255, 0.1); /* même couleur pour tous */
-  color: white; /* texte blanc */
-  font-size: 16px;
-  outline: none;
-  text-align: center;
-  transition: all 0.3s ease;
-  box-sizing: border-box; /* assure que padding n'affecte pas la taille */
-}
+          width: 100%;
+          padding: 12px;
+          border: none;
+          border-radius: 10px;
+          background-color: rgba(255, 255, 255, 0.1);
+          color: white;
+          font-size: 16px;
+          outline: none;
+          text-align: center;
+          transition: all 0.3s ease;
+          box-sizing: border-box;
+        }
 
-.login-input:focus {
-  background-color: rgba(255, 255, 255, 0.2); /* même effet au focus */
-  box-shadow: 0 0 10px #00d4ff;
-}
-
+        .login-input:focus {
+          background-color: rgba(255, 255, 255, 0.2);
+          box-shadow: 0 0 10px #00d4ff;
+        }
 
         /* 🔘 Bouton */
         .login-button {
@@ -150,9 +172,9 @@ export default function Login() {
 
       <div className="login-container">
         <div className="login-box">
-          <h1 className="login-title">Connexion</h1>
+          <h1 className="login-title">{mode === "login" ? "Connexion" : "Inscription"}</h1>
 
-          <form onSubmit={handleLogin} className="login-form">
+          <form onSubmit={handleSubmit} className="login-form">
             <div className="input-group">
               <input
                 type="text"
@@ -174,17 +196,21 @@ export default function Login() {
             </div>
 
             <button type="submit" className="login-button">
-              Se connecter
+              {mode === "login" ? "Se connecter" : "S'inscrire"}
             </button>
           </form>
 
           <p className="signup-text">
-            Nouveau joueur ?{" "}
+            {mode === "login" ? "Nouveau joueur ?" : "Déjà un compte ?"}{" "}
             <span
               className="signup-link"
-              onClick={() => alert("Fonction de création de compte à venir 😉")}
+              onClick={() => {
+                setMode(mode === "login" ? "signup" : "login");
+                setUsername("");
+                setPassword("");
+              }}
             >
-              Créer un compte
+              {mode === "login" ? "Créer un compte" : "Se connecter"}
             </span>
           </p>
         </div>
