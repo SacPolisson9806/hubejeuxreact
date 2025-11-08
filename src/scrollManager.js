@@ -7,5 +7,9 @@ export function enableScroll() {
   document.body.style.overflow = 'auto';
 }
 
-// Active le scroll bloqué automatiquement
-disableScroll();
+// 🔹 Activer le scroll uniquement sur HubJeux
+if (window.location.pathname === '/hubjeux') {
+  enableScroll(); // scroll activé
+} else {
+  disableScroll(); // scroll bloqué
+}

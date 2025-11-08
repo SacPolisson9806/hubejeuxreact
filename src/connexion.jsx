@@ -2,16 +2,16 @@ import React, { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 
 const routesJeux = {
-  chiffremystere: '/Chiffremystere',
-  arrowrushaccueil: '/Arrowrushaccueil',
-  cemantix: '/Cemantix',
-  jeuxpendu: '/Jeuxpendu',
+  chiffremystere: '/chiffremystere',
+  arrowrushaccueil: '/arrowrushaccueil',
+  cemantix: '/cemantix',
+  jeuxpendu: '/jeuxpendu',
   quizzsolo: '/quizzsolo',       // solo
   quizzmulti: '/quizzmulti',     // multi
-  codecrackerindex: '/Codecrackerindex',
+  codecrackerindex: '/codecrackerindex',
   sudokuaccueil: '/sudokuaccueil',
-  index2048: '/Index2048',
-  accueil: '/Accueil'
+  index2048: '/index2048',
+  accueil: '/accueil'
 };
 
 export default function Connexion() {
@@ -32,29 +32,43 @@ export default function Connexion() {
   }, [jeu, navigate]);
 
   const handleSubmit = (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    if (mode === 'multi' && (!username || !room)) {
-      alert("Remplis ton pseudo et le code du salon !");
-      return;
-    }
+  // 🔹 Vérification des champs en mode multi
+  if (mode === 'multi' && (!username || !room)) {
+    alert("Remplis ton pseudo et le code du salon !");
+    return;
+  }
 
-    // 🔹 Redirection dynamique selon le jeu choisi
-    const gameRoute = routesJeux[jeu.toLowerCase()];
-if (!gameRoute) {
-  alert("Jeu inconnu !");
-  return;
-}
+  // 🔹 Détermination de la route du jeu
+  let gameRoute = routesJeux[jeu?.toLowerCase()];
 
+  // 🔹 Cas particuliers pour le Quizz
+  if (jeu === 'Quizz' && mode === 'solo') {
+    gameRoute = '/quizzsolo';
+  } else if (jeu === 'Quizz' && mode === 'multi') {
+    gameRoute = '/quizzmulti';
+  }
+  if (jeu === 'accueil' && mode === 'solo') {
+    gameRoute = '/accueil';
+  } else if (jeu === 'accueil' && mode === 'multi') {
+    gameRoute = '/accueil';
+  }
 
-    if (mode === 'solo') {
-      navigate(`${gameRoute}?mode=solo`);
-    } else {
-      navigate(
-        `${gameRoute}?mode=multi&username=${encodeURIComponent(username)}&room=${encodeURIComponent(room)}&type=${multiAction}`
-      );
-    }
-  };
+  // 🔹 Vérifie que le jeu existe
+  if (!gameRoute) {
+    alert("Jeu inconnu !");
+    return;
+  }
+
+  // 🔹 Redirection dynamique selon le mode
+  if (mode === 'solo') {
+    window.location.href = `${gameRoute}?mode=solo`;
+  } else {
+    window.location.href = `${gameRoute}?mode=multi&username=${encodeURIComponent(username)}&room=${encodeURIComponent(room)}&type=${multiAction}`;
+  }
+};
+
 
   return (
     <>
