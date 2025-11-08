@@ -118,7 +118,7 @@ export default function SudokuAccueil() {
 
         {/* 🔸 Bouton retour vers le hub */}
         <div className="return-button">
-          <a href="/" className="back-button">← Retour à l’accueil</a>
+          <a href="/hubjeux" className="back-button">← Retour à l’accueil</a>
         </div>
       </div>
     </>

@@ -32,7 +32,7 @@ export default function ChiffreMystere() {
   };
 
   const goBack = () => {
-    navigate('/');
+    navigate('/hubjeux');
   };
 
   return (

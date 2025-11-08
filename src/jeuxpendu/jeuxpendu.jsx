@@ -214,7 +214,7 @@ export default function JeuPendu() {
         )}
 
         <div className="footer">
-          <button className="button" onClick={() => navigate('/')}>
+          <button className="button" onClick={() => navigate('/hubjeux')}>
             Retour à l'accueil
           </button>
         </div>

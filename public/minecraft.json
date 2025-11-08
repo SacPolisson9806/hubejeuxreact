@@ -20,13 +20,13 @@
     {
         "type": "qcm",
         "question": "Quel outil est utilisé pour couper du bois rapidement ?",
-        "options": ["Hache", "Pioche", "Pelle", "Houe"],
-        "answer": "Charbon"
+        "options": ["Houe", "Pioche", "Pelle", "Hache"],
+        "answer": "Hache"
     },
     {
         "type": "qcm",
         "question": "Quelle plante peut être utilisée pour faire de la poudre verte ?",
-        "options": ["Cactus", "Canne à sucre", "Blé", "Carotte"],
+        "options": ["Blé", "Canne à sucre", "Cactus", "Carotte"],
         "answer": "Cactus"
     },
     {
@@ -50,7 +50,7 @@
     {
         "type": "qcm",
         "question": "Quelle ressource tombe des arbres lorsqu’on les casse avec la main ?",
-        "options": ["Bois", "Feuilles", "Charbon", "Écorce"],
+        "options": ["Écorce", "Feuilles", "Charbon", "Bois"],
         "answer": "Bois"
     },
     {
@@ -108,14 +108,14 @@
     {
         "type": "qcm",
         "question": "Quel animal pond des œufs ?",
-        "options": ["Poule", "Vache", "Mouton", "Cochon"],
+        "options": ["Cochon", "Vache", "Mouton", "Poule"],
         "answer": "Poule"
     },
     {
         "type": "qcm",
         "question": "Quel animal peut être apprivoisé avec des graines ?",
-        "options": ["Cochon", "Poulet", "Vache", "Cheval"],
-        "answer": "Poulet"
+        "options": ["Cochon", "Poule", "Vache", "Cheval"],
+        "answer": "Poule"
     },
     {
         "type": "qcm",
@@ -126,7 +126,7 @@
     {
         "type": "qcm",
         "question": "Quel animal peut être trouvé dans les océans et les rivières ?",
-        "options": ["Cochon", "Poisson", "Vache", "Mouton"],
+        "options": ["Cochon", "Vache", "Poisson", "Mouton"],
         "answer": "Poisson"
     },
     {
@@ -221,8 +221,8 @@
   {
     "type": "qcm",
     "question": "Quel est le poisson qui n'existe pas parmi ces 4 ?",
-    "options": ["morue", "saumon", "poisson-globe", "poisson tueur"],
-    "answer": "poisson tueur"
+    "options": ["morue", "saumon", "poisson-globe", "poisson clown"],
+    "answer": "poisson clown"
   },
   {
     "type": "input",
@@ -391,10 +391,10 @@
     "type": "qcm",
     "question": "Comment invoquer le Wither ?",
     "options": [
-      "3 têtes de Wither Skeleton + 4 blocs d’âme",
+      "3 têtes de Wither Skeleton + 4 blocs de terre",
       "3 têtes de Wither Skeleton + 4 blocs de sable",
       "3 têtes de Wither Skeleton + 4 blocs d’obsidienne",
-      "3 têtes de Wither Skeleton + 4 blocs de terre"
+      "3 têtes de Wither Skeleton + 4 blocs d’âme"
     ],
     "answer": "3 têtes de Wither Skeleton + 4 blocs d’âme"
   },
@@ -413,7 +413,7 @@
   {
     "type": "input",
     "question": "Quel est le nom du mob qui peut monter sur les murs ?",
-    "answer": ["l'araignée"]
+    "answer": ["araignée"]
   },
   {
     "type": "input",
@@ -464,7 +464,7 @@
     },
     {
         "type": "qcm",
-        "question": "Quel mob spawn lorsque l’on tue l’Enderman ?",
+        "question": "Quel mob a une probabilité de spawn lorsque l’on tue l’Enderman ?",
         "options": ["embourbé", "lapin", "endermite", "blaze"],
         "answer": "endermite"
     },
@@ -594,7 +594,7 @@
   },
   {
     "type": "qcm",
-    "question": "Quel mob va enfin être ajouté après plus de 12 ans sans être sur Minecraft ?",
+    "question": "Quel mob est enfin être ajouté après plus de 12 ans sans être sur Minecraft ?",
     "options": ["le cheval squelette", "le cheval noyé", "le cheval zombie", "le cheval momifié"],
     "answer": "le cheval zombie"
   },
@@ -642,7 +642,7 @@
     {
         "type": "qcm",
         "question": "Quel enchantement permet de respirer plus longtemps sous l'eau ?",
-        "options": ["Apnée", "Respiration auqatique", "Profondeur aquatique", "Plongée"],
+        "options": ["Plongée", "Respiration auqatique", "Profondeur aquatique", "Apnée"],
         "answer": "Apnée"
     },
     {
@@ -757,7 +757,7 @@
   {
     "type": "qcm",
     "question": "Quel enchantement augmente les dégâts infligés par les armes ?",
-    "options": ["Tranchant", "Acéré", "Aiguisé", "Lame"],
+    "options": ["Acéré", "Tranchant", "Aiguisé", "Lame"],
     "answer": "Tranchant"
   },
   {
@@ -769,7 +769,7 @@
   {
     "type": "qcm",
     "question": "Quel enchantement augmente les dégâts de l'effet de balayage infligé aux cibles voisines ?",
-    "options": ["Balayage", "Tranchage", "Affilage"],
+    "options": ["Balayage", "Tranchage", "Affilage","lynchage"],
     "answer": "Affilage"
   },
   {
@@ -1116,7 +1116,7 @@
         "type": "input",
         "question": "Quel est le nom de ce biome ?",
         "answer": "Badlands boisés",
-        "image": "/Minecraftimage/Badlandsboisés.webp"
+        "image": "/Minecraftimage/Badlandsboisées.webp"
     },
     {
         "type": "input",
@@ -1241,12 +1241,6 @@
   {
     "type": "input",
     "question": "Quel est le nom de ce biome ?",
-    "answer": ["Nether"],
-    "image": "/Minecraftimage/Nether.webp"
-  },
-  {
-    "type": "input",
-    "question": "Quel est le nom de ce biome ?",
     "answer": ["Forêt carmin"],
     "image": "/Minecraftimage/Forêtcarmin.webp"
   },
@@ -1272,7 +1266,7 @@
     "type": "input",
     "question": "Quel est le nom de ce biome ?",
     "answer": ["L’End"],
-    "image": "/Minecraftimage/L’End.webp"
+    "image": "/Minecraftimage/Lend.webp"
   },
   {
     "type": "input",

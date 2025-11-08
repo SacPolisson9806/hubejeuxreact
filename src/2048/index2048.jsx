@@ -271,7 +271,7 @@ export default function Index2048() {
         </main>
 
         <button
-          onClick={() => navigate('/')}
+          onClick={() => navigate('/hubjeux')}
           className="retour"
         >
           🏠 Retour à l’accueil

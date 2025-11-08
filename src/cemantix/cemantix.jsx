@@ -9,7 +9,7 @@ export default function Cemantix() {
   };
 
   const goBack = () => {
-    navigate('/');
+    navigate('/hubjeux');
   };
 
   // 🔧 Appliquer le style global au body

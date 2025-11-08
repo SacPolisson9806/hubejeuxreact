@@ -147,7 +147,7 @@ export default function AccueilVoiture() {
         <div className="button-group">
           <button onClick={() => setShowRules(!showRules)}>📜 Règles</button>
           <button onClick={handlePlay} className="btn">🎮 Jouer</button>
-          <a href="/" className="btn">↩ Retour</a>
+          <a href="/hubjeux" className="btn">↩ Retour</a>
           {showError && (
             <p className="car-error">🚫 Choisis une voiture avant de jouer !</p>
           )}

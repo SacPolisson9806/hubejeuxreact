@@ -2,16 +2,16 @@ import React, { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 
 const routesJeux = {
-  Chiffremystere: '/chiffremystere',
-  Arrowrushaccueil: '/arrowrushaccueil',
-  Cemantix: '/cemantix',
-  Jeuxpendu: '/jeuxpendu',
-  QuizzSolo: '/quizzsolo',       // ✅ Page solo
-  QuizzMulti: '/quizzmulti',     // ✅ Page multi
-  Codecrackerindex: '/codecrackerindex',
-  Sudokuaccueil: '/sudokuaccueil',
-  Index2048: '/index2048',
-  Accueil: '/accueil'
+  chiffremystere: '/Chiffremystere',
+  arrowrushaccueil: '/Arrowrushaccueil',
+  cemantix: '/Cemantix',
+  jeuxpendu: '/Jeuxpendu',
+  quizzsolo: '/quizzsolo',       // solo
+  quizzmulti: '/quizzmulti',     // multi
+  codecrackerindex: '/Codecrackerindex',
+  sudokuaccueil: '/sudokuaccueil',
+  index2048: '/Index2048',
+  accueil: '/Accueil'
 };
 
 export default function Connexion() {
@@ -39,12 +39,19 @@ export default function Connexion() {
       return;
     }
 
-    // 🔹 Redirection selon le mode choisi
+    // 🔹 Redirection dynamique selon le jeu choisi
+    const gameRoute = routesJeux[jeu.toLowerCase()];
+if (!gameRoute) {
+  alert("Jeu inconnu !");
+  return;
+}
+
+
     if (mode === 'solo') {
-      navigate(`/quizzsolo?mode=solo&jeu=${jeu}`);
+      navigate(`${gameRoute}?mode=solo`);
     } else {
       navigate(
-        `/quizzmulti?mode=multi&jeu=${jeu}&username=${encodeURIComponent(username)}&room=${encodeURIComponent(room)}&type=${multiAction}`
+        `${gameRoute}?mode=multi&username=${encodeURIComponent(username)}&room=${encodeURIComponent(room)}&type=${multiAction}`
       );
     }
   };
@@ -182,7 +189,7 @@ export default function Connexion() {
           <button type="submit">Jouer</button>
         </form>
 
-        <p><a href="/">← Retour au hub</a></p>
+        <p><a href="/hubjeux">← Retour au hub</a></p>
       </div>
     </>
   );

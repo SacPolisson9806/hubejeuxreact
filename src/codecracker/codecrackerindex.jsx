@@ -16,7 +16,7 @@ export default function CodeCrackerAccueil() {
 
   // 🔹 Retour au hub
   const goBack = () => {
-    navigate('/');
+    navigate('/hubjeux');
   };
 
   return (

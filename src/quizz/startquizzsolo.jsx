@@ -123,7 +123,7 @@ export default function StartQuizzSolo() {
       // ✅ Vérifie victoire ici AVANT de mettre à jour le state
       if (newScore >= pointsToWin) {
         alert(`🏆 Bravo ! Tu as atteint ${newScore} points et remporté la partie !`);
-        navigate('/quizz');
+        navigate('/quizzsolo');
         return;
       }
 
@@ -131,7 +131,7 @@ export default function StartQuizzSolo() {
     }
 
     setInputError('');
-    setTimeout(nextQuestion, 3000);
+    setTimeout(nextQuestion, 5000);
   };
 
   const nextQuestion = () => {
