@@ -150,7 +150,7 @@ export default function StartQuizzSolo() {
       setCurrentThemeIndex((prev) => prev + 1);
     } else {
       alert(`🎉 Fin du quiz !\nScore final : ${score} points`);
-      navigate('/quizz');
+      navigate('/quizzsolo');
     }
   };
 
