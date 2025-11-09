@@ -10,6 +10,16 @@ export default function JeuPendu() {
   const [tries, setTries] = useState(0);
   const [message, setMessage] = useState(null);
 
+  const accentsMap = {
+    a: ['a', 'à', 'â', 'ä', 'ã', 'å'],
+    e: ['e', 'é', 'è', 'ê', 'ë'],
+    i: ['i', 'î', 'ï', 'í'],
+    o: ['o', 'ô', 'ö', 'ò', 'õ'],
+    u: ['u', 'ù', 'û', 'ü'],
+    c: ['c', 'ç'],
+    y: ['y', 'ÿ']
+  };
+
   // 🔹 Chargement du fichier texte contenant les mots français
   useEffect(() => {
     fetch('/bibliotheque/liste_francais.txt')
@@ -20,19 +30,14 @@ export default function JeuPendu() {
         return res.text();
       })
       .then((text) => {
-        // Si le texte contient des balises HTML, on les ignore (cas "device-width")
         if (text.includes('<') || text.includes('>')) {
           throw new Error('❌ Le fichier contient du HTML au lieu de mots.');
         }
 
         const words = text
-          .split(/\r?\n/) // découpe sur les retours à la ligne
+          .split(/\r?\n/)
           .map((w) => w.trim().toLowerCase())
-          .filter(
-            (w) =>
-              w.length > 0 &&
-              /^[a-zàâçéèêëîïôûùüÿñæœ-]+$/i.test(w) // uniquement lettres FR
-          );
+          .filter((w) => w.length > 0 && /^[a-zàâçéèêëîïôûùüÿñæœ-]+$/i.test(w));
 
         if (words.length === 0) {
           throw new Error('❌ Aucun mot valide trouvé dans le fichier.');
@@ -41,7 +46,6 @@ export default function JeuPendu() {
         setWordList(words);
         const randomWord = words[Math.floor(Math.random() * words.length)];
         setWord(randomWord);
-        console.log('✅ Mot choisi :', randomWord);
       })
       .catch((err) => {
         console.error(err);
@@ -49,34 +53,53 @@ export default function JeuPendu() {
       });
   }, []);
 
-  const handleGuess = (letter) => {
-    if (guessed.includes(letter) || message) return;
+const handleGuess = (letter) => {
+  if (guessed.includes(letter) || message) return;
 
-    setGuessed((prev) => [...prev, letter]);
+  setGuessed((prev) => [...prev, letter]);
 
-    if (!word.includes(letter)) {
-      setTries((prev) => prev + 1);
-    }
-  };
+  // Vérifie si la lettre (ou ses variantes accentuées) est dans le mot
+  const possibleLetters = accentsMap[letter] || [letter];
+  if (!word.split('').some((char) => possibleLetters.includes(char))) {
+    setTries((prev) => prev + 1);
+  }
+};
 
-  const displayWord = word
-    .split('')
-    .map((char) => (guessed.includes(char) ? char : '_'))
-    .join(' ');
+const displayWord = word
+  .split('')
+  .map((char) => {
+    // Si une des lettres devinées correspond au char (avec accents)
+    const guessedMatch = guessed.some((letter) =>
+      (accentsMap[letter] || [letter]).includes(char)
+    );
+    return guessedMatch ? char : '_';
+  })
+  .join(' ');
 
-  const won = word && word.split('').every((char) => guessed.includes(char));
+
+  const won =
+    word &&
+    word
+      .split('')
+      .every((char) =>
+        guessed.some((letter) => (accentsMap[letter] || [letter]).includes(char))
+      );
   const lost = tries >= 6;
 
   useEffect(() => {
     if (won) {
-      setMessage('🎉 Félicitations ! Vous avez gagné !');
+      setMessage(`🎉 Félicitations ! Vous avez gagné ! Le mot était : ${word}`);
     } else if (lost) {
       setMessage(`💀 Vous avez perdu ! Le mot était : ${word}`);
     }
   }, [won, lost, word]);
 
   const handleReplay = () => {
-    window.location.reload();
+    const randomWord = wordList[Math.floor(Math.random() * wordList.length)];
+    setWord(randomWord);
+    setGuessed([]);
+    setTries(0);
+    setMessage(null);
   };
 
   useEffect(() => {
@@ -92,12 +115,7 @@ export default function JeuPendu() {
   return (
     <>
       <style>{`
-        * {
-          margin: 0;
-          padding: 0;
-          box-sizing: border-box;
-        }
-
+        * {margin:0;padding:0;box-sizing:border-box;}
         .container {
           background-color: #111;
           padding: 40px;
@@ -107,21 +125,15 @@ export default function JeuPendu() {
           width: 90%;
           max-width: 600px;
         }
-
-        h1 {
-          color: #00ffff;
-          text-shadow: 0 0 10px #00ffff;
-          margin-bottom: 20px;
-        }
-
+        h1 {color: #00ffff;text-shadow: 0 0 10px #00ffff;margin-bottom: 20px;}
         .word {
-          font-size: 2.5em;
-          letter-spacing: 15px;
-          margin-bottom: 30px;
+          font-size: 2em;
+          letter-spacing: 10px;
+          margin-bottom: 20px;
           color: #00ffff;
           text-shadow: 0 0 8px #00ffff;
+          word-wrap: break-word;
         }
-
         form button {
           margin: 5px;
           padding: 12px 18px;
@@ -134,27 +146,9 @@ export default function JeuPendu() {
           cursor: pointer;
           transition: transform 0.2s, background 0.3s;
         }
-
-        form button:hover {
-          transform: scale(1.05);
-          background-color: #00ffff;
-          color: #000;
-        }
-
-        form button:disabled {
-          background-color: #555;
-          color: #999;
-          box-shadow: none;
-          cursor: not-allowed;
-        }
-
-        .message {
-          font-size: 1.5em;
-          margin-bottom: 20px;
-          color: #ff4444;
-          text-shadow: 0 0 5px #ff4444;
-        }
-
+        form button:hover {transform: scale(1.05);background-color: #00ffff;color: #000;}
+        form button:disabled {background-color: #555;color: #999;box-shadow:none;cursor:not-allowed;}
+        .message {font-size: 1.5em;margin-bottom: 20px;color: #ff4444;text-shadow: 0 0 5px #ff4444;}
         .button {
           padding: 10px 20px;
           background-color: #00ffff;
@@ -167,17 +161,8 @@ export default function JeuPendu() {
           display: inline-block;
           margin-top: 30px;
         }
-
-        .button:hover {
-          background-color: #00cccc;
-        }
-
-        .footer {
-          margin-top: 40px;
-          text-align: center;
-          color: #888;
-          font-size: 0.9em;
-        }
+        .button:hover {background-color: #00cccc;}
+        .footer {margin-top: 40px;text-align: center;color: #888;font-size: 0.9em;}
       `}</style>
 
       <div className="container">

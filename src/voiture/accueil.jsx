@@ -2,46 +2,58 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Leaderboard from "../Leaderboard";
 
+/*
+  🔹 Composant principal de l'accueil du jeu "Course d'Évitement"
+  - Permet de choisir sa voiture
+  - Afficher les règles et le classement
+  - Lancer le jeu
+*/
 export default function Accueil() {
-  const navigate = useNavigate();
+  const navigate = useNavigate(); // Hook pour naviguer vers une autre route
 
-  const [selectedCar, setSelectedCar] = useState(null);
-  const [showRules, setShowRules] = useState(false);
-  const [showGallery, setShowGallery] = useState(false);
-  const [showScores, setShowScores] = useState(false);
-  const [showError, setShowError] = useState(false);
+  // 🏎️ États pour gérer la sélection de voiture et l'affichage des panneaux
+  const [selectedCar, setSelectedCar] = useState(null); // La voiture choisie par le joueur
+  const [showRules, setShowRules] = useState(false);    // Affichage du panneau de règles
+  const [showGallery, setShowGallery] = useState(false); // Affichage de la galerie de voitures
+  const [showScores, setShowScores] = useState(false);  // Affichage du panneau de scores
+  const [showError, setShowError] = useState(false);    // Message d'erreur si aucune voiture choisie
 
-  // 🔹 On récupère le pseudo automatiquement depuis le compte connecté
+  // 🔹 Récupération automatique du pseudo depuis le stockage local
   const playerName = localStorage.getItem("playerName") || "";
 
+  // 🏎️ Options de voitures disponibles
   const carOptions = [
     { src: "voitureimage/voiturerouge.png", alt: "Rouge" },
     { src: "voitureimage/voiturerose.png", alt: "Rose" },
     { src: "voitureimage/voiturebleu.png", alt: "Bleu" },
   ];
 
+  // 🔹 Fonction appelée au clic sur "Jouer"
   const handlePlay = () => {
-    if (!selectedCar) {
-      setShowError(true);
+    if (!selectedCar) {           // Vérifie si une voiture est sélectionnée
+      setShowError(true);         // Affiche un message d'erreur si non
       return;
     }
-    if (!playerName) {
+    if (!playerName) {            // Vérifie si le joueur est connecté
       alert("🚨 Connecte-toi pour jouer !");
       return;
     }
+    // Navigation vers la page du jeu en passant la voiture sélectionnée dans l'URL
     navigate(`/voiture?car=${encodeURIComponent(selectedCar)}`);
   };
 
+  // 🔹 useEffect pour styliser la page dès le chargement
   useEffect(() => {
     document.body.style.background = "radial-gradient(circle, #000 40%, #111 100%)";
     document.body.style.color = "#0ff";
     document.body.style.fontFamily = "'Press Start 2P', cursive, sans-serif";
     document.body.style.textAlign = "center";
     document.body.style.padding = "40px";
-  }, []);
+  }, []); // [] => s'exécute une seule fois au montage du composant
 
   return (
     <>
+      {/* 🔹 Styles internes pour la page */}
       <style>{`
         .screen {
           max-width: 600px;
@@ -170,9 +182,11 @@ export default function Accueil() {
       `}</style>
 
       <div className="screen">
+        {/* Titre du jeu */}
         <h1>🚗 Course d'Évitement</h1>
         <p className="subtitle">Évite les voitures rouges et reste en vie !</p>
 
+        {/* 🔹 Boutons principaux */}
         <div className="button-group">
           <button onClick={() => setShowRules(!showRules)}>📜 Règles</button>
           <button onClick={() => setShowScores(!showScores)}>🏆 Scores</button>
@@ -182,9 +196,11 @@ export default function Accueil() {
           </div>
           <a href="/hubjeux" className="btn">↩ Retour</a>
 
+          {/* Message d'erreur si aucune voiture choisie */}
           {showError && <p className="car-error">🚫 Choisis une voiture avant de jouer !</p>}
         </div>
 
+        {/* 🔹 Galerie de voitures */}
         {showGallery && (
           <div className="carGallery">
             <div className="car-options">
@@ -196,8 +212,8 @@ export default function Accueil() {
                   className={`car-pick ${selectedCar === car.src ? "selected" : ""}`}
                   style={{ width: "60px", height: "120px", imageRendering: "pixelated" }}
                   onClick={() => {
-                    setSelectedCar(car.src);
-                    setShowError(false);
+                    setSelectedCar(car.src); // Sélection de la voiture
+                    setShowError(false);     // Supprime le message d'erreur si affiché
                   }}
                 />
               ))}
@@ -205,7 +221,7 @@ export default function Accueil() {
           </div>
         )}
 
-        {/* 📜 Règles (gauche) */}
+        {/* 📜 Panneau des règles */}
         <div className={`rules-panel ${showRules ? "open" : ""}`}>
           <h2>📜 Règles du jeu</h2>
           <ul>
@@ -217,7 +233,7 @@ export default function Accueil() {
           </ul>
         </div>
 
-        {/* 🏆 Scores (droite) */}
+        {/* 🏆 Panneau des scores */}
         <div className={`score-panel ${showScores ? "open" : ""}`}>
           <h2>🏆 Classement - Course d'Évitement</h2>
           <Leaderboard game="accueil" />
