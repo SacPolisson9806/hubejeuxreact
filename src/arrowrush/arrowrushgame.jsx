@@ -3,19 +3,21 @@ import { useSearchParams } from 'react-router-dom';
 
 export default function ArrowRush() {
   const [searchParams] = useSearchParams();
-  const difficulty = searchParams.get('difficulty') || 'simple';
+  const difficulty = searchParams.get('difficulty') || 'simple'; // 🔹 Récupère la difficulté dans l’URL
 
-  const gameAreaRef = useRef(null);
-  const [score, setScore] = useState(0);
+  const gameAreaRef = useRef(null); // 🔹 Référence au conteneur du jeu
+  const [score, setScore] = useState(0); // 🔹 Score du joueur
 
+  // 🔹 Paramètres selon la difficulté (vitesse et fréquence d’apparition)
   const settings = {
     simple: { speed: 2, interval: 1500 },
     difficile: { speed: 4, interval: 1000 },
     hardcore: { speed: 6, interval: 600 }
   };
 
-  const { speed, interval } = settings[difficulty] || settings.simple;
+  const { speed, interval } = settings[difficulty] || settings.simple; // 🔹 Valeurs utilisées pour la partie en cours
 
+  // 🎯 Fait apparaître une flèche aléatoire dans l’une des colonnes
   const spawnArrow = () => {
     const directions = ['left', 'down', 'up', 'right'];
     const dir = directions[Math.floor(Math.random() * directions.length)];
@@ -24,17 +26,19 @@ export default function ArrowRush() {
     arrow.classList.add('arrow', dir);
     arrow.style.top = '0px';
     arrow.dataset.direction = dir;
-    arrow.style.left = `${(column.offsetWidth - 60) / 2}px`;
+    arrow.style.left = `${(column.offsetWidth - 60) / 2}px`; // centre la flèche dans sa colonne
     column.appendChild(arrow);
   };
 
+  // 🏃‍♂️ Fait descendre les flèches progressivement selon la vitesse
   const moveArrows = () => {
     const arrows = gameAreaRef.current.querySelectorAll('.arrow');
     arrows.forEach((arrow) => {
       let top = parseInt(arrow.style.top);
-      top += speed;
+      top += speed; // la vitesse dépend du niveau
       arrow.style.top = `${top}px`;
 
+      // 🔻 Si la flèche atteint le bas sans être touchée → pénalité
       if (top > 500 && !arrow.dataset.hit) {
         arrow.dataset.hit = true;
         setScore((prev) => prev - 5);
@@ -43,30 +47,34 @@ export default function ArrowRush() {
     });
   };
 
+  // ⌨️ Vérifie si le joueur a appuyé sur la bonne flèche au bon moment
   const checkHit = (key) => {
-    const lineY = gameAreaRef.current.offsetHeight - 100;
+    const lineY = gameAreaRef.current.offsetHeight - 100; // position de la ligne rouge
     const arrows = gameAreaRef.current.querySelectorAll('.arrow');
+
     arrows.forEach((arrow) => {
       const top = parseInt(arrow.style.top);
       const arrowHeight = arrow.offsetHeight;
       const arrowBottom = top + arrowHeight;
       const isTouchingLine = lineY >= top && lineY <= arrowBottom;
 
+      // ✅ Si la flèche correspond à la touche et est dans la bonne zone
       if (
         isTouchingLine &&
         arrow.dataset.direction === key &&
         !arrow.dataset.hit
       ) {
         arrow.dataset.hit = true;
-        setScore((prev) => prev + 10);
-        arrow.remove();
+        setScore((prev) => prev + 10); // ajoute des points
+        arrow.remove(); // supprime la flèche touchée
       }
     });
   };
 
+  // ⚙️ Gère les intervalles et les événements clavier
   useEffect(() => {
-    const spawnInterval = setInterval(spawnArrow, interval);
-    const moveInterval = setInterval(moveArrows, 30);
+    const spawnInterval = setInterval(spawnArrow, interval); // apparition des flèches
+    const moveInterval = setInterval(moveArrows, 30); // mouvement continu
 
     const handleKeyDown = (e) => {
       const map = {
@@ -75,11 +83,12 @@ export default function ArrowRush() {
         ArrowLeft: 'left',
         ArrowRight: 'right'
       };
-      if (map[e.key]) checkHit(map[e.key]);
+      if (map[e.key]) checkHit(map[e.key]); // détecte la touche correspondante
     };
 
     document.addEventListener('keydown', handleKeyDown);
 
+    // 🔁 Nettoie les intervalles et événements quand on quitte la page
     return () => {
       clearInterval(spawnInterval);
       clearInterval(moveInterval);
@@ -87,7 +96,7 @@ export default function ArrowRush() {
     };
   }, [interval, speed]);
 
-  // 🔧 Style global du body
+  // 🎨 Applique un style global au body (fond noir, texte blanc)
   useEffect(() => {
     document.body.style.margin = '0';
     document.body.style.fontFamily = "'Courier New', monospace";
@@ -98,6 +107,7 @@ export default function ArrowRush() {
 
   return (
     <>
+      {/* 💅 CSS intégré directement ici */}
       <style>{`
         .jeu #game-area {
           position: relative;
@@ -121,6 +131,7 @@ export default function ArrowRush() {
           border-right: 1px solid #333;
         }
 
+        /* 🔻 Ligne de référence où frapper la flèche */
         #line {
           position: absolute;
           bottom: 100px;
@@ -130,6 +141,7 @@ export default function ArrowRush() {
           background: red;
         }
 
+        /* 🔸 Apparence des flèches (image selon la direction) */
         .arrow {
           position: absolute;
           width: 60px;
@@ -149,14 +161,17 @@ export default function ArrowRush() {
         }
       `}</style>
 
+      {/* 🧩 Structure principale du jeu */}
       <div className="jeu">
         <div id="score">Score : {score}</div>
+
+        {/* 🎯 Zone du jeu avec 4 colonnes de flèches */}
         <div id="game-area" ref={gameAreaRef}>
           <div className="column" data-direction="left"></div>
           <div className="column" data-direction="down"></div>
           <div className="column" data-direction="up"></div>
           <div className="column" data-direction="right"></div>
-          <div id="line"></div>
+          <div id="line"></div> {/* Ligne rouge où taper au bon moment */}
         </div>
       </div>
     </>

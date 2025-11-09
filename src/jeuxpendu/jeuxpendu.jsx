@@ -4,12 +4,14 @@ import { useNavigate } from 'react-router-dom';
 export default function JeuPendu() {
   const navigate = useNavigate();
 
-  const [wordList, setWordList] = useState([]);
-  const [word, setWord] = useState('');
-  const [guessed, setGuessed] = useState([]);
-  const [tries, setTries] = useState(0);
-  const [message, setMessage] = useState(null);
+  // 🔹 États du jeu
+  const [wordList, setWordList] = useState([]); // liste des mots chargés depuis le fichier
+  const [word, setWord] = useState(''); // mot actuel à deviner
+  const [guessed, setGuessed] = useState([]); // lettres déjà proposées par le joueur
+  const [tries, setTries] = useState(0); // nombre d’erreurs
+  const [message, setMessage] = useState(null); // message de victoire/défaite
 
+  // 🔹 Gestion des lettres accentuées (pour rendre le jeu plus "français")
   const accentsMap = {
     a: ['a', 'à', 'â', 'ä', 'ã', 'å'],
     e: ['e', 'é', 'è', 'ê', 'ë'],
@@ -20,7 +22,7 @@ export default function JeuPendu() {
     y: ['y', 'ÿ']
   };
 
-  // 🔹 Chargement du fichier texte contenant les mots français
+  // 🔹 Au chargement, on lit le fichier texte contenant les mots français
   useEffect(() => {
     fetch('/bibliotheque/liste_francais.txt')
       .then((res) => {
@@ -30,10 +32,12 @@ export default function JeuPendu() {
         return res.text();
       })
       .then((text) => {
+        // Vérifie que le fichier ne contient pas de HTML
         if (text.includes('<') || text.includes('>')) {
           throw new Error('❌ Le fichier contient du HTML au lieu de mots.');
         }
 
+        // Nettoie et filtre les mots valides
         const words = text
           .split(/\r?\n/)
           .map((w) => w.trim().toLowerCase())
@@ -43,6 +47,7 @@ export default function JeuPendu() {
           throw new Error('❌ Aucun mot valide trouvé dans le fichier.');
         }
 
+        // Stocke la liste et choisit un mot au hasard
         setWordList(words);
         const randomWord = words[Math.floor(Math.random() * words.length)];
         setWord(randomWord);
@@ -53,30 +58,35 @@ export default function JeuPendu() {
       });
   }, []);
 
-const handleGuess = (letter) => {
-  if (guessed.includes(letter) || message) return;
+  // 🔹 Fonction appelée quand l’utilisateur clique sur une lettre
+  const handleGuess = (letter) => {
+    // Si la lettre a déjà été proposée ou qu’une fin de partie est affichée → on ne fait rien
+    if (guessed.includes(letter) || message) return;
 
-  setGuessed((prev) => [...prev, letter]);
+    // Ajoute la lettre à la liste des lettres testées
+    setGuessed((prev) => [...prev, letter]);
 
-  // Vérifie si la lettre (ou ses variantes accentuées) est dans le mot
-  const possibleLetters = accentsMap[letter] || [letter];
-  if (!word.split('').some((char) => possibleLetters.includes(char))) {
-    setTries((prev) => prev + 1);
-  }
-};
+    // Vérifie si cette lettre (ou ses variantes accentuées) est dans le mot
+    const possibleLetters = accentsMap[letter] || [letter];
+    if (!word.split('').some((char) => possibleLetters.includes(char))) {
+      // Si elle n’est pas dedans → on compte un essai raté
+      setTries((prev) => prev + 1);
+    }
+  };
 
-const displayWord = word
-  .split('')
-  .map((char) => {
-    // Si une des lettres devinées correspond au char (avec accents)
-    const guessedMatch = guessed.some((letter) =>
-      (accentsMap[letter] || [letter]).includes(char)
-    );
-    return guessedMatch ? char : '_';
-  })
-  .join(' ');
+  // 🔹 Génère l’affichage du mot avec les lettres trouvées et les "_"
+  const displayWord = word
+    .split('')
+    .map((char) => {
+      // Vérifie si le caractère fait partie des lettres trouvées (même avec accent)
+      const guessedMatch = guessed.some((letter) =>
+        (accentsMap[letter] || [letter]).includes(char)
+      );
+      return guessedMatch ? char : '_';
+    })
+    .join(' ');
 
-
+  // 🔹 Vérifie les conditions de victoire ou défaite
   const won =
     word &&
     word
@@ -86,6 +96,7 @@ const displayWord = word
       );
   const lost = tries >= 6;
 
+  // 🔹 Affiche un message quand le joueur gagne ou perd
   useEffect(() => {
     if (won) {
       setMessage(`🎉 Félicitations ! Vous avez gagné ! Le mot était : ${word}`);
@@ -94,6 +105,7 @@ const displayWord = word
     }
   }, [won, lost, word]);
 
+  // 🔹 Permet de relancer une partie sans recharger la page
   const handleReplay = () => {
     const randomWord = wordList[Math.floor(Math.random() * wordList.length)];
     setWord(randomWord);
@@ -102,6 +114,7 @@ const displayWord = word
     setMessage(null);
   };
 
+  // 🔹 Définit le style général du fond de page (effet néon futuriste)
   useEffect(() => {
     document.body.style.background = 'linear-gradient(to bottom, #1a1a1a, #000)';
     document.body.style.fontFamily = "'Orbitron', sans-serif";
@@ -114,6 +127,7 @@ const displayWord = word
 
   return (
     <>
+      {/* 💅 Styles CSS internes */}
       <style>{`
         * {margin:0;padding:0;box-sizing:border-box;}
         .container {
@@ -165,11 +179,14 @@ const displayWord = word
         .footer {margin-top: 40px;text-align: center;color: #888;font-size: 0.9em;}
       `}</style>
 
+      {/* 🎮 Conteneur principal du jeu */}
       <div className="container">
         <h1>Jeu du Pendu</h1>
 
+        {/* 🔹 Affichage selon l’état du jeu (message, mot ou chargement) */}
         {message ? (
           <>
+            {/* Message de victoire ou défaite */}
             <p className="message">{message}</p>
             <button className="button" onClick={handleReplay}>
               🔁 Rejouer
@@ -177,8 +194,11 @@ const displayWord = word
           </>
         ) : word ? (
           <>
+            {/* Affichage du mot et des essais restants */}
             <p className="word">{displayWord}</p>
             <p>Essais restants : {6 - tries}</p>
+
+            {/* Clavier virtuel avec les lettres de l’alphabet */}
             <form>
               {Array.from({ length: 26 }, (_, i) =>
                 String.fromCharCode(97 + i)
@@ -195,9 +215,11 @@ const displayWord = word
             </form>
           </>
         ) : (
+          // Message de chargement pendant la lecture du fichier
           <p>Chargement des mots français...</p>
         )}
 
+        {/* 🔙 Bouton retour vers le hub des jeux */}
         <div className="footer">
           <button className="button" onClick={() => navigate('/hubjeux')}>
             Retour à l'accueil

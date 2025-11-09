@@ -6,56 +6,59 @@ export default function CodeCracker() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
 
-  // 🔹 Nombre de chiffres à deviner (ex: 4)
+  // 🔹 Récupère le nombre de chiffres à deviner depuis l’URL (par défaut : 4)
   const digitCount = parseInt(searchParams.get('digits')) || 4;
 
   // 🔹 États du jeu
-  const [secret, setSecret] = useState([]);
-  const [guess, setGuess] = useState('');
-  const [attempts, setAttempts] = useState([]);
-  const [won, setWon] = useState(false);
+  const [secret, setSecret] = useState([]);     // Le code secret à deviner
+  const [guess, setGuess] = useState('');       // La tentative actuelle saisie par le joueur
+  const [attempts, setAttempts] = useState([]); // Historique des tentatives précédentes
+  const [won, setWon] = useState(false);        // Statut de victoire
 
-  // 🔹 Génère un code secret unique
+  // 🔹 Génère un code secret unique à chaque partie
   useEffect(() => {
     const newSecret = [];
     while (newSecret.length < digitCount) {
       const digit = Math.floor(Math.random() * 10);
-      if (!newSecret.includes(digit)) newSecret.push(digit);
+      if (!newSecret.includes(digit)) newSecret.push(digit); // empêche les doublons
     }
     setSecret(newSecret);
   }, [digitCount]);
 
-  // 🔹 Vérifie la tentative
+  // 🔹 Vérifie la tentative du joueur et produit un feedback coloré
   const checkGuess = () => {
-    if (guess.length !== digitCount || isNaN(guess)) return;
+    if (guess.length !== digitCount || isNaN(guess)) return; // Vérifie la validité de l’entrée
 
-    const guessDigits = guess.split('').map(Number);
+    const guessDigits = guess.split('').map(Number); // Convertit la saisie en tableau de nombres
     let result = '';
 
+    // 🔸 Compare chaque chiffre avec le code secret
     guessDigits.forEach((digit, i) => {
       if (digit === secret[i]) {
-        result += `<span class="green">🟢</span>`;
+        result += `<span class="green">🟢</span>`; // Bon chiffre et bonne position
       } else if (secret.includes(digit)) {
-        result += `<span class="yellow">🟡</span>`;
+        result += `<span class="yellow">🟡</span>`; // Bon chiffre, mauvaise position
       } else {
-        result += `<span class="red">🔴</span>`;
+        result += `<span class="red">🔴</span>`; // Chiffre absent du code
       }
     });
 
+    // Enregistre la tentative et son résultat
     const newAttempt = {
       input: guess,
       result
     };
 
-    setAttempts((prev) => [...prev, newAttempt]);
-    setGuess('');
+    setAttempts((prev) => [...prev, newAttempt]); // Ajoute à la liste des tentatives
+    setGuess(''); // Réinitialise le champ de saisie
 
+    // 🔹 Vérifie la victoire
     if (guessDigits.every((d, i) => d === secret[i])) {
       setWon(true);
     }
   };
 
-  // 🔹 Retour à l’accueil
+  // 🔹 Retour à la page d’accueil du jeu
   const goBack = () => {
     navigate('/codecrackerindex');
   };
@@ -65,8 +68,10 @@ export default function CodeCracker() {
       <h1>🎮 Code Cracker</h1>
       <p id="instructions">Devine le code secret à {digitCount} chiffres</p>
 
+      {/* 🧩 Zone de jeu principale */}
       {!won ? (
         <>
+          {/* Champ de saisie du code */}
           <input
             type="text"
             id="guessInput"
@@ -77,19 +82,28 @@ export default function CodeCracker() {
           <button onClick={checkGuess}>Essayer</button>
         </>
       ) : (
+        // 🎉 Message de victoire
         <h2>🎉 Bravo ! Code trouvé !</h2>
       )}
 
+      {/* 📜 Zone d’affichage des essais précédents */}
       <div className="feedback" id="feedback">
         {attempts.map((attempt, i) => (
-          <div key={i} className="attempt" dangerouslySetInnerHTML={{ __html: `👉 ${attempt.input} → ${attempt.result}` }} />
+          <div
+            key={i}
+            className="attempt"
+            dangerouslySetInnerHTML={{
+              __html: `👉 ${attempt.input} → ${attempt.result}`
+            }}
+          />
         ))}
       </div>
 
       <br /><br />
+      {/* Bouton de retour */}
       <button onClick={goBack}>Retour à l’accueil</button>
 
-      {/* 🔹 CSS intégré */}
+      {/* 🎨 Styles CSS intégrés */}
       <style>{`
         body {
           font-family: 'Segoe UI', sans-serif;
@@ -104,6 +118,7 @@ export default function CodeCracker() {
           margin: auto;
         }
 
+        /* Sélecteurs et boutons */
         select {
           padding: 12px 16px;
           font-size: 18px;
@@ -136,6 +151,7 @@ export default function CodeCracker() {
           background-color: #66bb6a;
         }
 
+        /* Sections d’affichage */
         .rules, .difficulty, .feedback {
           margin-top: 20px;
           padding: 16px;
@@ -154,6 +170,7 @@ export default function CodeCracker() {
           font-size: 16px;
         }
 
+        /* Champ de saisie du code */
         input[type="text"] {
           padding: 12px 16px;
           font-size: 20px;
@@ -178,10 +195,12 @@ export default function CodeCracker() {
           background-color: #2c2c2c;
         }
 
+        /* 🟢🟡🔴 Couleurs des résultats */
         .green { color: #4caf50; }
         .yellow { color: #ffeb3b; }
         .red { color: #f44336; }
 
+        /* Liste des tentatives */
         .attempt {
           margin: 6px 0;
           font-size: 18px;

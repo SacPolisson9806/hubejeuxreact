@@ -4,40 +4,45 @@ import { useNavigate } from 'react-router-dom';
 export default function ChiffreMystere() {
   const navigate = useNavigate();
 
-  const [secret, setSecret] = useState(null);
-  const [guess, setGuess] = useState('');
-  const [attempts, setAttempts] = useState(0);
-  const [message, setMessage] = useState('');
+  // 🔹 États du jeu
+  const [secret, setSecret] = useState(null);  // Le chiffre mystère à deviner
+  const [guess, setGuess] = useState('');      // La tentative actuelle du joueur
+  const [attempts, setAttempts] = useState(0); // Nombre d’essais effectués
+  const [message, setMessage] = useState('');  // Message de feedback à afficher
 
+  // 🔹 Génère un nombre aléatoire entre 1 et 100 au chargement du composant
   useEffect(() => {
     const random = Math.floor(Math.random() * 100) + 1;
     setSecret(random);
   }, []);
 
+  // 🔹 Vérifie la tentative du joueur
   const checkGuess = () => {
     const num = Number(guess);
-    setAttempts((prev) => prev + 1);
+    setAttempts((prev) => prev + 1); // Incrémente le compteur d’essais
 
+    // Vérifie la validité et la comparaison du nombre
     if (!num || num < 1 || num > 100) {
-      setMessage('⚠️ Entre un nombre entre 1 et 100 !');
+      setMessage('⚠️ Entre un nombre entre 1 et 100 !'); // Hors limites
     } else if (num === secret) {
-      setMessage(`🎉 Bravo ! Tu as trouvé le chiffre ${secret} en ${attempts + 1} essais.`);
+      setMessage(`🎉 Bravo ! Tu as trouvé le chiffre ${secret} en ${attempts + 1} essais.`); // Gagné
     } else if (num < secret) {
-      setMessage('🔼 Trop petit !');
+      setMessage('🔼 Trop petit !'); // Trop bas
     } else {
-      setMessage('🔽 Trop grand !');
+      setMessage('🔽 Trop grand !'); // Trop haut
     }
 
-    setGuess('');
+    setGuess(''); // Vide le champ après chaque tentative
   };
 
+  // 🔹 Retourne à la page du hub de jeux
   const goBack = () => {
     navigate('/hubjeux');
   };
 
   return (
     <>
-      {/* 🔸 Style intégré */}
+      {/* 🎨 Style intégré directement dans le composant */}
       <style>{`
         * {
           margin: 0;
@@ -70,6 +75,7 @@ export default function ChiffreMystere() {
           margin-top: 20px;
         }
 
+        /* 🎯 Champ de saisie pour le nombre */
         input[type="number"] {
           padding: 10px;
           font-size: 1.5em;
@@ -83,6 +89,7 @@ export default function ChiffreMystere() {
           margin-right: 10px;
         }
 
+        /* 🟦 Bouton de validation */
         button {
           padding: 10px 20px;
           font-size: 1.2em;
@@ -99,6 +106,7 @@ export default function ChiffreMystere() {
           box-shadow: 0 0 10px #00ffff;
         }
 
+        /* 💬 Message de feedback (trop grand, petit, ou trouvé) */
         #message {
           margin-top: 30px;
           font-size: 1.5em;
@@ -106,6 +114,7 @@ export default function ChiffreMystere() {
           text-shadow: 0 0 5px #0f0;
         }
 
+        /* 🔙 Bouton de retour vers le hub */
         .back-button {
           display: inline-block;
           margin-top: 40px;
@@ -124,11 +133,13 @@ export default function ChiffreMystere() {
       `}</style>
 
       <div>
+        {/* 🧩 En-tête du jeu */}
         <header>
           <h1>🎲 Jeu du Chiffre Mystère</h1>
           <p>Devine le chiffre choisi par l’ordinateur !</p>
         </header>
 
+        {/* 🎮 Zone de jeu */}
         <div id="game">
           <input
             type="number"
@@ -140,8 +151,14 @@ export default function ChiffreMystere() {
             onChange={(e) => setGuess(e.target.value)}
           />
           <button onClick={checkGuess}>Essayer</button>
+
+          {/* 📢 Message de résultat */}
           <p id="message">{message}</p>
-          <button className="back-button" onClick={goBack}>⬅ Retour au hub de jeux</button>
+
+          {/* 🔙 Bouton de retour */}
+          <button className="back-button" onClick={goBack}>
+            ⬅ Retour au hub de jeux
+          </button>
         </div>
       </div>
     </>

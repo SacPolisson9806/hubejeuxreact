@@ -4,60 +4,66 @@ import { useNavigate } from 'react-router-dom';
 export default function Cemantixgame() {
   const navigate = useNavigate();
 
-  const [motMystere, setMotMystere] = useState('');
-  const [motPropose, setMotPropose] = useState('');
-  const [history, setHistory] = useState([]);
+  // 🔹 États principaux du jeu
+  const [motMystere, setMotMystere] = useState('');  // Mot mystère à deviner
+  const [motPropose, setMotPropose] = useState('');  // Mot entré par le joueur
+  const [history, setHistory] = useState([]);        // Historique des tentatives
 
+  // 🔹 Chargement du mot mystère depuis un fichier JSON local
   useEffect(() => {
-    fetch('/bibliotheque.json')
+    fetch('/bibliotheque.json') // Fichier contenant une liste de mots
       .then((res) => res.json())
       .then((data) => {
-        const mots = Object.keys(data);
-        const mot = mots[Math.floor(Math.random() * mots.length)];
+        const mots = Object.keys(data); // Récupère les mots du JSON
+        const mot = mots[Math.floor(Math.random() * mots.length)]; // Sélectionne un mot aléatoire
         setMotMystere(mot);
-        console.log('Mot mystère :', mot);
+        console.log('Mot mystère :', mot); // 🔍 Pour debug uniquement
       });
   }, []);
 
+  // 🔹 Fonction appelée à chaque tentative
   const checkWord = () => {
-    const mot = motPropose.trim().toLowerCase();
-    if (!mot || !motMystere) return;
+    const mot = motPropose.trim().toLowerCase(); // Nettoie le mot proposé
+    if (!mot || !motMystere) return; // Vérifie que les champs sont valides
 
+    // 🔸 Envoi de la requête au backend pour obtenir la similarité
     fetch('https://hubejeux.onrender.com/similarity', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ word1: mot, word2: motMystere })
     })
       .then((res) => res.json())
-      .then((data) => afficherScore(mot, data.score))
+      .then((data) => afficherScore(mot, data.score)) // Affiche le score obtenu
       .catch((err) => {
         console.error('Erreur backend :', err);
-        afficherScore(mot, 0);
+        afficherScore(mot, 0); // En cas d’erreur, score = 0
       });
 
-    setMotPropose('');
+    setMotPropose(''); // Réinitialise le champ d’entrée
   };
 
+  // 🔹 Ajoute le score dans l’historique et gère les couleurs / victoire
   const afficherScore = (mot, score) => {
-    let couleur = '🔵';
-    if (score >= 0.8) couleur = '🔴';
-    else if (score >= 0.5) couleur = '🟡';
+    let couleur = '🔵'; // Score faible
+    if (score >= 0.8) couleur = '🔴'; // Proche du mot mystère
+    else if (score >= 0.5) couleur = '🟡'; // Moyennement proche
 
     const entry = {
-      mot,
-      score: score.toFixed(3),
-      couleur,
-      victoire: mot === motMystere
+      mot,                          // Mot proposé
+      score: score.toFixed(3),      // Arrondi du score
+      couleur,                      // Indicateur visuel
+      victoire: mot === motMystere  // Booléen : mot trouvé ou non
     };
 
-    setHistory((prev) => [...prev, entry]);
+    setHistory((prev) => [...prev, entry]); // Ajoute la tentative à l’historique
   };
 
+  // 🔹 Retour au menu principal Cemantix
   const goBack = () => {
     navigate('/cemantix');
   };
 
-  // 🔧 Appliquer le style global au body
+  // 🔹 Applique un style global au <body> lors du montage du composant
   useEffect(() => {
     document.body.style.fontFamily = "'Courier New', Courier, monospace";
     document.body.style.backgroundColor = '#fdf6e3';
@@ -68,7 +74,7 @@ export default function Cemantixgame() {
 
   return (
     <>
-      {/* 🔸 Style intégré */}
+      {/* 🎨 Style CSS intégré directement dans le composant */}
       <style>{`
         h1 {
           font-size: 36px;
@@ -101,6 +107,7 @@ export default function Cemantixgame() {
           margin: 8px 0;
         }
 
+        /* 🟩 Champ de saisie du mot */
         input[type="text"] {
           padding: 12px 16px;
           font-size: 20px;
@@ -116,6 +123,7 @@ export default function Cemantixgame() {
           color: #aaa;
         }
 
+        /* 🟢 Boutons de jeu */
         button {
           padding: 12px 20px;
           font-size: 18px;
@@ -132,6 +140,7 @@ export default function Cemantixgame() {
           background-color: #388e3c;
         }
 
+        /* 📜 Historique des mots testés */
         #history {
           margin-top: 30px;
           font-size: 16px;
@@ -146,10 +155,12 @@ export default function Cemantixgame() {
         }
       `}</style>
 
+      {/* 🧩 Conteneur principal du jeu */}
       <div className="container">
         <h1>🎮 Cemantix</h1>
         <p>Devine le mot mystère !</p>
 
+        {/* 📝 Champ et bouton de proposition */}
         <input
           type="text"
           id="wordInput"
@@ -158,9 +169,11 @@ export default function Cemantixgame() {
           onChange={(e) => setMotPropose(e.target.value)}
         />
         <button onClick={checkWord}>Essayer</button>
+
         <br /><br />
         <button onClick={goBack}>Retour à l’accueil</button>
 
+        {/* 🧾 Affichage des tentatives précédentes */}
         <div id="history">
           {history.map((entry, index) => (
             <div key={index}>

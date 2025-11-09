@@ -4,15 +4,17 @@ import { useNavigate } from 'react-router-dom';
 export default function Cemantix() {
   const navigate = useNavigate();
 
+  // 🔹 Démarre la partie → redirige vers la page du jeu
   const startGame = () => {
     navigate('/cemantixgame');
   };
 
+  // 🔹 Retourne au hub principal des jeux
   const goBack = () => {
     navigate('/hubjeux');
   };
 
-  // 🔧 Appliquer le style global au body
+  // 🔧 Applique un style global au <body> dès que le composant est monté
   useEffect(() => {
     document.body.style.fontFamily = "'Courier New', Courier, monospace";
     document.body.style.backgroundColor = '#fdf6e3';
@@ -23,7 +25,7 @@ export default function Cemantix() {
 
   return (
     <>
-      {/* 🔸 Style intégré */}
+      {/* 🎨 Style CSS intégré directement ici pour simplifier la structure */}
       <style>{`
         h1 {
           font-size: 36px;
@@ -36,6 +38,7 @@ export default function Cemantix() {
           margin-bottom: 20px;
         }
 
+        /* 🧾 Sections d’explications et de boutons */
         .rules, .difficulty {
           background-color: #fff;
           border: 2px dashed #ccc;
@@ -56,6 +59,7 @@ export default function Cemantix() {
           margin: 8px 0;
         }
 
+        /* 🟩 Styles pour les champs et boutons (mêmes couleurs que le thème principal) */
         input[type="text"] {
           padding: 12px 16px;
           font-size: 20px;
@@ -71,6 +75,7 @@ export default function Cemantix() {
           color: #aaa;
         }
 
+        /* 🟢 Boutons principaux */
         button {
           padding: 12px 20px;
           font-size: 18px;
@@ -87,6 +92,7 @@ export default function Cemantix() {
           background-color: #388e3c;
         }
 
+        /* 📋 Historique (réutilisable dans la page du jeu) */
         #history {
           margin-top: 30px;
           font-size: 16px;
@@ -101,10 +107,12 @@ export default function Cemantix() {
         }
       `}</style>
 
+      {/* 🧩 Conteneur principal de la page d’accueil du jeu Cemantix */}
       <div className="container">
         <h1>🧠 Cemantix</h1>
         <p>Bienvenue dans le jeu de déduction sémantique !</p>
 
+        {/* 📜 Section expliquant les règles du jeu */}
         <div className="rules">
           <h2>📜 Règles du jeu</h2>
           <p>Un mot mystère est caché. À chaque mot proposé, tu obtiens un score de proximité :</p>
@@ -116,6 +124,7 @@ export default function Cemantix() {
           <p>Devine le mot en un minimum d’essais !</p>
         </div>
 
+        {/* 🎯 Zone de sélection/démarrage */}
         <div className="difficulty">
           <button onClick={startGame}>Commencer</button>
           <br /><br />
