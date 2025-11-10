@@ -1,7 +1,12 @@
 import React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import useAutoLogout from "./UseAutoLogout.jsx";
+import LogoutWarning from "./Logoutwarning.jsx";
+
+// Tes pages
 import Hubjeux from "./hubjeux";
 import Connexion from "./connexion";
+import Login from "./login.jsx";
 import QuizzSolo from "./quizz/quizzsolo";
 import QuizzMulti from "./quizz/quizzmulti";
 import StartquizzSolo from "./quizz/startquizzsolo.jsx";
@@ -20,40 +25,39 @@ import Index2048 from "./2048/index2048";
 import Game2048 from "./2048/game2048";
 import Sudokuaccueil from "./sudoku/sudokuaccueil";
 import Sudokugame from "./sudoku/sudokugame";
-import "./app.css";
-import Login from "./login.jsx";
 import Leaderboard from "./Leaderboard.jsx";
 
 export default function App() {
+  const { showWarning, countdown, resetTimer } = useAutoLogout();
+
   return (
-    <Routes>
-      {/* 🧩 Page d’accueil = Connexion / Inscription */}
-      <Route path="/" element={<Login />} />
-
-      {/* 🕹️ Page principale après connexion */}
-      <Route path="/hubjeux" element={<Hubjeux />} />
-
-      {/* 🎮 Jeux et modes */}
-      <Route path="/connexion" element={<Connexion />} />
-      <Route path="/quizzsolo" element={<QuizzSolo />} />
-      <Route path="/quizzmulti" element={<QuizzMulti />} />
-      <Route path="/startquizzsolo" element={<StartquizzSolo />} />
-      <Route path="/startquizzmulti" element={<StartquizzMulti />} />
-      <Route path="/jeuxpendu" element={<Jeuxpendu />} />
-      <Route path="/voiture" element={<Voiture />} />
-      <Route path="/accueil" element={<Accueil />} />
-      <Route path="/codecrackerindex" element={<Codecrackerindex />} />
-      <Route path="/codecracker" element={<Codecracker />} />
-      <Route path="/chiffremystere" element={<Chiffremystere />} />
-      <Route path="/cemantixgame" element={<Cemantixgame />} />
-      <Route path="/cemantix" element={<Cemantix />} />
-      <Route path="/arrowrushaccueil" element={<Arrowrushaccueil />} />
-      <Route path="/arrowrushgame" element={<Arrowrushgame />} />
-      <Route path="/index2048" element={<Index2048 />} />
-      <Route path="/game2048" element={<Game2048 />} />
-      <Route path="/sudokuaccueil" element={<Sudokuaccueil />} />
-      <Route path="/sudokugame" element={<Sudokugame />} />
-      <Route path="/Leaderboard" element={<Leaderboard />} />
-    </Routes>
+    <>
+      {showWarning && <LogoutWarning countdown={countdown} onStayConnected={resetTimer} />}
+      <Routes>
+        <Route path="/" element={<Login />} />
+        <Route path="/hubjeux" element={<Hubjeux />} />
+        <Route path="/connexion" element={<Connexion />} />
+        <Route path="/quizzsolo" element={<QuizzSolo />} />
+        <Route path="/quizzmulti" element={<QuizzMulti />} />
+        <Route path="/startquizzsolo" element={<StartquizzSolo />} />
+        <Route path="/startquizzmulti" element={<StartquizzMulti />} />
+        <Route path="/jeuxpendu" element={<Jeuxpendu />} />
+        <Route path="/voiture" element={<Voiture />} />
+        <Route path="/accueil" element={<Accueil />} />
+        <Route path="/codecrackerindex" element={<Codecrackerindex />} />
+        <Route path="/codecracker" element={<Codecracker />} />
+        <Route path="/chiffremystere" element={<Chiffremystere />} />
+        <Route path="/cemantixgame" element={<Cemantixgame />} />
+        <Route path="/cemantix" element={<Cemantix />} />
+        <Route path="/arrowrushaccueil" element={<Arrowrushaccueil />} />
+        <Route path="/arrowrushgame" element={<Arrowrushgame />} />
+        <Route path="/index2048" element={<Index2048 />} />
+        <Route path="/game2048" element={<Game2048 />} />
+        <Route path="/sudokuaccueil" element={<Sudokuaccueil />} />
+        <Route path="/sudokugame" element={<Sudokugame />} />
+        <Route path="/Leaderboard" element={<Leaderboard />} />
+      </Routes>
+      </>
+    
   );
 }

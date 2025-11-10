@@ -228,11 +228,11 @@ export default function Accueil() {
             <li>🚗 Choisis ta voiture préférée parmi les modèles disponibles dans l’onglet <strong>“Choisir voiture”</strong>.</li>
             <li>🎮 Utilise les flèches <strong>← / →</strong> pour te faufiler entre les voitures ennemies.</li>
             <li>💥 Évite à tout prix les voitures rouges — un seul choc et la partie est terminée !</li>
+            <li>⚡ Appuie sur <strong>E</strong> pour déclencher le nitro et filer comme une fusée !</li>
             <li>🧠 Reste concentré : plus tu tiens longtemps, plus ton score grimpe !</li>
             <li>🏆 Tente de décrocher la première place dans l’onglet <strong>“Scores”</strong>… et surtout, <strong>défends ton trône</strong> aussi longtemps que possible !</li>
           </ul>
         </div>
-
         {/* 🏆 Panneau des scores */}
         <div className={`score-panel ${showScores ? "open" : ""}`}>
           <h2>🏆 Classement - Course d'Évitement</h2>
