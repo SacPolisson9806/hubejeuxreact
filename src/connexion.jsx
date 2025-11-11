@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 
 const routesJeux = {
-  chiffremystere: '/chiffremystere',
+  chiffremystere: '/chiffremystereaccueil',
   arrowrushaccueil: '/arrowrushaccueil',
   cemantix: '/cemantix',
   jeuxpendu: '/jeuxpendu',

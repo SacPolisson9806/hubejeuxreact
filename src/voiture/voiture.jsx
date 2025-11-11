@@ -6,9 +6,13 @@ export default function Voiture() {
   const canvasRef = useRef(null);
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
+
+  // 🔹 Récupère la voiture choisie dans l’accueil
   const selectedCar = searchParams.get("car") || "images/car-red.png";
 
-  // 🔹 Joueur
+  // ==========================
+  // 🏎️ Paramètres du joueur
+  // ==========================
   const player = {
     x: 180,
     y: 500,
@@ -17,7 +21,9 @@ export default function Voiture() {
     sprite: selectedCar
   };
 
-  // 🔹 Voitures ennemies
+  // ==========================
+  // 🚗 Liste des voitures ennemies
+  // ==========================
   const enemyImages = [
     "voitureenemieimage/car1.png",
     "voitureenemieimage/car2.png",
@@ -25,35 +31,36 @@ export default function Voiture() {
     "voitureenemieimage/car4.png"
   ];
 
-  // 🔹 Variables du jeu
+  // ==========================
+  // ⚙️ Variables du jeu
+  // ==========================
   let obstacles = [];
   let speed = 4;
   let survivalTime = 0;
   let isGameOver = false;
 
-  // 🔥 Gestion du nitro
-  let nitro = 100; // pourcentage (0 à 100)
+  // ==========================
+  // 🔥 Nitro
+  // ==========================
+  let nitro = 100; // Pourcentage (0–100)
   let isNitroActive = false;
-  let canUseNitro = true; // 🚫 empêche de relancer avant 100%
+  let canUseNitro = true;
   let gameLoop, obstacleLoop, speedLoop, nitroLoop;
 
-  // 🏎️ Dessin des voitures
+  // ==========================
+  // 🎨 Fonction pour dessiner une voiture
+  // ==========================
   function drawCar(ctx, obj) {
     const img = new Image();
     img.src = obj.sprite;
     ctx.drawImage(img, obj.x, obj.y, obj.width, obj.height);
   }
 
-  // 🔹 Choix d'une voiture ennemie
-  function getRandomEnemyImage() {
-    const index = Math.floor(Math.random() * enemyImages.length);
-    return enemyImages[index];
-  }
-
-  // 🚧 Création des obstacles
+  // ==========================
+  // 🚘 Crée des voitures ennemies aléatoirement
+  // ==========================
   function spawnObstacle(ctx) {
     if (isGameOver) return;
-
     const count = Math.floor(Math.random() * 3) + 1;
     const minGap = 50;
     const positions = [];
@@ -70,12 +77,14 @@ export default function Voiture() {
         y: -80,
         width: 40,
         height: 80,
-        sprite: getRandomEnemyImage()
+        sprite: enemyImages[Math.floor(Math.random() * enemyImages.length)]
       });
     });
   }
 
+  // ==========================
   // 💥 Collision
+  // ==========================
   function handleCollision() {
     isGameOver = true;
     clearInterval(gameLoop);
@@ -84,7 +93,7 @@ export default function Voiture() {
     clearInterval(nitroLoop);
     document.getElementById("gameOver").classList.remove("hidden");
 
-    // 🔹 Envoi du score
+    // 🔹 Envoi du score au backend
     const username = localStorage.getItem("playerName") || "Invité";
     axios
       .post("http://localhost:5000/scores", {
@@ -100,14 +109,16 @@ export default function Voiture() {
     }, 1500);
   }
 
+  // ==========================
   // 🔄 Mise à jour du jeu
+  // ==========================
   function update(ctx) {
     if (isGameOver) return;
 
     ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
     drawCar(ctx, player);
 
-    // 🔥 Effet du nitro (flammes derrière la voiture)
+    // 🔥 Effet visuel du nitro (flammes)
     if (isNitroActive) {
       ctx.fillStyle = "orange";
       ctx.beginPath();
@@ -118,11 +129,12 @@ export default function Voiture() {
       ctx.fill();
     }
 
-    // 🧱 Obstacles
+    // 🧱 Déplacement des voitures ennemies
     obstacles.forEach((obs, i) => {
       obs.y += speed;
       drawCar(ctx, obs);
 
+      // Détection collision
       if (
         obs.x < player.x + player.width &&
         obs.x + obs.width > player.x &&
@@ -132,11 +144,14 @@ export default function Voiture() {
         handleCollision();
       }
 
+      // Supprime celles sorties de l’écran
       if (obs.y > ctx.canvas.height) obstacles.splice(i, 1);
     });
   }
 
-  // ⚙️ Mise à jour de la barre de nitro
+  // ==========================
+  // ⚡ Mise à jour de la barre de nitro
+  // ==========================
   function updateNitroBar() {
     const bar = document.getElementById("nitroBar");
     if (bar) {
@@ -145,15 +160,18 @@ export default function Voiture() {
     }
   }
 
+  // ==========================
+  // 🎮 useEffect principal du jeu
+  // ==========================
   useEffect(() => {
     const canvas = canvasRef.current;
     const ctx = canvas.getContext("2d");
 
-    // 🔁 Boucles du jeu
+    // 🔁 Boucles principales
     gameLoop = setInterval(() => update(ctx), 1000 / 60);
     obstacleLoop = setInterval(() => spawnObstacle(ctx), 1500);
 
-    // ⏱️ Timer du jeu
+    // ⏱️ Timer
     speedLoop = setInterval(() => {
       if (!isGameOver) {
         survivalTime += 1;
@@ -162,21 +180,21 @@ export default function Voiture() {
       }
     }, 1000);
 
-    // ⛽ Gestion du nitro (vidage + recharge)
+    // ⛽ Nitro (consommation + recharge)
     nitroLoop = setInterval(() => {
       if (isNitroActive) {
-        nitro -= 2; // consomme vite
+        nitro -= 2;
         if (nitro <= 0) {
           nitro = 0;
           isNitroActive = false;
-          canUseNitro = false; // 🚫 impossible de réactiver
-          speed /= 2; // retour normal
+          canUseNitro = false;
+          speed /= 2;
         }
       } else if (!isNitroActive && nitro < 100) {
-        nitro += 1; // recharge lente
+        nitro += 1;
         if (nitro >= 100) {
           nitro = 100;
-          canUseNitro = true; // ✅ peut à nouveau l’utiliser
+          canUseNitro = true;
         }
       }
       updateNitroBar();
@@ -189,10 +207,10 @@ export default function Voiture() {
       if (e.key === "ArrowRight" && player.x < canvas.width - player.width)
         player.x += 20;
 
-      // ⚡ Nitro activé avec E, seulement s’il est disponible
+      // ⚡ Nitro (touche E)
       if (e.key.toLowerCase() === "e" && canUseNitro && nitro === 100 && !isNitroActive) {
         isNitroActive = true;
-        speed *= 2; // double la vitesse
+        speed *= 2;
       }
     };
 
@@ -209,42 +227,43 @@ export default function Voiture() {
     };
   }, []);
 
-  // 🌈 Style global
-  useEffect(() => {
-    document.body.style.margin = "0";
-    document.body.style.backgroundColor = "#000";
-    document.body.style.fontFamily = "'Press Start 2P', cursive, sans-serif";
-    document.body.style.overflow = "hidden";
-    document.body.style.display = "flex";
-    document.body.style.flexDirection = "column";
-    document.body.style.alignItems = "center";
-    document.body.style.justifyContent = "center";
-    document.body.style.height = "100vh";
-    document.body.style.position = "relative";
-
-    return () => {
-      document.body.style = "";
-    };
-  }, []);
-
   return (
     <>
+      {/* ==========================
+          🎨 Styles intégrés (CSS)
+          ========================== */}
       <style>{`
-        canvas {
-          background-color: #222;
-          border: 4px solid #0ff;
+        body {
+          background-color: #000;
+          color: #00ffff;
+          margin: 0;
+          font-family: "Press Start 2P", cursive, sans-serif;
+          overflow: hidden;
+        }
+
+        .voiture-game-container {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          height: 100vh;
+          position: relative;
+        }
+
+        .game-canvas {
+          border: 4px solid #00ffff;
           border-radius: 10px;
-          box-shadow: 0 0 20px #0ff;
-          margin-bottom: 60px;
+          background: #111;
+          box-shadow: 0 0 25px #00ffff;
         }
 
         #scoreDisplay {
           position: absolute;
-          bottom: 20px;
+          top: 10px;
           left: 50%;
           transform: translateX(-50%);
           color: #00ffff;
-          font-size: 20px;
+          font-size: 18px;
           background: #000;
           padding: 10px 20px;
           border: 2px solid #00ffff;
@@ -273,14 +292,12 @@ export default function Voiture() {
           50% { opacity: 0.4; }
         }
 
-        .hidden {
-          display: none;
-        }
+        .hidden { display: none; }
 
-        /* 🚀 Nitro réaliste */
+        /* 🚀 Nitro bar */
         #nitroContainer {
           position: absolute;
-          left: calc(50% + 230px);
+          right: 30px;
           top: 50%;
           transform: translateY(-50%);
           width: 40px;
@@ -299,7 +316,6 @@ export default function Voiture() {
           width: 100%;
           height: 100%;
           background: linear-gradient(to top, #ff0000 0%, #ff6600 50%, #ffff00 100%);
-          border-radius: 0 0 20px 20px;
           transform-origin: bottom;
           transform: scaleY(1);
           transition: transform 0.2s linear;
@@ -312,17 +328,19 @@ export default function Voiture() {
           text-align: center;
           color: #00ffff;
           font-size: 10px;
-          font-family: 'Press Start 2P';
           text-shadow: 0 0 5px #00ffff;
         }
       `}</style>
 
-      <div className="voiture-container">
-        <canvas ref={canvasRef} width={400} height={600} />
+      {/* ==========================
+          🕹️ Structure du jeu
+          ========================== */}
+      <div className="voiture-game-container">
+        <canvas ref={canvasRef} className="game-canvas" width={400} height={600} />
         <div id="scoreDisplay">⏱ Temps : 0s</div>
         <div id="gameOver" className="hidden">💥 Collision ! Game Over</div>
 
-        {/* 🔹 Barre de nitro */}
+        {/* 🔋 Barre de Nitro */}
         <div id="nitroContainer">
           <div id="nitroText">NITRO</div>
           <div id="nitroBar"></div>

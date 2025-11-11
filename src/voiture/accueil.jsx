@@ -9,51 +9,51 @@ import Leaderboard from "../Leaderboard";
   - Lancer le jeu
 */
 export default function Accueil() {
-  const navigate = useNavigate(); // Hook pour naviguer vers une autre route
+  const navigate = useNavigate(); // Hook React Router pour changer de page
 
-  // 🏎️ États pour gérer la sélection de voiture et l'affichage des panneaux
-  const [selectedCar, setSelectedCar] = useState(null); // La voiture choisie par le joueur
-  const [showRules, setShowRules] = useState(false);    // Affichage du panneau de règles
-  const [showGallery, setShowGallery] = useState(false); // Affichage de la galerie de voitures
-  const [showScores, setShowScores] = useState(false);  // Affichage du panneau de scores
-  const [showError, setShowError] = useState(false);    // Message d'erreur si aucune voiture choisie
+  // 🏎️ États de gestion
+  const [selectedCar, setSelectedCar] = useState(null); // Voiture choisie
+  const [showRules, setShowRules] = useState(false);    // Panneau règles
+  const [showGallery, setShowGallery] = useState(false); // Galerie voitures
+  const [showScores, setShowScores] = useState(false);  // Panneau scores
+  const [showError, setShowError] = useState(false);    // Message erreur
 
-  // 🔹 Récupération automatique du pseudo depuis le stockage local
+  // 🔹 Récupération du pseudo joueur
   const playerName = localStorage.getItem("playerName") || "";
 
-  // 🏎️ Options de voitures disponibles
+  // 🏎️ Liste des voitures disponibles
   const carOptions = [
     { src: "voitureimage/voiturerouge.png", alt: "Rouge" },
     { src: "voitureimage/voiturerose.png", alt: "Rose" },
     { src: "voitureimage/voiturebleu.png", alt: "Bleu" },
   ];
 
-  // 🔹 Fonction appelée au clic sur "Jouer"
+  // ▶️ Lancer le jeu
   const handlePlay = () => {
-    if (!selectedCar) {           // Vérifie si une voiture est sélectionnée
-      setShowError(true);         // Affiche un message d'erreur si non
+    if (!selectedCar) {
+      setShowError(true);
       return;
     }
-    if (!playerName) {            // Vérifie si le joueur est connecté
+    if (!playerName) {
       alert("🚨 Connecte-toi pour jouer !");
       return;
     }
-    // Navigation vers la page du jeu en passant la voiture sélectionnée dans l'URL
+    // Navigation vers la page du jeu avec la voiture choisie
     navigate(`/voiture?car=${encodeURIComponent(selectedCar)}`);
   };
 
-  // 🔹 useEffect pour styliser la page dès le chargement
+  // 🎨 Style global du corps de la page
   useEffect(() => {
     document.body.style.background = "radial-gradient(circle, #000 40%, #111 100%)";
     document.body.style.color = "#0ff";
     document.body.style.fontFamily = "'Press Start 2P', cursive, sans-serif";
     document.body.style.textAlign = "center";
     document.body.style.padding = "40px";
-  }, []); // [] => s'exécute une seule fois au montage du composant
+  }, []);
 
   return (
     <>
-      {/* 🔹 Styles internes pour la page */}
+      {/* 🔹 Styles internes de la page */}
       <style>{`
         .screen {
           max-width: 600px;
@@ -136,7 +136,7 @@ export default function Accueil() {
           animation: pulse 0.3s ease;
         }
 
-        /* 📜 Panneau des règles (gauche) */
+        /* 📜 Panneau des règles (à gauche) */
         .rules-panel {
           position: fixed;
           top: 0;
@@ -158,7 +158,7 @@ export default function Accueil() {
           transform: translateX(0);
         }
 
-        /* 🏆 Panneau des scores (droite) */
+        /* 🏆 Panneau des scores (à droite) */
         .score-panel {
           position: fixed;
           top: 0;
@@ -182,25 +182,24 @@ export default function Accueil() {
       `}</style>
 
       <div className="screen">
-        {/* Titre du jeu */}
+        {/* 🏁 Titre du jeu */}
         <h1>🚗 Course d'Évitement</h1>
         <p className="subtitle">Évite les voitures rouges et reste en vie !</p>
 
-        {/* 🔹 Boutons principaux */}
+        {/* 🎮 Boutons principaux */}
         <div className="button-group">
-          <button onClick={() => setShowRules(!showRules)}>📜 Règles</button>
-          <button onClick={() => setShowScores(!showScores)}>🏆 Scores</button>
+          {/* Ajout de la classe .btn manquante ici ✅ */}
+          <button onClick={() => setShowRules(!showRules)} className="btn">📜 Règles</button>
+          <button onClick={() => setShowScores(!showScores)} className="btn">🏆 Scores</button>
           <button onClick={handlePlay} className="btn">🎮 Jouer</button>
-          <div onClick={() => setShowGallery(!showGallery)} className="btn">
-            🚗 Choisir ta voiture
-          </div>
+          <div onClick={() => setShowGallery(!showGallery)} className="btn">🚗 Choisir ta voiture</div>
           <a href="/hubjeux" className="btn">↩ Retour</a>
 
           {/* Message d'erreur si aucune voiture choisie */}
           {showError && <p className="car-error">🚫 Choisis une voiture avant de jouer !</p>}
         </div>
 
-        {/* 🔹 Galerie de voitures */}
+        {/* 🚘 Galerie de voitures */}
         {showGallery && (
           <div className="carGallery">
             <div className="car-options">
@@ -212,8 +211,8 @@ export default function Accueil() {
                   className={`car-pick ${selectedCar === car.src ? "selected" : ""}`}
                   style={{ width: "60px", height: "120px", imageRendering: "pixelated" }}
                   onClick={() => {
-                    setSelectedCar(car.src); // Sélection de la voiture
-                    setShowError(false);     // Supprime le message d'erreur si affiché
+                    setSelectedCar(car.src);
+                    setShowError(false);
                   }}
                 />
               ))}
@@ -221,7 +220,7 @@ export default function Accueil() {
           </div>
         )}
 
-        {/* 📜 Panneau des règles */}
+        {/* 📜 Règles du jeu */}
         <div className={`rules-panel ${showRules ? "open" : ""}`}>
           <h2>📜 Règles du jeu</h2>
           <ul>
@@ -233,7 +232,8 @@ export default function Accueil() {
             <li>🏆 Tente de décrocher la première place dans l’onglet <strong>“Scores”</strong>… et surtout, <strong>défends ton trône</strong> aussi longtemps que possible !</li>
           </ul>
         </div>
-        {/* 🏆 Panneau des scores */}
+
+        {/* 🏆 Classement */}
         <div className={`score-panel ${showScores ? "open" : ""}`}>
           <h2>🏆 Classement - Course d'Évitement</h2>
           <Leaderboard game="accueil" />

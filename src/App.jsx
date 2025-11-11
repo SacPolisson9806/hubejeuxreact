@@ -17,6 +17,7 @@ import Accueil from "./voiture/accueil";
 import Codecrackerindex from "./codecracker/codecrackerindex";
 import Codecracker from "./codecracker/codecracker";
 import Chiffremystere from "./chiffremystere/chiffremystere";
+import Chiffremystereaccueil from "./chiffremystere/chiffremystereaccueil";
 import Cemantixgame from "./cemantix/cemantixgame";
 import Cemantix from "./cemantix/cemantix";
 import Arrowrushaccueil from "./arrowrush/arrowrushaccueil";
@@ -26,6 +27,7 @@ import Game2048 from "./2048/game2048";
 import Sudokuaccueil from "./sudoku/sudokuaccueil";
 import Sudokugame from "./sudoku/sudokugame";
 import Leaderboard from "./Leaderboard.jsx";
+import ChiffreMystereLeaderboard from "./chiffremystere/ChiffreMystereLeaderboard.jsx";
 
 export default function App() {
   const { showWarning, countdown, resetTimer } = useAutoLogout();
@@ -47,6 +49,7 @@ export default function App() {
         <Route path="/codecrackerindex" element={<Codecrackerindex />} />
         <Route path="/codecracker" element={<Codecracker />} />
         <Route path="/chiffremystere" element={<Chiffremystere />} />
+        <Route path="/chiffremystereaccueil" element={<Chiffremystereaccueil />} />
         <Route path="/cemantixgame" element={<Cemantixgame />} />
         <Route path="/cemantix" element={<Cemantix />} />
         <Route path="/arrowrushaccueil" element={<Arrowrushaccueil />} />
@@ -56,6 +59,7 @@ export default function App() {
         <Route path="/sudokuaccueil" element={<Sudokuaccueil />} />
         <Route path="/sudokugame" element={<Sudokugame />} />
         <Route path="/Leaderboard" element={<Leaderboard />} />
+        <Route path="/ChiffreMystereLeaderboard" element={<ChiffreMystereLeaderboard />} />
       </Routes>
       </>
     
