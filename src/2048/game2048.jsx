@@ -109,27 +109,207 @@ export default function Game2048() {
     <>
       {/* CSS compact */}
       <style>{`
-        body { background: linear-gradient(to bottom,#d8f6ff,#b0e0f0); font-family:'Segoe UI',Tahoma,sans-serif; color:#004d40; text-align:center; padding:40px; overflow-x:hidden;}
-        h1{font-size:36px;color:#006064;margin-bottom:10px;}
-        .grid{display:grid;grid-template-columns:repeat(var(--size),80px);gap:14px;margin:20px auto;padding:14px;background:radial-gradient(circle,#aeefff 40%,#87ceeb 100%);border-radius:16px;box-shadow:inset 0 0 20px rgba(0,150,200,.2),0 0 12px rgba(0,200,255,.1);}
-        .cell{width:80px;height:80px;visibility:hidden;opacity:0;}
-        .cell-glacon{width:80px;height:80px;background:linear-gradient(to bottom right,#e0f7ff,#b0dfff);color:#00363a;font-size:24px;font-weight:bold;display:flex;align-items:center;justify-content:center;border-radius:12px;box-shadow:inset 0 0 6px rgba(255,255,255,.4),0 0 12px rgba(0,150,200,.4);animation:float 3s ease-in-out infinite;transition:transform .2s;}
-        @keyframes float{0%{transform:translateY(0)}50%{transform:translateY(-4px)}100%{transform:translateY(0)}}
-        .retour{margin:40px auto;padding:10px 20px;background:#01c8fa;color:#fff;border:none;border-radius:8px;cursor:pointer;box-shadow:0 4px 6px rgba(0,0,0,.1);}
-        .retour:hover{background:#e53935;}
-        #environment{position:relative;margin-top:40px;height:120px;overflow:hidden;}
-        .penguin,.bear{position:absolute;bottom:0;width:60px;height:60px;background-size:contain;background-repeat:no-repeat;animation:waddle 6s linear infinite;}
-        .penguin{left:10%;background-image:url('sprites/penguin.png');}
-        .bear{right:10%;background-image:url('sprites/bear.png');}
-        @keyframes waddle{0%{transform:translateY(0)}50%{transform:translateY(-5px)}100%{transform:translateY(0)}}
-        .snow{position:absolute;top:0;left:0;width:100%;height:100%;background-image:url('sprites/snow.png');background-size:cover;opacity:.3;}
-        .popup{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,50,.6);display:flex;align-items:center;justify-content:center;z-index:999;}
-        .popup-content{background:#e0f7ff;padding:30px;border-radius:16px;text-align:center;box-shadow:0 0 20px rgba(0,150,200,.4);}
-        .popup-content h2{margin-bottom:10px;color:#006064;}
-        .popup-content button{margin:10px;padding:10px 20px;font-size:16px;border:none;border-radius:8px;background-color:#4dd0e1;color:white;cursor:pointer;}
-        .popup-content button:hover{background-color:#26c6da;}
-      `}</style>
+  body {
+    background: linear-gradient(to bottom, #e6f9ff 0%, #b8e8fa 40%, #9fdcf8 100%);
+    font-family: 'Segoe UI', sans-serif;
+    text-align: center;
+    padding: 40px;
+    overflow-x: hidden;
+    color: #024d61;
+  }
 
+  h1 {
+    font-size: 36px;
+    color: #015f6f;
+    margin-bottom: 10px;
+    text-shadow: 1px 2px 4px rgba(255,255,255,0.8);
+  }
+
+  /* 🌊 Eau gelée qui s’adapte à la taille de la grille */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(var(--size), 80px);
+    gap: 14px;
+    margin: 30px auto;
+    padding: 18px;
+    width: calc(var(--size) * 80px + (var(--size) - 1) * 14px + 36px);
+    height: calc(var(--size) * 80px + (var(--size) - 1) * 14px + 36px);
+    border-radius: 24px;
+    position: relative;
+    background: 
+      radial-gradient(circle at 30% 30%, rgba(180,240,255,0.9) 0%, rgba(110,190,255,0.8) 60%, rgba(80,160,230,0.6) 100%);
+    box-shadow:
+      inset 0 0 35px rgba(255,255,255,0.6),
+      0 10px 40px rgba(0,80,150,0.3),
+      inset 0 -10px 30px rgba(0,120,255,0.25);
+    overflow: hidden;
+  }
+
+  /* 💧 Reflets animés sur l’eau */
+  .grid::before {
+    content: '';
+    position: absolute;
+    top: -100%;
+    left: 0;
+    width: 100%;
+    height: 200%;
+    background: radial-gradient(circle at 30% 20%, rgba(255,255,255,0.3) 0%, transparent 70%);
+    opacity: 0.25;
+    animation: shimmer 8s linear infinite;
+  }
+
+  @keyframes shimmer {
+    0% { transform: translateY(0); }
+    100% { transform: translateY(100%); }
+  }
+
+  /* 🧊 Glaçons réalistes */
+  .cell-glacon {
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(145deg, rgba(255,255,255,0.97), rgba(180,230,255,0.8));
+    border-radius: 14px;
+    box-shadow:
+      inset 0 0 10px rgba(255,255,255,0.8),
+      0 6px 12px rgba(0,80,130,0.3),
+      0 0 15px rgba(180,240,255,0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 24px;
+    color: #012c3c;
+    text-shadow: 1px 1px 3px rgba(255,255,255,0.5);
+    animation: float 3s ease-in-out infinite;
+    transition: transform 0.2s ease, background 0.3s ease;
+  }
+
+  .cell-glacon:hover {
+    transform: scale(1.05);
+    background: linear-gradient(145deg, rgba(255,255,255,1), rgba(210,250,255,0.9));
+  }
+
+  @keyframes float {
+    0% { transform: translateY(0); }
+    50% { transform: translateY(-3px); }
+    100% { transform: translateY(0); }
+  }
+
+  /* ❄️ Neige douce et réaliste */
+  .snow {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    background-image: url('sprites/snow.png');
+    background-size: cover;
+    opacity: 0.25;
+    animation: snowFall 25s linear infinite;
+    z-index: 0;
+  }
+
+  @keyframes snowFall {
+    0% { background-position: 0 0; }
+    100% { background-position: 0 1000px; }
+  }
+
+  /* 🐧 Ours & pingouin sur la banquise */
+  #environment {
+    position: relative;
+    margin-top: 40px;
+    height: 120px;
+  }
+
+  .penguin, .bear {
+    position: absolute;
+    bottom: 0;
+    width: 60px;
+    height: 60px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    animation: waddle 6s ease-in-out infinite;
+  }
+
+  .penguin {
+    left: 15%;
+    background-image: url('sprites/penguin.png');
+  }
+
+  .bear {
+    right: 15%;
+    background-image: url('sprites/bear.png');
+  }
+
+  @keyframes waddle {
+    0% { transform: translateY(0); }
+    50% { transform: translateY(-5px); }
+    100% { transform: translateY(0); }
+  }
+
+  /* 💬 Popup stylé glace */
+  .popup {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 30, 60, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 999;
+  }
+
+  .popup-content {
+    background: rgba(240,250,255,0.95);
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0 0 25px rgba(0,150,200,0.4);
+    backdrop-filter: blur(6px);
+    text-align: center;
+  }
+
+  .popup-content h2 {
+    color: #015f6f;
+    margin-bottom: 10px;
+  }
+
+  .popup-content button {
+    margin: 10px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    background-color: #4dd0e1;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .popup-content button:hover {
+    background-color: #0097a7;
+  }
+
+  /* 🏠 Bouton retour */
+  .retour {
+    margin: 40px auto;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 10px;
+    background: #00bcd4;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    transition: background 0.2s;
+  }
+
+  .retour:hover {
+    background: #0097a7;
+  }
+`}</style>
       <header>
         <h1>🧊 2048 Iceberg Edition</h1>
         <button onClick={() => navigate('/index2048')} className="retour">🏠 Accueil</button>
