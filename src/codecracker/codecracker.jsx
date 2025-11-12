@@ -6,72 +6,49 @@ export default function CodeCracker() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
 
-  // 🔹 Récupère le nombre de chiffres à deviner depuis l’URL (par défaut : 4)
   const digitCount = parseInt(searchParams.get('digits')) || 4;
 
-  // 🔹 États du jeu
-  const [secret, setSecret] = useState([]);     // Le code secret à deviner
-  const [guess, setGuess] = useState('');       // La tentative actuelle saisie par le joueur
-  const [attempts, setAttempts] = useState([]); // Historique des tentatives précédentes
-  const [won, setWon] = useState(false);        // Statut de victoire
+  const [secret, setSecret] = useState([]);
+  const [guess, setGuess] = useState('');
+  const [attempts, setAttempts] = useState([]);
+  const [won, setWon] = useState(false);
 
-  // 🔹 Génère un code secret unique à chaque partie
   useEffect(() => {
     const newSecret = [];
     while (newSecret.length < digitCount) {
       const digit = Math.floor(Math.random() * 10);
-      if (!newSecret.includes(digit)) newSecret.push(digit); // empêche les doublons
+      if (!newSecret.includes(digit)) newSecret.push(digit);
     }
     setSecret(newSecret);
   }, [digitCount]);
 
-  // 🔹 Vérifie la tentative du joueur et produit un feedback coloré
   const checkGuess = () => {
-    if (guess.length !== digitCount || isNaN(guess)) return; // Vérifie la validité de l’entrée
+    if (guess.length !== digitCount || isNaN(guess)) return;
 
-    const guessDigits = guess.split('').map(Number); // Convertit la saisie en tableau de nombres
+    const guessDigits = guess.split('').map(Number);
     let result = '';
 
-    // 🔸 Compare chaque chiffre avec le code secret
     guessDigits.forEach((digit, i) => {
-      if (digit === secret[i]) {
-        result += `<span class="green">🟢</span>`; // Bon chiffre et bonne position
-      } else if (secret.includes(digit)) {
-        result += `<span class="yellow">🟡</span>`; // Bon chiffre, mauvaise position
-      } else {
-        result += `<span class="red">🔴</span>`; // Chiffre absent du code
-      }
+      if (digit === secret[i]) result += `<span class="green">🟢</span>`;
+      else if (secret.includes(digit)) result += `<span class="yellow">🟡</span>`;
+      else result += `<span class="red">🔴</span>`;
     });
 
-    // Enregistre la tentative et son résultat
-    const newAttempt = {
-      input: guess,
-      result
-    };
+    setAttempts((prev) => [...prev, { input: guess, result }]);
+    setGuess('');
 
-    setAttempts((prev) => [...prev, newAttempt]); // Ajoute à la liste des tentatives
-    setGuess(''); // Réinitialise le champ de saisie
-
-    // 🔹 Vérifie la victoire
-    if (guessDigits.every((d, i) => d === secret[i])) {
-      setWon(true);
-    }
+    if (guessDigits.every((d, i) => d === secret[i])) setWon(true);
   };
 
-  // 🔹 Retour à la page d’accueil du jeu
-  const goBack = () => {
-    navigate('/codecrackerindex');
-  };
+  const goBack = () => navigate('/codecrackerindex');
 
   return (
     <div className="container">
-      <h1>🎮 Code Cracker</h1>
+      <h1 className="title">🎮 Code Cracker</h1>
       <p id="instructions">Devine le code secret à {digitCount} chiffres</p>
 
-      {/* 🧩 Zone de jeu principale */}
       {!won ? (
         <>
-          {/* Champ de saisie du code */}
           <input
             type="text"
             id="guessInput"
@@ -82,128 +59,147 @@ export default function CodeCracker() {
           <button onClick={checkGuess}>Essayer</button>
         </>
       ) : (
-        // 🎉 Message de victoire
-        <h2>🎉 Bravo ! Code trouvé !</h2>
+        <h2 className="win-message">🎉 Bravo ! Code trouvé !</h2>
       )}
 
-      {/* 📜 Zone d’affichage des essais précédents */}
-      <div className="feedback" id="feedback">
-        {attempts.map((attempt, i) => (
-          <div
-            key={i}
-            className="attempt"
-            dangerouslySetInnerHTML={{
-              __html: `👉 ${attempt.input} → ${attempt.result}`
-            }}
-          />
-        ))}
+      {/* 📊 Tableau scrollable */}
+      {attempts.length > 0 && (
+        <div className="table-container">
+          <h3>Historique des tentatives</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Tentative</th>
+                <th>Résultat</th>
+              </tr>
+            </thead>
+            <tbody>
+              {attempts.map((attempt, index) => (
+                <tr key={index}>
+                  <td>{index + 1}</td>
+                  <td>{attempt.input}</td>
+                  <td dangerouslySetInnerHTML={{ __html: attempt.result }}></td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+
+      {/* 🔘 Bouton Retour fixé */}
+      <div className="bottom">
+        <button onClick={goBack}>Retour à l’accueil</button>
       </div>
 
-      <br /><br />
-      {/* Bouton de retour */}
-      <button onClick={goBack}>Retour à l’accueil</button>
-
-      {/* 🎨 Styles CSS intégrés */}
       <style>{`
         body {
           font-family: 'Segoe UI', sans-serif;
-          background: #121212;
+          margin: 0;
+          padding: 0;
+          height: 100vh;
+          background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
           color: #fff;
-          text-align: center;
-          padding: 40px;
+          overflow: hidden; /* pas de scroll global */
         }
 
         .container {
-          max-width: 700px;
-          margin: auto;
+          display: flex;
+          flex-direction: column;
+          height: 100vh;
+          align-items: center;
+          padding: 20px;
+          box-sizing: border-box;
         }
 
-        /* Sélecteurs et boutons */
-        select {
-          padding: 12px 16px;
-          font-size: 18px;
-          border-radius: 10px;
+        .title {
+          font-size: 2.8rem;
+          margin-bottom: 10px;
+          text-shadow: 2px 2px 6px rgba(0,0,0,0.5);
+        }
+
+        #instructions {
+          font-size: 1.2rem;
+          margin-bottom: 20px;
+          color: #ddd;
+        }
+
+        input[type="text"] {
+          padding: 16px;
+          font-size: 24px;
+          border-radius: 12px;
           border: 2px solid #4caf50;
           background-color: #1e1e1e;
           color: #fff;
-          transition: all 0.3s ease;
-          cursor: pointer;
-        }
-
-        select:hover {
-          border-color: #81c784;
-          background-color: #2c2c2c;
+          text-align: center;
+          letter-spacing: 10px;
+          width: 250px;
+          margin-bottom: 15px;
         }
 
         button {
-          padding: 12px 20px;
+          padding: 14px 28px;
           font-size: 18px;
-          border-radius: 10px;
+          border-radius: 12px;
           border: none;
           background-color: #4caf50;
           color: #fff;
           cursor: pointer;
-          transition: background-color 0.3s ease;
+          transition: transform 0.2s ease, background-color 0.3s ease;
           margin: 5px;
         }
+        button:hover { transform: scale(1.05); background-color: #66bb6a; }
 
-        button:hover {
-          background-color: #66bb6a;
+        .win-message {
+          font-size: 2rem;
+          color: #ffeb3b;
+          text-shadow: 2px 2px 10px rgba(0,0,0,0.5);
         }
 
-        /* Sections d’affichage */
-        .rules, .difficulty, .feedback {
-          margin-top: 20px;
-          padding: 16px;
-          background-color: #1a1a1a;
-          border-radius: 8px;
-          box-shadow: 0 0 6px rgba(76, 175, 80, 0.2);
-        }
-
-        ul {
-          list-style: none;
-          padding: 0;
-        }
-
-        ul li {
-          margin: 8px 0;
-          font-size: 16px;
-        }
-
-        /* Champ de saisie du code */
-        input[type="text"] {
-          padding: 12px 16px;
-          font-size: 20px;
+        /* 📊 Tableau scrollable */
+        .table-container {
+          width: 100%;
+          flex: 1 1 auto;
+          overflow-y: auto; /* scroll si dépasse */
+          margin-bottom: 80px; /* espace pour le bouton */
+          padding: 10px;
+          background-color: rgba(30,30,30,0.8);
           border-radius: 10px;
-          border: 2px solid #4caf50;
-          background-color: #1e1e1e;
-          color: #fff;
+        }
+
+        table {
+          width: 100%;
+          border-collapse: collapse;
+        }
+
+        th, td {
+          padding: 12px 16px;
           text-align: center;
-          letter-spacing: 8px;
-          width: 200px;
-          transition: all 0.3s ease;
+          border-bottom: 1px solid rgba(76,175,80,0.3);
         }
 
-        input[type="text"]::placeholder {
-          color: #888;
-          letter-spacing: normal;
+        th { background-color: rgba(76,175,80,0.2); font-weight: bold; }
+        td span.green { color: #4caf50; }
+        td span.yellow { color: #ffeb3b; }
+        td span.red { color: #f44336; }
+
+        /* 🔘 Bouton Retour fixé en bas */
+        .bottom {
+          position: fixed;
+          bottom: 0;
+          left: 0;
+          width: 100%;
+          height: 60px;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          background: linear-gradient(to top, #121212 0%, transparent 50%);
         }
 
-        input[type="text"]:focus {
-          outline: none;
-          border-color: #81c784;
-          background-color: #2c2c2c;
-        }
-
-        /* 🟢🟡🔴 Couleurs des résultats */
-        .green { color: #4caf50; }
-        .yellow { color: #ffeb3b; }
-        .red { color: #f44336; }
-
-        /* Liste des tentatives */
-        .attempt {
-          margin: 6px 0;
-          font-size: 18px;
+        @media (max-width: 500px) {
+          input[type="text"] { width: 80%; font-size: 20px; letter-spacing: 6px; }
+          button { width: 45%; font-size: 16px; }
+          th, td { padding: 10px; font-size: 14px; }
         }
       `}</style>
     </div>
