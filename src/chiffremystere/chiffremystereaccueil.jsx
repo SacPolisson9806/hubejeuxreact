@@ -1,7 +1,7 @@
 // src/chiffremystere/ChiffreMystereAccueil.jsx
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import ChiffreMystereLeaderboard from "./ChiffreMystereLeaderboard";
+import ChiffreMystereLeaderboard from "./chiffremystereleaderboard";
 
 export default function ChiffreMystereAccueil() {
   const navigate = useNavigate();

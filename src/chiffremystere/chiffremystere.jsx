@@ -35,27 +35,40 @@ export default function ChiffreMystere() {
       setScore(1); // 1 victoire
       setMessage(`🎉 Bravo ${localStorage.getItem('playerName')} ! Tu as trouvé le chiffre ${secret} en ${attempts + 1} essais.`);
 
-      // 🔹 Envoi d’une victoire au backend
-      fetch("http://localhost:5000/scores", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          game: "ChiffreMystere",
-          username: localStorage.getItem("playerName") || "Invité",
-          score: 1,
-        }),
-      })
-      .then(res => res.json())
-      .then(data => {
-        if (!data.success) console.error("❌ Erreur serveur :", data.message);
-      })
-      .catch(err => console.error("❌ Erreur serveur :", err));
+      // 🔹 Récupérer le score existant avant d’ajouter un nouveau
+      const playerName = localStorage.getItem("playerName") || "Invité";
+
+      console.log(playerName);
+      fetch(`http://localhost:5000/getScore/${playerName}/ChiffreMystere`)
+        .then(res => res.json())
+        .then(data => {
+
+          const previousScore = data.score || 0;
+
+          console.log(previousScore);
+
+          // 🔹 Envoi du nouveau score
+          fetch("http://localhost:5000/scores", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              game: "ChiffreMystere",
+              username: playerName,
+              score: previousScore + 1, // Exemple : on ajoute 1 victoire
+            }),
+          })
+            .then(res => res.json())
+            .then(data => {
+              if (!data.success) console.error("❌ Erreur serveur :", data.message);
+            })
+            .catch(err => console.error("❌ Erreur serveur :", err));
+        })
+        .catch(err => console.error("❌ Erreur récupération score :", err));
     } else if (num < secret) {
       setMessage('🔼 Trop petit !');
     } else {
       setMessage('🔽 Trop grand !');
     }
-
     setGuess('');
   };
 

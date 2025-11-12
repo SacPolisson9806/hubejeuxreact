@@ -18,6 +18,7 @@ export default function Hub() {
   const [playerName, setPlayerName] = useState('');
   const [showLogoutModal, setShowLogoutModal] = useState(false);
 
+  // Vérifie si le joueur est connecté, sinon redirige vers la page d'accueil
   useEffect(() => {
     const storedName = localStorage.getItem('playerName');
     if (!storedName) {
@@ -27,6 +28,7 @@ export default function Hub() {
     }
   }, [navigate]);
 
+  // Déconnexion
   const handleLogout = () => {
     localStorage.removeItem("playerName");
     navigate("/");
@@ -52,6 +54,13 @@ export default function Hub() {
         .logout-container { display:flex; justify-content:center; margin:40px 0; }
         footer { background:#333; color:white; padding:20px 0; margin-top:auto; }
 
+        /* Bouton bloqué pour Cemantix */
+        .btn.blocked {
+          background: #999;       /* gris pour montrer que c'est bloqué */
+          cursor: not-allowed;    /* curseur interdit */
+          opacity: 0.6;
+        }
+
         /* Modal */
         .modal-overlay { 
           position: fixed; top:0; left:0; width:100%; height:100%; 
@@ -71,13 +80,23 @@ export default function Hub() {
       </header>
 
       <main>
-        {jeux.map((jeu, index) => (
-          <div className="game-card" key={index}>
-            <h2>{jeu.nom}</h2>
-            <p>{jeu.description}</p>
-            <Link to={jeu.lien} className="btn">Jouer</Link>
-          </div>
-        ))}
+        {jeux.map((jeu, index) => {
+          const isBlocked = jeu.nom === 'Cemantix'; // On bloque Cemantix pour le moment
+          return (
+            <div className="game-card" key={index}>
+              <h2>{jeu.nom}</h2>
+              <p>{jeu.description}</p>
+              {isBlocked ? (
+                // Bouton désactivé pour Cemantix
+                <button className="btn blocked" disabled>
+                  Jouer
+                </button>
+              ) : (
+                <Link to={jeu.lien} className="btn">Jouer</Link>
+              )}
+            </div>
+          );
+        })}
       </main>
 
       <div className="logout-container">

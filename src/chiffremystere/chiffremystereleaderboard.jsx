@@ -12,6 +12,7 @@ export default function ChiffreMystereLeaderboard() {
     fetch("http://localhost:5000/scores/chiffremystere")
       .then((res) => res.json())
       .then((data) => {
+        console.log(data);
         // 🔹 Adapter selon la structure de ton backend
         const allScores = Array.isArray(data) ? data : data.scores || [];
 
@@ -19,7 +20,7 @@ export default function ChiffreMystereLeaderboard() {
         const victories = {};
         allScores.forEach((entry) => {
           const name = entry.Username || "Invité";
-          victories[name] = (victories[name] || 0) + 1;
+          victories[name] = (entry.Score || 0);
         });
 
         // 🔹 Transforme en tableau trié du plus grand nombre de victoires
