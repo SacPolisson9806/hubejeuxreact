@@ -22,11 +22,13 @@ export default function Login() {
       showMessage("Remplis pseudo et mot de passe !", "error");
       return;
     }
+   
+    const url = process.env.REACT_APP_API_URL;
+    const port = process.env.REACT_APP_PORT;
 
-    const url = mode === "login" ? "http://localhost:5000/login" : "http://localhost:5000/signup";
 
     try {
-      const response = await fetch(url, {
+      const response = await fetch(`${url}:${port}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, password }),
