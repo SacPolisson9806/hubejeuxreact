@@ -11,7 +11,8 @@ const routesJeux = {
   codecrackerindex: '/codecrackerindex',
   sudokuaccueil: '/sudokuaccueil',
   index2048: '/index2048',
-  accueil: '/accueil'
+  accueil: '/accueil',
+  snake: '/snake'
 };
 
 export default function Connexion() {

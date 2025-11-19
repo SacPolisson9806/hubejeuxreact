@@ -10,7 +10,8 @@ const jeux = [
   { nom: 'Codecracker', description: 'Devine le code secret à 4 chiffres !', lien: '/connexion?jeu=codecrackerindex' },
   { nom: 'Mini quizz', description: 'Teste tes connaissances.', lien: '/connexion?jeu=Quizz' },
   { nom: 'Course d\'Évitement', description: 'Évite les voitures qui arrivent en face !', lien: '/connexion?jeu=accueil' },
-  { nom: '2048', description: 'Essaie d\'atteindre 2048 !', lien: '/connexion?jeu=index2048' }
+  { nom: '2048', description: 'Essaie d\'atteindre 2048 !', lien: '/connexion?jeu=index2048' },
+  { nom: 'snake', description: 'Joue au jeu du serpent !', lien: '/connexion?jeu=snake' }
 ];
 
 export default function Hub() {
@@ -98,22 +99,30 @@ export default function Hub() {
         <Link to="/profile" className="quete-btn">Profile ⭐</Link>
       </header>
 
-      <main>
-        {jeux.map((jeu, index) => {
-          const isBlocked = jeu.nom === 'Cemantix';
-          return (
-            <div className="game-card" key={index}>
-              <h2>{jeu.nom}</h2>
-              <p>{jeu.description}</p>
-              {isBlocked ? (
-                <button className="btn blocked" disabled>Jouer</button>
-              ) : (
-                <Link to={jeu.lien} className="btn">Jouer</Link>
-              )}
-            </div>
-          );
-        })}
-      </main>
+     <main>
+  {jeux.map((jeu, index) => {
+    // Définir ici les jeux bloqués
+    const blockedGames = ['Cemantix', 'Arrow Rush'];
+    const isBlocked = blockedGames.includes(jeu.nom);
+
+    return (
+      <div className="game-card" key={index}>
+        <h2>{jeu.nom}</h2>
+        <p>{jeu.description}</p>
+        {isBlocked ? (
+          <button className="btn blocked" disabled>
+            Jouer
+          </button>
+        ) : (
+          <Link to={jeu.lien} className="btn">
+            Jouer
+          </Link>
+        )}
+      </div>
+    );
+  })}
+</main>
+
 
       <div className="logout-container">
         <button className="logout-btn" onClick={() => setShowLogoutModal(true)}>

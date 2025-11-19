@@ -1,256 +1,321 @@
-import React, { useState, useRef, useEffect } from "react";
+// Quetes.jsx
+import React, { useState, useEffect } from "react";
+
+/*
+  Quetes.jsx (single-file)
+  - Style : Battle-Pass / Fortnite-like (choisi au hasard)
+  - Structure : jeux -> catégories -> niveaux empilés (volets)
+  - Logique : seul le prochain niveau déblocable est cliquable. Cliquer ouvre le volet.
+  - Actions : "Marquer comme terminé" complète et débloque le suivant.
+  - Modal : agrandir médaillon (utilise image uploadée comme exemple).
+*/
 
 export default function Quetes() {
-  const [selectedMedaillon, setSelectedMedaillon] = useState(null);
-  const [rotationY, setRotationY] = useState(0);
-  const medaillonRef = useRef(null);
-  const isDragging = useRef(false);
-  const lastX = useRef(0);
-
-  const quetes = [
+  // Exemple de données : chaque jeu contient des catégories, chaque catégorie des niveaux
+  const data = [
+    {
+      jeu: "2048",
+      categories: [
+        {
+          key: "ascension",
+          titre: "Ascension Légendaire",
+          niveaux: [
+            { id: "2048-1", niveau: "Petit Bond", objectif: "Atteindre 32", progression: 40, recompense: "5 XP", img: "/mnt/data/d7ba5c0b-fe71-4880-b6fb-c06040c6d021.png" },
+            { id: "2048-2", niveau: "Montée en Puissance", objectif: "Atteindre 128", progression: 0, recompense: "10 XP", img: "/mnt/data/d7ba5c0b-fe71-4880-b6fb-c06040c6d021.png" },
+            { id: "2048-3", niveau: "Grand Bond", objectif: "Atteindre 512", progression: 0, recompense: "15 XP", img: "/mnt/data/d7ba5c0b-fe71-4880-b6fb-c06040c6d021.png" },
+            { id: "2048-4", niveau: "Maître des Tuiles", objectif: "Atteindre 2048", progression: 0, recompense: "20 XP", img: "/mnt/data/d7ba5c0b-fe71-4880-b6fb-c06040c6d021.png" },
+            { id: "2048-5", niveau: "Titan", objectif: "Atteindre 8192", progression: 0, recompense: "25 XP", img: "/mnt/data/d7ba5c0b-fe71-4880-b6fb-c06040c6d021.png" },
+            { id: "2048-6", niveau: "Légende Épique", objectif: "Atteindre 32768", progression: 0, recompense: "30 XP", img: "/mnt/data/d7ba5c0b-fe71-4880-b6fb-c06040c6d021.png" },
+          ]
+        }
+      ]
+    },
     {
       jeu: "Course d'Évitement",
-      titre: "Maîtrise Nitro",
-      medaillonColor: "#FF5733",
-      progression: 60,
-      niveau: "Novice Conducteur",
-      objectif: "Utiliser le nitro 10 fois",
-      recompense: "10 XP"
-    },
-    {
-      jeu: "Chiffre Mystère",
-      titre: "Chercheur de Mot",
-      medaillonColor: "#33FF57",
-      progression: 90,
-      niveau: "Détective Junior",
-      objectif: "Trouver 100 mots",
-      recompense: "Médaille spéciale"
-    },
-    {
-      jeu: "2048",
-      titre: "Ascension Légendaire",
-      medaillonColor: "#3357FF",
-      progression: 40,
-      niveau: "Petit Bond",
-      objectif: "Atteindre 32",
-      recompense: "5 XP"
-    },
-    {
-      jeu: "2048",
-      titre: "Ascension Légendaire",
-      medaillonColor: "#3357FF",
-      progression: 40,
-      niveau: "Montée en Puissance",
-      objectif: "Atteindre 128",
-      recompense: "10 XP"
-    },
-    {
-      jeu: "2048",
-      titre: "Ascension Légendaire",
-      medaillonColor: "#3357FF",
-      progression: 40,
-      niveau: "Grand Bond",
-      objectif: "Atteindre 512",
-      recompense: "15 XP"
-    },
-    {
-      jeu: "2048",
-      titre: "Ascension Légendaire",
-      medaillonColor: "#3357FF",
-      progression: 40,
-      niveau: "Maître des Tuiles",
-      objectif: "Atteindre 2048",
-      recompense: "20 XP"
-    },
-    {
-      jeu: "2048",
-      titre: "Ascension Légendaire",
-      medaillonColor: "#3357FF",
-      progression: 40,
-      niveau: "Titan",
-      objectif: "Atteindre 8192",
-      recompense: "25 XP"
-    },
-    {
-      jeu: "2048",
-      titre: "Ascension Légendaire",
-      medaillonColor: "#3357FF",
-      progression: 40,
-      niveau: "Légende Épique",
-      objectif: "Atteindre 32768",
-      recompense: "30 XP"
+      categories: [
+        {
+          key: "nitro",
+          titre: "Maîtrises du Volant",
+          niveaux: [
+            { id: "car-1", niveau: "Novice Conducteur", objectif: "Utiliser le nitro 10 fois", progression: 60, recompense: "10 XP", img: "/mnt/data/d7ba5c0b-fe71-4880-b6fb-c06040c6d021.png" },
+            { id: "car-2", niveau: "Apprenti", objectif: "Éviter 50 voitures", progression: 0, recompense: "20 XP", img: "/mnt/data/d7ba5c0b-fe71-4880-b6fb-c06040c6d021.png" },
+          ]
+        }
+      ]
     }
-
   ];
 
-  // Groupement par jeu
-  const groupedQuetes = quetes.reduce((acc, q) => {
-    if (!acc[q.jeu]) acc[q.jeu] = [];
-    acc[q.jeu].push(q);
-    return acc;
-  }, {});
+  // State pour suivre l'index ouvert par catégorie (par jeu+cat key)
+  // Structure : { "<jeu>::<categorieKey>": openedIndex }
+  const [openedMap, setOpenedMap] = useState(() => ({}));
+  // State pour suivi complétion par niveau id => boolean
+  const [doneMap, setDoneMap] = useState(() => ({}));
 
-  // --- BLOQUER LE SCROLL DE MANIERE ROBUSTE ---
-  // On sauvegarde l'état précédent pour restaurer
-  const prevBodyOverflow = useRef("");
-  const prevBodyPaddingRight = useRef("");
+  // Modal pour médaillon agrandi
+  const [modalImg, setModalImg] = useState(null);
 
-  // fonctions d'interception d'événements
-  const preventDefault = (e) => {
-    e.preventDefault();
-  };
-  const preventKey = (e) => {
-    // bloquer les touches de défilement: espace, flèches, pageUp/pageDown, home/end
-    const keys = ["ArrowUp","ArrowDown","PageUp","PageDown","Home","End"," "];
-    if (keys.includes(e.key)) e.preventDefault();
-  };
-
-  const openMedaillon = (q) => {
-    setSelectedMedaillon(q);
-    setRotationY(0);
-
-    // sauvegarder overflow + padding-right
-    prevBodyOverflow.current = document.body.style.overflow;
-    prevBodyPaddingRight.current = document.body.style.paddingRight || "";
-
-    // calculer largeur scrollbar et compenser pour éviter "shift"
-    const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
-    if (scrollbarWidth > 0) {
-      document.body.style.paddingRight = `${scrollbarWidth}px`;
-    }
-
-    // bloquer le scroll natif
-    document.body.style.overflow = "hidden";
-
-    // bloquer wheel & touchmove & keydown
-    window.addEventListener("wheel", preventDefault, { passive: false });
-    window.addEventListener("touchmove", preventDefault, { passive: false });
-    window.addEventListener("keydown", preventKey, { passive: false });
-  };
-
-  const closeMedaillon = () => {
-    setSelectedMedaillon(null);
-
-    // restaurer overflow + padding-right
-    document.body.style.overflow = prevBodyOverflow.current || "";
-    document.body.style.paddingRight = prevBodyPaddingRight.current || "";
-
-    // enlever listeners
-    window.removeEventListener("wheel", preventDefault, { passive: false });
-    window.removeEventListener("touchmove", preventDefault, { passive: false });
-    window.removeEventListener("keydown", preventKey, { passive: false });
-  };
-
-  // nettoyage si le composant est démonté pendant modal ouvert
+  // When modal open, block scroll robustly
   useEffect(() => {
-    return () => {
-      // restore
-      document.body.style.overflow = prevBodyOverflow.current || "";
-      document.body.style.paddingRight = prevBodyPaddingRight.current || "";
-      window.removeEventListener("wheel", preventDefault, { passive: false });
-      window.removeEventListener("touchmove", preventDefault, { passive: false });
-      window.removeEventListener("keydown", preventKey, { passive: false });
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    const prevOverflow = document.body.style.overflow;
+    if (modalImg) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = prevOverflow || "";
+    }
+    return () => { document.body.style.overflow = prevOverflow || ""; };
+  }, [modalImg]);
 
-  // --- DRAG pour rotation (simple) ---
-  const handleMouseDown = (e) => {
-    isDragging.current = true;
-    lastX.current = e.clientX;
-    // empêcher sélection texte lors du drag
-    e.preventDefault();
-  };
-  const handleMouseUp = () => { isDragging.current = false; };
-  const handleMouseMove = (e) => {
-    if (!isDragging.current) return;
-    const deltaX = e.clientX - lastX.current;
-    setRotationY((prev) => prev + deltaX * 0.8); // facteur de sensibilité
-    lastX.current = e.clientX;
+  // helper: key for category
+  const catKey = (jeu, cat) => `${jeu}::${cat}`;
+
+  // open a level (if unlocked)
+  const openLevel = (jeu, cat, idx) => {
+    const key = catKey(jeu, cat);
+    // check unlocked: it's unlocked if all previous levels have been marked done
+    const niveauList = (data.find(d => d.jeu === jeu).categories.find(c => c.key === cat)).niveaux;
+    let unlocked = true;
+    for (let i = 0; i < idx; i++) {
+      if (!doneMap[niveauList[i].id]) { unlocked = false; break; }
+    }
+    if (!unlocked) return; // not clickable
+    setOpenedMap(prev => ({ ...prev, [key]: prev[key] === idx ? -1 : idx })); // toggle
   };
 
-  // --- rendu ---
+  // mark level as done (completes and unlocks next)
+  const completeLevel = (levelId) => {
+    setDoneMap(prev => ({ ...prev, [levelId]: true }));
+  };
+
+  // helper to check if level is unlocked
+  const isUnlocked = (jeu, cat, idx) => {
+    const niveauList = (data.find(d => d.jeu === jeu).categories.find(c => c.key === cat)).niveaux;
+    for (let i = 0; i < idx; i++) {
+      if (!doneMap[niveauList[i].id]) return false;
+    }
+    return true;
+  };
+
+  // style chosen: Battle-Pass / Fortnite-like (inline CSS block below)
   return (
-    <div className="quetes-page" onMouseMove={handleMouseMove} onMouseUp={handleMouseUp} onMouseLeave={handleMouseUp}>
+    <div className="quetes-root">
       <style>{`
-        * { margin:0; padding:0; box-sizing:border-box; font-family:'Arial',sans-serif; }
-        .quetes-page { min-height:100vh; background:#1e1e2f; color:#fff; padding:40px 20px; }
-        h1 { text-align:center; color:#7ec8e3; margin-bottom:30px; }
-        .jeu-section { margin-bottom:40px; }
-        .jeu-titre { font-size:22px; margin-bottom:15px; border-bottom:2px solid #7ec8e3; padding-bottom:5px; color:#7ec8e3; }
-        .quetes-container { display:flex; flex-wrap:wrap; gap:20px; justify-content:center; }
-        .quete-card { width:220px; padding:20px; background:#2b2b3f; border-radius:12px; text-align:center; cursor:default; display:flex; flex-direction:column; }
-        .titre { font-weight:bold; margin-bottom:6px; font-size:18px; color:#7ec8e3; }
-        .niveau { font-size:14px; margin-bottom:5px; color:#a0cfff; font-weight:bold; }
-        .objectif { font-size:14px; color:#cfdfff; margin-bottom:8px; }
-        .recompense { font-size:14px; color:#7ec8e3; margin-bottom:10px; font-weight:bold; }
-        .progress-bar { height:14px; width:100%; background:#333; border-radius:7px; overflow:hidden; margin-bottom:10px; }
-        .progress { height:100%; background: linear-gradient(90deg, #7ec8e3, #a0d8ff); text-align:center; color:#000; font-size:12px; line-height:14px; }
-        .medaillon { width:60px; height:60px; border-radius:50%; margin:10px auto 0 auto; display:flex; align-items:center; justify-content:center; color:#fff; font-size:24px; font-weight:bold; box-shadow:0 4px 8px rgba(0,0,0,0.4),0 0 15px rgba(255,255,255,0.3); border:3px solid #fff; cursor:pointer; transition: transform 0.2s; }
-        .medaillon:hover { transform: scale(1.05) rotateY(10deg); }
-        /* Modal simplifiée (overlay flou couvrant tout) */
-        .modal-overlay { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.75); backdrop-filter: blur(6px); display:flex; justify-content:center; align-items:center; z-index:1000; }
-        .modal-content { display:flex; align-items:center; justify-content:center; position:relative; width:100%; height:100%; }
-        .modal-medaillon { width:460px; height:460px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:120px; font-weight:bold; border:8px solid rgba(255,255,255,0.9); cursor:grab; user-select:none; transition: transform 0.08s ease-out; box-shadow: 0 30px 60px rgba(0,0,0,0.6); }
-        /* Bouton retour fixé tout en haut à droite (bordé et visible) */
-        .close-fixed {
-          position: fixed;
-          top: 12px;
-          right: 12px;
-          z-index: 2000;
-          background: rgba(255,255,255,0.95);
-          color: #111;
-          border: none;
-          padding: 10px 14px;
-          border-radius: 8px;
-          cursor: pointer;
-          font-weight:700;
-          box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+        :root {
+          --accent: #7ec8e3;
+          --bg: #0f1116;
+          --card: linear-gradient(180deg,#11141a,#0f1419);
+          --glass: rgba(255,255,255,0.04);
+        }
+        * { box-sizing: border-box; font-family: 'Inter', Arial, sans-serif; }
+        .quetes-root { min-height:100vh; padding:36px; background: var(--bg); color:#eaf7ff; }
+        .page-title { text-align:center; font-size:28px; color: #bff0ff; margin-bottom:26px; font-weight:800; }
+
+        .game-section { margin-bottom:36px; }
+        .game-header { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:14px; }
+        .game-title { font-size:20px; color:var(--accent); font-weight:800; border-bottom:2px solid rgba(126,200,227,0.08); padding-bottom:6px; }
+
+        .categories { display:flex; flex-direction:column; gap:12px; max-width:920px; margin:0 auto; }
+
+        /* Category container */
+        .category {
+          background: var(--card);
+          border-radius:12px;
+          padding:12px;
+          border:1px solid var(--glass);
+          box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+        }
+        .cat-title {
+          font-weight:800; color:#bfefff; display:flex; align-items:center; gap:10px;
+        }
+
+        /* Niveau (volet) */
+        .niveau {
+          margin-top:10px;
+          border-radius:10px;
+          overflow:visible;
+        }
+
+        .niveau-row {
+          display:flex;
+          align-items:center;
+          justify-content:space-between;
+          gap:12px;
+          padding:12px;
+          background: linear-gradient(90deg, rgba(255,255,255,0.02), transparent);
+          border-radius:10px;
+          cursor:pointer;
+          transition: transform .18s ease, box-shadow .18s ease, background .18s;
+          border:1px solid rgba(255,255,255,0.03);
+        }
+
+        .niveau-row.locked {
+          opacity:0.4;
+          cursor: default;
+        }
+
+        .niveau-row:hover {
+          transform: translateY(-4px);
+          box-shadow: 0 16px 40px rgba(0,0,0,0.6);
+        }
+
+        .left {
+          display:flex; align-items:center; gap:12px;
+        }
+        .badge {
+          width:46px; height:46px; border-radius:50%;
+          display:flex; align-items:center; justify-content:center; font-weight:900; color:#fff;
+          box-shadow: 0 8px 20px rgba(0,0,0,0.6);
+          border: 3px solid rgba(255,255,255,0.08);
+          flex-shrink:0;
+        }
+        .info {
+          display:flex; flex-direction:column;
+        }
+        .level-name { font-weight:800; color:#dff8ff; }
+        .level-sub { font-size:13px; color:#cfeefb; }
+
+        .right {
+          display:flex; align-items:center; gap:12px;
+        }
+
+        .progress-pill {
+          background: rgba(0,0,0,0.25); padding:6px 10px; border-radius:999px; border:1px solid rgba(255,255,255,0.03);
+          font-weight:800; color:#dff8ff; font-size:13px;
+        }
+
+        .chevron { font-size:18px; opacity:0.9; }
+
+        /* content revealed */
+        .level-panel {
+          overflow:hidden;
+          transition: max-height 0.36s ease, padding 0.28s ease;
+          background: linear-gradient(180deg, rgba(255,255,255,0.018), rgba(0,0,0,0.02));
+          margin-top:8px;
+          border-radius:8px;
+          padding:0 12px;
+        }
+        .level-panel.closed { max-height:0; padding-top:0; padding-bottom:0; }
+        .level-panel.open { max-height:320px; padding:12px; }
+
+        .panel-row { display:flex; gap:12px; align-items:flex-start; }
+        .panel-left { flex:1; }
+        .panel-right { width:160px; display:flex; flex-direction:column; gap:8px; align-items:center; }
+
+        .panel-objectif { color:#cfeefb; margin-bottom:8px; font-weight:700; }
+        .panel-progressbar { height:12px; background: rgba(255,255,255,0.04); border-radius:8px; overflow:hidden; margin-bottom:8px; }
+        .panel-progress { height:100%; background: linear-gradient(90deg,var(--accent), #a0d8ff); color:#000; font-weight:800; text-align:center; line-height:12px; font-size:12px; }
+
+        .panel-reward { font-weight:900; color:#9fe8ff; }
+
+        .panel-medaillon {
+          width:100px; height:100px; border-radius:50%; overflow:hidden; display:flex; align-items:center; justify-content:center; border:6px solid rgba(255,255,255,0.9); box-shadow: 0 20px 50px rgba(0,0,0,0.6); cursor:pointer;
+        }
+        .panel-medaillon img { width:92%; height:92%; object-fit:contain; }
+
+        .btn-complete {
+          background: linear-gradient(90deg,#4ae0a6,#07d08b);
+          color:#012; border:none; padding:10px 14px; border-radius:10px; font-weight:900; cursor:pointer; box-shadow: 0 8px 20px rgba(0,0,0,0.45);
+        }
+
+        .locked-tag {
+          display:inline-block; padding:6px 10px; background: rgba(255,80,80,0.12); color:#ff8a8a; border-radius:999px; font-weight:800; border:1px solid rgba(255,80,80,0.08);
+        }
+
+        /* responsive */
+        @media (max-width:900px) {
+          .panel-right { width:120px; }
+          .panel-medaillon { width:84px; height:84px; border-width:5px; }
         }
       `}</style>
 
-      <h1>🗡️ Quêtes</h1>
+      <div className="page-title">🗡️ Quêtes — Battle Pass</div>
 
-      {Object.keys(groupedQuetes).map((jeu, idx) => (
-        <div className="jeu-section" key={idx}>
-          <div className="jeu-titre">{jeu}</div>
-          <div className="quetes-container">
-            {groupedQuetes[jeu].map((q, i) => (
-              <div className="quete-card" key={i}>
-                <div className="titre">{q.titre}</div>
-                <div className="niveau">{q.niveau}</div>
-                <div className="progress-bar">
-                  <div className="progress" style={{ width: q.progression + "%" }}>{q.progression}%</div>
-                </div>
-                <div className="objectif"><strong>Objectif:</strong> {q.objectif}</div>
-                <div className="recompense"><strong>Récompense:</strong> {q.recompense}</div>
-                <div
-                  className="medaillon"
-                  style={{ background: q.medaillonColor }}
-                  onClick={() => openMedaillon(q)}
-                >
-                  {q.titre[0]}
-                </div>
-              </div>
-            ))}
+      {data.map((game) => (
+        <section key={game.jeu} className="game-section">
+          <div className="game-header">
+            <div className="game-title">{game.jeu}</div>
+            <div style={{ fontSize: 14, color: "#9fdcff", fontWeight: 800 }}>{game.categories.length} catégorie(s)</div>
           </div>
-        </div>
+
+          <div className="categories">
+            {game.categories.map((cat) => {
+              const key = catKey(game.jeu, cat.key);
+              const openedIndex = openedMap[key] ?? -1;
+
+              return (
+                <div className="category" key={cat.key}>
+                  <div className="cat-title">{cat.titre}</div>
+
+                  {cat.niveaux.map((lvl, idx) => {
+                    const unlocked = isUnlocked(game.jeu, cat.key, idx);
+                    const completed = !!doneMap[lvl.id];
+                    const isOpen = openedIndex === idx;
+
+                    return (
+                      <div className="niveau" key={lvl.id}>
+                        <div
+                          className={`niveau-row ${unlocked ? "" : "locked"}`}
+                          onClick={() => unlocked && openLevel(game.jeu, cat.key, idx)}
+                        >
+                          <div className="left">
+                            <div className="badge" style={{ background: completed ? "#20c997" : (unlocked ? "#ff6b6b" : "#555") }}>
+                              {idx + 1}
+                            </div>
+                            <div className="info">
+                              <div className="level-name">{lvl.niveau}</div>
+                              <div className="level-sub">{lvl.objectif}</div>
+                            </div>
+                          </div>
+
+                          <div className="right">
+                            <div className="progress-pill">{lvl.progression}%</div>
+                            <div className="chevron">{isOpen ? "▾" : "▸"}</div>
+                          </div>
+                        </div>
+
+                        <div className={`level-panel ${isOpen ? "open" : "closed"}`}>
+                          <div className="panel-row">
+                            <div className="panel-left">
+                              <div className="panel-objectif"><strong>Objectif:</strong> {lvl.objectif}</div>
+                              <div className="panel-progressbar"><div className="panel-progress" style={{ width: `${lvl.progression}%` }}>{lvl.progression}%</div></div>
+                              <div className="panel-reward"><strong>Récompense:</strong> {lvl.recompense}</div>
+                            </div>
+
+                            <div className="panel-right">
+                              <div className="panel-medaillon" title="Agrandir le médaillon" onClick={() => setModalImg(lvl.img)}>
+                                <img src={lvl.img} alt={lvl.niveau} draggable={false} />
+                              </div>
+
+                              {!completed ? (
+                                <button className="btn-complete" onClick={() => completeLevel(lvl.id)}>Marquer comme terminé</button>
+                              ) : (
+                                <div style={{ color: "#8fffdc", fontWeight: 900 }}>✔ Terminé</div>
+                              )}
+
+                              {!unlocked && <div className="locked-tag">Bloqué</div>}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              );
+            })}
+          </div>
+        </section>
       ))}
 
-      {selectedMedaillon && (
-        <div className="modal-overlay" onMouseMove={handleMouseMove} onMouseUp={handleMouseUp} onMouseLeave={handleMouseUp}>
-          {/* Bouton retour fixé tout en haut à droite */}
-          <button className="close-fixed" onClick={closeMedaillon}>↩ Retour</button>
+      {/* Modal simple pour agrandir médaillon */}
+      {modalImg && (
+        <div className="modal-overlay" onClick={() => setModalImg(null)} style={{
+          position: "fixed", inset: 0, background: "rgba(0,0,0,0.75)", backdropFilter: "blur(6px)", display: "flex", justifyContent: "center", alignItems: "center", zIndex: 4000
+        }}>
+          <button onClick={() => setModalImg(null)} style={{
+            position: "fixed", top: 12, right: 12, zIndex: 4500, background: "#0c00f6", color: "#fff", border: "none", padding: "10px 14px", borderRadius: 8, cursor: "pointer", fontWeight: 800
+          }}>↩</button>
 
-          <div className="modal-content" aria-hidden={false}>
-            <div
-              ref={medaillonRef}
-              className="modal-medaillon"
-              style={{ background: selectedMedaillon.medaillonColor, transform: `rotateY(${rotationY}deg)` }}
-              onMouseDown={handleMouseDown}
-            >
-              {selectedMedaillon.titre[0]}
-            </div>
+          <div style={{ width: 520, height: 520, borderRadius: "50%", overflow: "hidden", border: "12px solid rgba(255,255,255,0.95)", boxShadow: "0 80px 160px rgba(0,0,0,0.7)", display: "flex", alignItems: "center", justifyContent: "center", background: "#0b0b0c" }} onClick={(e) => e.stopPropagation()}>
+            <img src={modalImg} alt="médaillon" style={{ width: "92%", height: "92%", objectFit: "contain", userSelect: "none" }} />
           </div>
         </div>
       )}

@@ -31,6 +31,7 @@ import ChiffreMystereLeaderboard from "./chiffremystere/chiffremystereleaderboar
 import Profile from "./profile.jsx";
 import Quete from "./quete.jsx";
 import Quetemedaillon from "./quetemedaillon.jsx";
+import Snake from "./snake/snake";
 
 export default function App() {
   const { showWarning, countdown, resetTimer } = useAutoLogout();
@@ -66,6 +67,7 @@ export default function App() {
         <Route path="/profile" element={<Profile />} />
         <Route path="/quete" element={<Quete />} />
         <Route path="/quetemedaillon" element={<Quetemedaillon />} />
+        <Route path="/snake" element={<Snake />} />
       </Routes>
       </>
     
