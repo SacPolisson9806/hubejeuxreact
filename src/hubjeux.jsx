@@ -18,7 +18,6 @@ export default function Hub() {
   const [playerName, setPlayerName] = useState('');
   const [showLogoutModal, setShowLogoutModal] = useState(false);
 
-  // Vérifie si le joueur est connecté, sinon redirige vers la page d'accueil
   useEffect(() => {
     const storedName = localStorage.getItem('playerName');
     if (!storedName) {
@@ -28,7 +27,6 @@ export default function Hub() {
     }
   }, [navigate]);
 
-  // Déconnexion
   const handleLogout = () => {
     localStorage.removeItem("playerName");
     navigate("/");
@@ -40,7 +38,27 @@ export default function Hub() {
         * { margin:0; padding:0; box-sizing:border-box; }
         body { font-family: Arial, sans-serif; background:white; color:#333; text-align:center; }
         .hub-container { min-height:100vh; display:flex; flex-direction:column; }
-        header { background:#0c00f6; color:white; padding:40px 0; }
+        header { background:#0c00f6; color:white; padding:40px 0; position:relative; }
+
+        /* Nouveau bouton Quêtes */
+        .quete-btn {
+          position:absolute;
+          right:20px;
+          top:20px;
+          background:white;
+          color:#0c00f6;
+          padding:10px 20px;
+          border-radius:6px;
+          font-weight:bold;
+          text-decoration:none;
+          border:none;
+          cursor:pointer;
+          transition:0.3s;
+        }
+        .quete-btn:hover {
+          background:#dcdcff;
+        }
+
         header p { font-size:18px; margin-top:10px; }
         main { display:flex; flex-wrap:wrap; justify-content:center; margin:50px 20px; gap:30px; }
         .game-card { background:white; border-radius:10px; padding:20px; width:250px; box-shadow:0 5px 15px rgba(0,0,0,0.1); transition: transform 0.3s; }
@@ -54,14 +72,12 @@ export default function Hub() {
         .logout-container { display:flex; justify-content:center; margin:40px 0; }
         footer { background:#333; color:white; padding:20px 0; margin-top:auto; }
 
-        /* Bouton bloqué pour Cemantix */
         .btn.blocked {
-          background: #999;       /* gris pour montrer que c'est bloqué */
-          cursor: not-allowed;    /* curseur interdit */
+          background: #999;
+          cursor: not-allowed;
           opacity: 0.6;
         }
 
-        /* Modal */
         .modal-overlay { 
           position: fixed; top:0; left:0; width:100%; height:100%; 
           background: rgba(0,0,0,0.5); display:flex; justify-content:center; align-items:center; 
@@ -77,20 +93,20 @@ export default function Hub() {
       <header>
         <h1>🎮 Bienvenue {playerName} 🎮</h1>
         <p>Choisis un jeu et amuse-toi !</p>
+
+        {/* 🔥 Bouton pour accéder aux quêtes */}
+        <Link to="/profile" className="quete-btn">Profile ⭐</Link>
       </header>
 
       <main>
         {jeux.map((jeu, index) => {
-          const isBlocked = jeu.nom === 'Cemantix'; // On bloque Cemantix pour le moment
+          const isBlocked = jeu.nom === 'Cemantix';
           return (
             <div className="game-card" key={index}>
               <h2>{jeu.nom}</h2>
               <p>{jeu.description}</p>
               {isBlocked ? (
-                // Bouton désactivé pour Cemantix
-                <button className="btn blocked" disabled>
-                  Jouer
-                </button>
+                <button className="btn blocked" disabled>Jouer</button>
               ) : (
                 <Link to={jeu.lien} className="btn">Jouer</Link>
               )}

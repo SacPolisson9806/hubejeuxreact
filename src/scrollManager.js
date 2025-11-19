@@ -8,7 +8,7 @@ export function enableScroll() {
 }
 
 // 🔹 Activer le scroll uniquement sur HubJeux
-if (window.location.pathname === '/hubjeux') {
+if (window.location.pathname === '/hubjeux','/quete') {
   enableScroll(); // scroll activé
 } else {
   disableScroll(); // scroll bloqué

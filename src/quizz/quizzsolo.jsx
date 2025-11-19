@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 export default function QuizzSolo() {
   const navigate = useNavigate();
 
-  const themes = ['minecraft', 'HarryPotter', 'StarWars', 'Marvel', 'Geographie'];
+  const themes = ['minecraft', 'hiragana', 'hiragana(variant dakuten)', 'hiragana(combinaison)', 'Geographie'];
   const [selectedThemes, setSelectedThemes] = useState([]);
   const [pointsToWin, setPointsToWin] = useState(100);
   const [timePerQuestion, setTimePerQuestion] = useState(30);

@@ -1,0 +1,278 @@
+[
+    {
+        "type": "input",
+        "question": "Que veux dire ce symbole en hiragana ?",
+        "answer": "a",
+        "image": "/Hiraganaimage/hiraganaa.webp"
+    },
+    {
+        "type": "input",
+        "question": "Que veux dire ce symbole en hiragana ?",
+        "answer": "i",
+        "image": "/Hiraganaimage/hiraganai.webp"
+    },
+    {
+        "type": "input",
+        "question": "Que veux dire ce symbole en hiragana ?",
+        "answer": "u",
+        "image": "/Hiraganaimage/hiraganau.webp"
+    },
+    {
+        "type": "input",
+        "question": "Que veux dire ce symbole en hiragana ?",
+        "answer": "e",
+        "image": "/Hiraganaimage/hiraganae.webp"
+    },
+    {
+        "type": "input",
+        "question": "Que veux dire ce symbole en hiragana ?",
+        "answer": "o",
+        "image": "/Hiraganaimage/hiraganao.webp"
+    },
+    {
+        "type": "input",
+        "question": "Que veux dire ce symbole en hiragana ?",
+        "answer": "ka",
+        "image": "/Hiraganaimage/hiraganaka.webp"
+    },
+    {
+        "type": "input",
+        "question": "Que veux dire ce symbole en hiragana ?",
+        "answer": "ki",
+        "image": "/Hiraganaimage/hiraganaki.webp"
+    },
+    {
+        "type": "input",
+        "question": "Que veux dire ce symbole en hiragana ?",
+        "answer": "ku",
+        "image": "/Hiraganaimage/hiraganaku.webp"
+    },
+    {
+        "type": "input",
+        "question": "Que veux dire ce symbole en hiragana ?",
+        "answer": "ke",
+        "image": "/Hiraganaimage/hiraganake.webp"
+    },
+    {
+        "type": "input",
+        "question": "Que veux dire ce symbole en hiragana ?",
+        "answer": "ko",
+        "image": "/Hiraganaimage/hiraganako.webp"
+    },
+    {
+        "type": "input",
+        "question": "Que veux dire ce symbole en hiragana ?",
+        "answer": "sa",
+        "image": "/Hiraganaimage/hiraganasa.webp"
+    },
+    {
+        "type": "input",
+        "question": "Que veux dire ce symbole en hiragana ?",
+        "answer": "si",
+        "image": "/Hiraganaimage/hiraganasi.webp"
+    },
+    {
+        "type": "input",
+        "question": "Que veux dire ce symbole en hiragana ?",
+        "answer": "su",
+        "image": "/Hiraganaimage/hiraganasu.webp"
+    },
+    {
+        "type": "input",
+        "question": "Que veux dire ce symbole en hiragana ?",
+        "answer": "se",
+        "image": "/Hiraganaimage/hiraganase.webp"
+    },
+    {
+        "type": "input",
+        "question": "Que veux dire ce symbole en hiragana ?",
+        "answer": "so",
+        "image": "/Hiraganaimage/hiraganaso.webp"
+    },
+    {
+        "type": "input",
+        "question": "Que veux dire ce symbole en hiragana ?",
+        "answer": "ta",
+        "image": "/Hiraganaimage/hiraganata.webp"
+    },
+    {
+        "type": "input",
+        "question": "Que veux dire ce symbole en hiragana ?",
+        "answer": "ti",
+        "image": "/Hiraganaimage/hiraganati.webp"
+    },
+    {
+        "type": "input",
+        "question": "Que veux dire ce symbole en hiragana ?",
+        "answer": "tu",
+        "image": "/Hiraganaimage/hiraganatu.webp"
+    },
+    {
+        "type": "input",
+        "question": "Que veux dire ce symbole en hiragana ?",
+        "answer": "te",
+        "image": "/Hiraganaimage/hiraganate.webp"
+    },
+    {
+        "type": "input",
+        "question": "Que veux dire ce symbole en hiragana ?",
+        "answer": "to",
+        "image": "/Hiraganaimage/hiraganato.webp"
+    },
+    {
+        "type": "input",
+        "question": "Que veux dire ce symbole en hiragana ?",
+        "answer": "na",
+        "image": "/Hiraganaimage/hiraganana.webp"
+    },
+    {
+        "type": "input",
+        "question": "Que veux dire ce symbole en hiragana ?",
+        "answer": "ni",
+        "image": "/Hiraganaimage/hiraganani.webp"
+    },
+    {
+        "type": "input",
+        "question": "Que veux dire ce symbole en hiragana ?",
+        "answer": "nu",
+        "image": "/Hiraganaimage/hiragananu.webp"
+    },
+    {
+        "type": "input",
+        "question": "Que veux dire ce symbole en hiragana ?",
+        "answer": "ne",
+        "image": "/Hiraganaimage/hiraganane.webp"
+    },
+    {
+        "type": "input",
+        "question": "Que veux dire ce symbole en hiragana ?",
+        "answer": "no",
+        "image": "/Hiraganaimage/hiraganano.webp"
+    },
+    {
+        "type": "input",
+        "question": "Que veux dire ce symbole en hiragana ?",
+        "answer": "ha",
+        "image": "/Hiraganaimage/hiraganaha.webp"
+    },
+    {
+        "type": "input",
+        "question": "Que veux dire ce symbole en hiragana ?",
+        "answer": "hi",
+        "image": "/Hiraganaimage/hiraganahi.webp"
+    },
+    {
+        "type": "input",
+        "question": "Que veux dire ce symbole en hiragana ?",
+        "answer": "hu",
+        "image": "/Hiraganaimage/hiraganahu.webp"
+    },
+    {
+        "type": "input",
+        "question": "Que veux dire ce symbole en hiragana ?",
+        "answer": "he",
+        "image": "/Hiraganaimage/hiraganahe.webp"
+    },
+    {
+        "type": "input",
+        "question": "Que veux dire ce symbole en hiragana ?",
+        "answer": "ho",
+        "image": "/Hiraganaimage/hiraganaho.webp"
+    },
+    {
+        "type": "input",
+        "question": "Que veux dire ce symbole en hiragana ?",
+        "answer": "ma",
+        "image": "/Hiraganaimage/hiraganama.webp"
+    },
+    {
+        "type": "input",
+        "question": "Que veux dire ce symbole en hiragana ?",
+        "answer": "mi",
+        "image": "/Hiraganaimage/hiraganami.webp"
+    },
+    {
+        "type": "input",
+        "question": "Que veux dire ce symbole en hiragana ?",
+        "answer": "mu",
+        "image": "/Hiraganaimage/hiraganamu.webp"
+    },
+    {
+        "type": "input",
+        "question": "Que veux dire ce symbole en hiragana ?",
+        "answer": "me",
+        "image": "/Hiraganaimage/hiraganame.webp"
+    },
+    {
+        "type": "input",
+        "question": "Que veux dire ce symbole en hiragana ?",
+        "answer": "mo",
+        "image": "/Hiraganaimage/hiraganamo.webp"
+    },
+    {
+        "type": "input",
+        "question": "Que veux dire ce symbole en hiragana ?",
+        "answer": "ya",
+        "image": "/Hiraganaimage/hiraganaya.webp"
+    },
+    {
+        "type": "input",
+        "question": "Que veux dire ce symbole en hiragana ?",
+        "answer": "yu",
+        "image": "/Hiraganaimage/hiraganayu.webp"
+    },
+    {
+        "type": "input",
+        "question": "Que veux dire ce symbole en hiragana ?",
+        "answer": "yo",
+        "image": "/Hiraganaimage/hiraganayo.webp"
+    },
+    {
+        "type": "input",
+        "question": "Que veux dire ce symbole en hiragana ?",
+        "answer": "ra",
+        "image": "/Hiraganaimage/hiraganara.webp"
+    },
+    {
+        "type": "input",
+        "question": "Que veux dire ce symbole en hiragana ?",
+        "answer": "ri",
+        "image": "/Hiraganaimage/hiraganari.webp"
+    },
+    {
+        "type": "input",
+        "question": "Que veux dire ce symbole en hiragana ?",
+        "answer": "ru",
+        "image": "/Hiraganaimage/hiraganaru.webp"
+    },
+    {
+        "type": "input",
+        "question": "Que veux dire ce symbole en hiragana ?",
+        "answer": "re",
+        "image": "/Hiraganaimage/hiraganare.webp"
+    },
+    {
+        "type": "input",
+        "question": "Que veux dire ce symbole en hiragana ?",
+        "answer": "ro",
+        "image": "/Hiraganaimage/hiraganaro.webp"
+    },
+    {
+        "type": "input",
+        "question": "Que veux dire ce symbole en hiragana ?",
+        "answer": "wa",
+        "image": "/Hiraganaimage/hiraganawa.webp"
+    },
+    {
+        "type": "input",
+        "question": "Que veux dire ce symbole en hiragana ?",
+        "answer": "wo",
+        "image": "/Hiraganaimage/hiraganawo.webp"
+    },
+    {
+        "type": "input",
+        "question": "Que veux dire ce symbole en hiragana ?",
+        "answer": "n",
+        "image": "/Hiraganaimage/hiraganan.webp"
+    }
+]

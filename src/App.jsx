@@ -28,6 +28,9 @@ import Sudokuaccueil from "./sudoku/sudokuaccueil";
 import Sudokugame from "./sudoku/sudokugame";
 import Leaderboard from "./Leaderboard.jsx";
 import ChiffreMystereLeaderboard from "./chiffremystere/chiffremystereleaderboard.jsx";
+import Profile from "./profile.jsx";
+import Quete from "./quete.jsx";
+import Quetemedaillon from "./quetemedaillon.jsx";
 
 export default function App() {
   const { showWarning, countdown, resetTimer } = useAutoLogout();
@@ -60,6 +63,9 @@ export default function App() {
         <Route path="/sudokugame" element={<Sudokugame />} />
         <Route path="/Leaderboard" element={<Leaderboard />} />
         <Route path="/chiffremystereleaderboard" element={<ChiffreMystereLeaderboard />} />
+        <Route path="/profile" element={<Profile />} />
+        <Route path="/quete" element={<Quete />} />
+        <Route path="/quetemedaillon" element={<Quetemedaillon />} />
       </Routes>
       </>
     
