@@ -23,12 +23,14 @@ export default function Login() {
       return;
     }
    
-    const url = process.env.REACT_APP_API_URL;
-    const port = process.env.REACT_APP_PORT;
+const server = import.meta.env.VITE_API_URL;
+
+    console.log(server);
+    const url = mode === 'login' ? `${server}/login` : `${server}/register`;
 
 
     try {
-      const response = await fetch(`${url}:${port}`, {
+      const response = await fetch(`${url}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, password }),

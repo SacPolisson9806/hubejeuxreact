@@ -1,24 +1,16 @@
-// Quetes.jsx
-import React, { useState, useEffect } from "react";
-
-/*
-  Quetes.jsx (single-file)
-  - Style : Battle-Pass / Fortnite-like (choisi au hasard)
-  - Structure : jeux -> catégories -> niveaux empilés (volets)
-  - Logique : seul le prochain niveau déblocable est cliquable. Cliquer ouvre le volet.
-  - Actions : "Marquer comme terminé" complète et débloque le suivant.
-  - Modal : agrandir médaillon (utilise image uploadée comme exemple).
-*/
+import React, { useState } from "react";
 
 export default function Quetes() {
-  // Exemple de données : chaque jeu contient des catégories, chaque catégorie des niveaux
-  const data = [
-    {
-      jeu: "2048",
-      categories: [
-        {
-          key: "ascension",
-          titre: "Ascension Légendaire",
+  const [openCategory, setOpenCategory] = useState(null);
+  const [openQuest, setOpenQuest] = useState(null);
+
+  const data = [ 
+    { 
+      jeu: "2048", 
+      categories: [ 
+        { 
+          key: "ascension", 
+          titre: "Ascension Légendaire", 
           niveaux: [
             { id: "2048-1", niveau: "Petit Bond", objectif: "Atteindre 32", progression: 40, recompense: "5 XP", img: "/mnt/data/d7ba5c0b-fe71-4880-b6fb-c06040c6d021.png" },
             { id: "2048-2", niveau: "Montée en Puissance", objectif: "Atteindre 128", progression: 0, recompense: "10 XP", img: "/mnt/data/d7ba5c0b-fe71-4880-b6fb-c06040c6d021.png" },
@@ -26,299 +18,226 @@ export default function Quetes() {
             { id: "2048-4", niveau: "Maître des Tuiles", objectif: "Atteindre 2048", progression: 0, recompense: "20 XP", img: "/mnt/data/d7ba5c0b-fe71-4880-b6fb-c06040c6d021.png" },
             { id: "2048-5", niveau: "Titan", objectif: "Atteindre 8192", progression: 0, recompense: "25 XP", img: "/mnt/data/d7ba5c0b-fe71-4880-b6fb-c06040c6d021.png" },
             { id: "2048-6", niveau: "Légende Épique", objectif: "Atteindre 32768", progression: 0, recompense: "30 XP", img: "/mnt/data/d7ba5c0b-fe71-4880-b6fb-c06040c6d021.png" },
-          ]
-        }
-      ]
-    },
-    {
-      jeu: "Course d'Évitement",
-      categories: [
+          ] 
+        },
         {
-          key: "nitro",
-          titre: "Maîtrises du Volant",
+          key: "Combos",
+          titre: "Épopée des Combos",
+          niveaux: [
+            { id: "2048-1", niveau: "Premier Enchaînement", objectif: "Fait 10 parfait combos", progression: 40, recompense: "5 XP", img: "/mnt/data/d7ba5c0b-fe71-4880-b6fb-c06040c6d021.png" },
+            { id: "2048-2", niveau: "Chaîne Montante", objectif: "Fait 40 parfait combos", progression: 0, recompense: "10 XP", img: "/mnt/data/d7ba5c0b-fe71-4880-b6fb-c06040c6d021.png" },
+            { id: "2048-3", niveau: "Fusion Harmonique", objectif: "Fait 80 parfait combos", progression: 0, recompense: "15 XP", img: "/mnt/data/d7ba5c0b-fe71-4880-b6fb-c06040c6d021.png" },
+            { id: "2048-4", niveau: "Combo Magistral", objectif: "Fait 110 parfait combos", progression: 0, recompense: "20 XP", img: "/mnt/data/d7ba5c0b-fe71-4880-b6fb-c06040c6d021.png" },
+            { id: "2048-5", niveau: "Enchaînement Légendaire", objectif: "Fait 140 parfait combos", progression: 0, recompense: "25 XP", img: "/mnt/data/d7ba5c0b-fe71-4880-b6fb-c06040c6d021.png" },
+            { id: "2048-6", niveau: "Maître des Combos", objectif: "Fait 200 parfait combos", progression: 0, recompense: "30 XP", img: "/mnt/data/d7ba5c0b-fe71-4880-b6fb-c06040c6d021.png" },
+          ]
+        } 
+      ] 
+    },
+    { 
+      jeu: "Course d'Évitement", 
+      categories: [
+        { 
+          key: "nitro", 
+          titre: "Maîtrises du Volant", 
           niveaux: [
             { id: "car-1", niveau: "Novice Conducteur", objectif: "Utiliser le nitro 10 fois", progression: 60, recompense: "10 XP", img: "/mnt/data/d7ba5c0b-fe71-4880-b6fb-c06040c6d021.png" },
             { id: "car-2", niveau: "Apprenti", objectif: "Éviter 50 voitures", progression: 0, recompense: "20 XP", img: "/mnt/data/d7ba5c0b-fe71-4880-b6fb-c06040c6d021.png" },
-          ]
-        }
-      ]
-    }
+          ] 
+        } 
+      ] 
+    } 
   ];
 
-  // State pour suivre l'index ouvert par catégorie (par jeu+cat key)
-  // Structure : { "<jeu>::<categorieKey>": openedIndex }
-  const [openedMap, setOpenedMap] = useState(() => ({}));
-  // State pour suivi complétion par niveau id => boolean
-  const [doneMap, setDoneMap] = useState(() => ({}));
-
-  // Modal pour médaillon agrandi
-  const [modalImg, setModalImg] = useState(null);
-
-  // When modal open, block scroll robustly
-  useEffect(() => {
-    const prevOverflow = document.body.style.overflow;
-    if (modalImg) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = prevOverflow || "";
-    }
-    return () => { document.body.style.overflow = prevOverflow || ""; };
-  }, [modalImg]);
-
-  // helper: key for category
-  const catKey = (jeu, cat) => `${jeu}::${cat}`;
-
-  // open a level (if unlocked)
-  const openLevel = (jeu, cat, idx) => {
-    const key = catKey(jeu, cat);
-    // check unlocked: it's unlocked if all previous levels have been marked done
-    const niveauList = (data.find(d => d.jeu === jeu).categories.find(c => c.key === cat)).niveaux;
-    let unlocked = true;
-    for (let i = 0; i < idx; i++) {
-      if (!doneMap[niveauList[i].id]) { unlocked = false; break; }
-    }
-    if (!unlocked) return; // not clickable
-    setOpenedMap(prev => ({ ...prev, [key]: prev[key] === idx ? -1 : idx })); // toggle
-  };
-
-  // mark level as done (completes and unlocks next)
-  const completeLevel = (levelId) => {
-    setDoneMap(prev => ({ ...prev, [levelId]: true }));
-  };
-
-  // helper to check if level is unlocked
-  const isUnlocked = (jeu, cat, idx) => {
-    const niveauList = (data.find(d => d.jeu === jeu).categories.find(c => c.key === cat)).niveaux;
-    for (let i = 0; i < idx; i++) {
-      if (!doneMap[niveauList[i].id]) return false;
-    }
-    return true;
-  };
-
-  // style chosen: Battle-Pass / Fortnite-like (inline CSS block below)
   return (
-    <div className="quetes-root">
+    <div className="page-quetes">
       <style>{`
-        :root {
-          --accent: #7ec8e3;
-          --bg: #0f1116;
-          --card: linear-gradient(180deg,#11141a,#0f1419);
-          --glass: rgba(255,255,255,0.04);
-        }
-        * { box-sizing: border-box; font-family: 'Inter', Arial, sans-serif; }
-        .quetes-root { min-height:100vh; padding:36px; background: var(--bg); color:#eaf7ff; }
-        .page-title { text-align:center; font-size:28px; color: #bff0ff; margin-bottom:26px; font-weight:800; }
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap');
 
-        .game-section { margin-bottom:36px; }
-        .game-header { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:14px; }
-        .game-title { font-size:20px; color:var(--accent); font-weight:800; border-bottom:2px solid rgba(126,200,227,0.08); padding-bottom:6px; }
-
-        .categories { display:flex; flex-direction:column; gap:12px; max-width:920px; margin:0 auto; }
-
-        /* Category container */
-        .category {
-          background: var(--card);
-          border-radius:12px;
-          padding:12px;
-          border:1px solid var(--glass);
-          box-shadow: 0 10px 30px rgba(0,0,0,0.6);
-        }
-        .cat-title {
-          font-weight:800; color:#bfefff; display:flex; align-items:center; gap:10px;
+        body, html, #root {
+          margin: 0;
+          padding: 0;
+          width: 100%;
+          height: 100%;
+          font-family: 'Orbitron', sans-serif;
         }
 
-        /* Niveau (volet) */
-        .niveau {
-          margin-top:10px;
-          border-radius:10px;
-          overflow:visible;
+        .page-quetes {
+          min-height: 100vh;
+          width: 100%;
+          padding: 40px 20px;
+          background: linear-gradient(160deg, #1b1b2a, #2f2f3f);
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 40px;
         }
 
-        .niveau-row {
-          display:flex;
-          align-items:center;
-          justify-content:space-between;
-          gap:12px;
-          padding:12px;
-          background: linear-gradient(90deg, rgba(255,255,255,0.02), transparent);
-          border-radius:10px;
-          cursor:pointer;
-          transition: transform .18s ease, box-shadow .18s ease, background .18s;
-          border:1px solid rgba(255,255,255,0.03);
+        .jeu-section {
+          width: 100%;
+          max-width: 1400px;
+          display: flex;
+          flex-direction: column;
+          gap: 20px;
         }
 
-        .niveau-row.locked {
-          opacity:0.4;
-          cursor: default;
+        .jeu-title {
+          font-size: 48px;
+          color: #ffd700;
+          text-shadow: 2px 2px 6px #000;
+          margin-bottom: 10px;
         }
 
-        .niveau-row:hover {
-          transform: translateY(-4px);
-          box-shadow: 0 16px 40px rgba(0,0,0,0.6);
+        .categorie-card {
+          background: #2f2f40;
+          border-radius: 20px;
+          padding: 20px;
+          box-shadow: 0 6px 20px rgba(0,0,0,0.7);
+          transition: transform 0.2s;
         }
 
-        .left {
-          display:flex; align-items:center; gap:12px;
+        .categorie-card:hover {
+          transform: translateY(-5px);
         }
-        .badge {
-          width:46px; height:46px; border-radius:50%;
-          display:flex; align-items:center; justify-content:center; font-weight:900; color:#fff;
+
+        .categorie-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          font-size: 24px;
+          font-weight: 700;
+          padding: 15px 20px;
+          cursor: pointer;
+          background: #3b3b55;
+          border-radius: 16px;
+          transition: background 0.2s;
+        }
+
+        .categorie-header:hover {
+          background: #4b4b6b;
+        }
+
+        .niveaux-list {
+          margin-top: 15px;
+          display: flex;
+          flex-direction: column;
+          gap: 15px;
+        }
+
+        .niveau-card {
+          background: #3c3c5a;
+          border-radius: 16px;
+          overflow: hidden;
+          transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .niveau-card:hover {
+          transform: translateY(-2px);
           box-shadow: 0 8px 20px rgba(0,0,0,0.6);
-          border: 3px solid rgba(255,255,255,0.08);
-          flex-shrink:0;
-        }
-        .info {
-          display:flex; flex-direction:column;
-        }
-        .level-name { font-weight:800; color:#dff8ff; }
-        .level-sub { font-size:13px; color:#cfeefb; }
-
-        .right {
-          display:flex; align-items:center; gap:12px;
         }
 
-        .progress-pill {
-          background: rgba(0,0,0,0.25); padding:6px 10px; border-radius:999px; border:1px solid rgba(255,255,255,0.03);
-          font-weight:800; color:#dff8ff; font-size:13px;
+        .niveau-header {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          padding: 15px 20px;
+          cursor: pointer;
+          font-size: 20px;
         }
 
-        .chevron { font-size:18px; opacity:0.9; }
-
-        /* content revealed */
-        .level-panel {
-          overflow:hidden;
-          transition: max-height 0.36s ease, padding 0.28s ease;
-          background: linear-gradient(180deg, rgba(255,255,255,0.018), rgba(0,0,0,0.02));
-          margin-top:8px;
-          border-radius:8px;
-          padding:0 12px;
-        }
-        .level-panel.closed { max-height:0; padding-top:0; padding-bottom:0; }
-        .level-panel.open { max-height:320px; padding:12px; }
-
-        .panel-row { display:flex; gap:12px; align-items:flex-start; }
-        .panel-left { flex:1; }
-        .panel-right { width:160px; display:flex; flex-direction:column; gap:8px; align-items:center; }
-
-        .panel-objectif { color:#cfeefb; margin-bottom:8px; font-weight:700; }
-        .panel-progressbar { height:12px; background: rgba(255,255,255,0.04); border-radius:8px; overflow:hidden; margin-bottom:8px; }
-        .panel-progress { height:100%; background: linear-gradient(90deg,var(--accent), #a0d8ff); color:#000; font-weight:800; text-align:center; line-height:12px; font-size:12px; }
-
-        .panel-reward { font-weight:900; color:#9fe8ff; }
-
-        .panel-medaillon {
-          width:100px; height:100px; border-radius:50%; overflow:hidden; display:flex; align-items:center; justify-content:center; border:6px solid rgba(255,255,255,0.9); box-shadow: 0 20px 50px rgba(0,0,0,0.6); cursor:pointer;
-        }
-        .panel-medaillon img { width:92%; height:92%; object-fit:contain; }
-
-        .btn-complete {
-          background: linear-gradient(90deg,#4ae0a6,#07d08b);
-          color:#012; border:none; padding:10px 14px; border-radius:10px; font-weight:900; cursor:pointer; box-shadow: 0 8px 20px rgba(0,0,0,0.45);
+        .niveau-header .left {
+          display: flex;
+          align-items: center;
+          gap: 20px;
         }
 
-        .locked-tag {
-          display:inline-block; padding:6px 10px; background: rgba(255,80,80,0.12); color:#ff8a8a; border-radius:999px; font-weight:800; border:1px solid rgba(255,80,80,0.08);
+        .med-small {
+          width: 60px;
+          height: 60px;
+          border-radius: 10px;
         }
 
-        /* responsive */
-        @media (max-width:900px) {
-          .panel-right { width:120px; }
-          .panel-medaillon { width:84px; height:84px; border-width:5px; }
+        .niveau-content {
+          padding: 20px;
+          background: #2b2b40;
+          border-top: 1px solid #505060;
+          display: flex;
+          flex-direction: column;
+          gap: 15px;
+        }
+
+        .progress-bar {
+          width: 100%;
+          height: 18px;
+          background: #505060;
+          border-radius: 10px;
+          overflow: hidden;
+        }
+
+        .progress-fill {
+          height: 100%;
+          background: #00d4ff;
+          border-radius: 10px;
+          transition: width 0.4s;
+        }
+
+        .big-med {
+          width: 180px;
+          border-radius: 12px;
+        }
+
+        .arrow {
+          font-size: 24px;
+          color: #fff;
         }
       `}</style>
 
-      <div className="page-title">🗡️ Quêtes — Battle Pass</div>
+      {data.map((jeu, idx) => (
+        <div key={idx} className="jeu-section">
+          <div className="jeu-title">{jeu.jeu}</div>
 
-      {data.map((game) => (
-        <section key={game.jeu} className="game-section">
-          <div className="game-header">
-            <div className="game-title">{game.jeu}</div>
-            <div style={{ fontSize: 14, color: "#9fdcff", fontWeight: 800 }}>{game.categories.length} catégorie(s)</div>
-          </div>
+          {jeu.categories.map(cat => (
+            <div key={cat.key} className="categorie-card">
+              <div 
+                className="categorie-header"
+                onClick={() => setOpenCategory(openCategory === cat.key ? null : cat.key)}
+              >
+                {cat.titre} <span className="arrow">{openCategory === cat.key ? '▲' : '▼'}</span>
+              </div>
 
-          <div className="categories">
-            {game.categories.map((cat) => {
-              const key = catKey(game.jeu, cat.key);
-              const openedIndex = openedMap[key] ?? -1;
-
-              return (
-                <div className="category" key={cat.key}>
-                  <div className="cat-title">{cat.titre}</div>
-
-                  {cat.niveaux.map((lvl, idx) => {
-                    const unlocked = isUnlocked(game.jeu, cat.key, idx);
-                    const completed = !!doneMap[lvl.id];
-                    const isOpen = openedIndex === idx;
-
-                    return (
-                      <div className="niveau" key={lvl.id}>
-                        <div
-                          className={`niveau-row ${unlocked ? "" : "locked"}`}
-                          onClick={() => unlocked && openLevel(game.jeu, cat.key, idx)}
-                        >
-                          <div className="left">
-                            <div className="badge" style={{ background: completed ? "#20c997" : (unlocked ? "#ff6b6b" : "#555") }}>
-                              {idx + 1}
-                            </div>
-                            <div className="info">
-                              <div className="level-name">{lvl.niveau}</div>
-                              <div className="level-sub">{lvl.objectif}</div>
-                            </div>
-                          </div>
-
-                          <div className="right">
-                            <div className="progress-pill">{lvl.progression}%</div>
-                            <div className="chevron">{isOpen ? "▾" : "▸"}</div>
-                          </div>
+              {openCategory === cat.key && (
+                <div className="niveaux-list">
+                  {cat.niveaux.map(n => (
+                    <div key={n.id} className="niveau-card">
+                      <div 
+                        className="niveau-header"
+                        onClick={() => setOpenQuest(openQuest === n.id ? null : n.id)}
+                      >
+                        <div className="left">
+                          <img src={n.img} className="med-small" alt="" />
+                          <span>{n.niveau}</span>
                         </div>
-
-                        <div className={`level-panel ${isOpen ? "open" : "closed"}`}>
-                          <div className="panel-row">
-                            <div className="panel-left">
-                              <div className="panel-objectif"><strong>Objectif:</strong> {lvl.objectif}</div>
-                              <div className="panel-progressbar"><div className="panel-progress" style={{ width: `${lvl.progression}%` }}>{lvl.progression}%</div></div>
-                              <div className="panel-reward"><strong>Récompense:</strong> {lvl.recompense}</div>
-                            </div>
-
-                            <div className="panel-right">
-                              <div className="panel-medaillon" title="Agrandir le médaillon" onClick={() => setModalImg(lvl.img)}>
-                                <img src={lvl.img} alt={lvl.niveau} draggable={false} />
-                              </div>
-
-                              {!completed ? (
-                                <button className="btn-complete" onClick={() => completeLevel(lvl.id)}>Marquer comme terminé</button>
-                              ) : (
-                                <div style={{ color: "#8fffdc", fontWeight: 900 }}>✔ Terminé</div>
-                              )}
-
-                              {!unlocked && <div className="locked-tag">Bloqué</div>}
-                            </div>
-                          </div>
-                        </div>
+                        <span className="arrow">{openQuest === n.id ? '▲' : '▼'}</span>
                       </div>
-                    );
-                  })}
+
+                      {openQuest === n.id && (
+                        <div className="niveau-content">
+                          <p><strong>Objectif:</strong> {n.objectif}</p>
+                          <div className="progress-bar">
+                            <div className="progress-fill" style={{ width: `${n.progression}%` }}></div>
+                          </div>
+                          <p><strong>Récompense:</strong> {n.recompense}</p>
+                          <img src={n.img} className="big-med" alt="medaillon" />
+                        </div>
+                      )}
+                    </div>
+                  ))}
                 </div>
-              );
-            })}
-          </div>
-        </section>
-      ))}
-
-      {/* Modal simple pour agrandir médaillon */}
-      {modalImg && (
-        <div className="modal-overlay" onClick={() => setModalImg(null)} style={{
-          position: "fixed", inset: 0, background: "rgba(0,0,0,0.75)", backdropFilter: "blur(6px)", display: "flex", justifyContent: "center", alignItems: "center", zIndex: 4000
-        }}>
-          <button onClick={() => setModalImg(null)} style={{
-            position: "fixed", top: 12, right: 12, zIndex: 4500, background: "#0c00f6", color: "#fff", border: "none", padding: "10px 14px", borderRadius: 8, cursor: "pointer", fontWeight: 800
-          }}>↩</button>
-
-          <div style={{ width: 520, height: 520, borderRadius: "50%", overflow: "hidden", border: "12px solid rgba(255,255,255,0.95)", boxShadow: "0 80px 160px rgba(0,0,0,0.7)", display: "flex", alignItems: "center", justifyContent: "center", background: "#0b0b0c" }} onClick={(e) => e.stopPropagation()}>
-            <img src={modalImg} alt="médaillon" style={{ width: "92%", height: "92%", objectFit: "contain", userSelect: "none" }} />
-          </div>
+              )}
+            </div>
+          ))}
         </div>
-      )}
+      ))}
     </div>
   );
 }
