@@ -1,12 +1,17 @@
 import React from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import useAutoLogout from "./UseAutoLogout.jsx";
 import LogoutWarning from "./Logoutwarning.jsx";
 
-// Tes pages
+// Pages
 import Hubjeux from "./hubjeux";
 import Connexion from "./connexion";
-import Login from "./login.jsx";
+import Login from "./auth/login.jsx";
+import { AuthContext } from "./auth/authcontext.jsx";
+import Changepassword from "./auth/changepassword.jsx";
+import ProtectedRoute from "./auth/protectedroute.jsx";
+import Signup from "./auth/signup.jsx";
+import Twofa from "./auth/twofa.jsx";
 import QuizzSolo from "./quizz/quizzsolo";
 import QuizzMulti from "./quizz/quizzmulti";
 import StartquizzSolo from "./quizz/startquizzsolo.jsx";
@@ -38,11 +43,22 @@ export default function App() {
 
   return (
     <>
+      {/* Popup de déconnexion automatique */}
       {showWarning && <LogoutWarning countdown={countdown} onStayConnected={resetTimer} />}
+
       <Routes>
+        {/* Routes publiques */}
         <Route path="/" element={<Login />} />
-        <Route path="/hubjeux" element={<Hubjeux />} />
         <Route path="/connexion" element={<Connexion />} />
+        <Route path="/signup" element={<Signup />} />
+        <Route path="/twofa" element={<Twofa />} />
+
+        {/* Routes protégées avec ProtectedRoute */}
+        <Route path="/hubjeux" element={<ProtectedRoute><Hubjeux /></ProtectedRoute>} />
+        <Route path="/changepassword" element={<ProtectedRoute><Changepassword /></ProtectedRoute>} />
+        <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+
+        {/* Autres pages */}
         <Route path="/quizzsolo" element={<QuizzSolo />} />
         <Route path="/quizzmulti" element={<QuizzMulti />} />
         <Route path="/startquizzsolo" element={<StartquizzSolo />} />
@@ -64,12 +80,10 @@ export default function App() {
         <Route path="/sudokugame" element={<Sudokugame />} />
         <Route path="/Leaderboard" element={<Leaderboard />} />
         <Route path="/chiffremystereleaderboard" element={<ChiffreMystereLeaderboard />} />
-        <Route path="/profile" element={<Profile />} />
         <Route path="/quete" element={<Quete />} />
         <Route path="/quetemedaillon" element={<Quetemedaillon />} />
         <Route path="/snake" element={<Snake />} />
       </Routes>
-      </>
-    
+    </>
   );
 }
