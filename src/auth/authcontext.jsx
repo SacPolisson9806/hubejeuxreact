@@ -4,83 +4,77 @@
  * 🔐 CONTEXTE GLOBAL D'AUTHENTIFICATION (React)
  * ===============================================
  *
- * Sert à :
- * - stocker l'utilisateur actuellement connecté
- * - stocker le token JWT renvoyé par le backend
- * - permettre aux composants d'appeler login() et logout()
- * - garder la connexion active même en rechargeant la page
+ * Objectif :
+ * - Stocker l'utilisateur connecté et son token JWT
+ * - Fournir login() et logout() à toute l'application
+ * - Persister la connexion via localStorage
+ * - Préparer le support pour la 2FA (flag twoFAValidated)
  *
- * Ce fichier gère à lui SEUL toute l'authentification du frontend.
+ * Utilisation future pour 2FA :
+ * - Ajouter un état `twoFAValidated` (false par défaut)
+ * - Ajouter une fonction `validate2FA()` pour l'activer après succès 2FA
+ * - Les ProtectedRoute pourront vérifier `twoFAValidated` avant d'autoriser l'accès
  */
 
 import React, { createContext, useState, useEffect } from "react";
 
-// 🔹 Création du contexte disponible partout dans l'app
+// 🔹 Création du contexte global
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  // =============================
-  // 🔹 États globaux du contexte
-  // =============================
+  // 🔹 États globaux
+  const [user, setUser] = useState(null); // Pseudo utilisateur
+  const [token, setToken] = useState(null); // Token JWT
+  const [twoFAValidated, setTwoFAValidated] = useState(false); // Flag 2FA (prêt pour future implémentation)
 
-  // Pseudo de l'utilisateur connecté
-  const [user, setUser] = useState(null);
-
-  // Token JWT du backend (permet d'accéder aux routes protégées)
-  const [token, setToken] = useState(null);
-
-  // =======================================================
   // 🔹 Chargement automatique depuis localStorage au démarrage
-  // Permet de rester connecté même après F5 (actualisation)
-  // =======================================================
   useEffect(() => {
     const savedUser = localStorage.getItem("playerName");
     const savedToken = localStorage.getItem("token");
+    const saved2FA = localStorage.getItem("twoFAValidated") === "true"; // si tu veux persister la 2FA plus tard
 
     if (savedUser && savedToken) {
       setUser(savedUser);
       setToken(savedToken);
+      setTwoFAValidated(saved2FA);
     }
   }, []);
 
-  // ==========================
-  // 🔹 Fonction LOGIN utilisateur
-  // ==========================
+  // 🔹 Connexion utilisateur
   const login = (username, tokenValue) => {
-    // Met à jour l'état global
     setUser(username);
     setToken(tokenValue);
+    setTwoFAValidated(false); // reset 2FA à false à chaque nouvelle connexion
 
-    // Stocke pour persistance
     localStorage.setItem("playerName", username);
     localStorage.setItem("token", tokenValue);
+    localStorage.setItem("twoFAValidated", "false");
 
-    // 🔥 IMPORTANT :
-    // On retourne true pour confirmer que la connexion s'est bien faite.
-    // Cela permet au composant Login.jsx de rediriger immédiatement.
     return true;
   };
 
-  // ==========================
-  // 🔹 Fonction LOGOUT utilisateur
-  // ==========================
+  // 🔹 Déconnexion utilisateur
   const logout = () => {
-    // Réinitialise l'état
     setUser(null);
     setToken(null);
+    setTwoFAValidated(false);
 
-    // Supprime du stockage local
     localStorage.removeItem("playerName");
     localStorage.removeItem("token");
+    localStorage.removeItem("twoFAValidated");
 
-    return true; // pas obligatoire, mais propre
+    return true;
   };
 
-  // ================================
-  // 🔹 Fournit les valeurs globales
-  // ================================
+  // 🔹 Valider la 2FA (à appeler après succès 2FA)
+  const validate2FA = () => {
+    setTwoFAValidated(true);
+    localStorage.setItem("twoFAValidated", "true");
+  };
+
+  // 🔹 Fournit toutes les valeurs et fonctions globales
   return (
-    <AuthContext.Provider value={{ user, token, login, logout }}>
+    <AuthContext.Provider value={{ user, token, twoFAValidated, login, logout, validate2FA }}>
       {children}
     </AuthContext.Provider>
   );

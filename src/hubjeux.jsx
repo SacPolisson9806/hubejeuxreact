@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import ProtectedRoute from './auth/protectedroute.jsx';
 
 const jeux = [
   { nom: 'Chiffre Mystère', description: 'Devine le chiffre choisi par l’ordinateur !', lien: '/connexion?jeu=chiffremystere' },
@@ -14,10 +15,14 @@ const jeux = [
   { nom: 'snake', description: 'Joue au jeu du serpent !', lien: '/connexion?jeu=snake' }
 ];
 
+const blockedGames = ['Cemantix', 'Arrow Rush'];
+
 export default function Hub() {
   const navigate = useNavigate();
   const [playerName, setPlayerName] = useState('');
   const [showLogoutModal, setShowLogoutModal] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
+  const cardRefs = useRef([]);
 
   useEffect(() => {
     const storedName = localStorage.getItem('playerName');
@@ -33,116 +38,127 @@ export default function Hub() {
     navigate("/");
   };
 
+  const filteredJeux = jeux.filter(jeu =>
+    jeu.nom.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      entries => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+          }
+        });
+      },
+      { threshold: 0.1 }
+    );
+    cardRefs.current.forEach(card => {
+      if (card) observer.observe(card);
+    });
+    return () => observer.disconnect();
+  }, [filteredJeux]);
+
   return (
-    <div className="hub-container">
-      <style>{`
-        * { margin:0; padding:0; box-sizing:border-box; }
-        body { font-family: Arial, sans-serif; background:white; color:#333; text-align:center; }
-        .hub-container { min-height:100vh; display:flex; flex-direction:column; }
-        header { background:#0c00f6; color:white; padding:40px 0; position:relative; }
+    <ProtectedRoute>
+      <div className="hub-container">
+        <style>{`
+          html, body { margin:0; padding:0; height:100%; width:100%; font-family:Poppins, sans-serif; overflow:hidden; }
+          body::before { content:""; position:fixed; top:0; left:0; width:100%; height:100%; background: radial-gradient(circle at top, #0a0a2a, #030314, #0a0a2a); background-size:400% 400%; animation: gradientMove 15s ease infinite; z-index:-1; }
+          @keyframes gradientMove {0%{background-position:0% 50%;}50%{background-position:100% 50%;}100%{background-position:0% 50%;}}
 
-        /* Nouveau bouton Quêtes */
-        .quete-btn {
-          position:absolute;
-          right:20px;
-          top:20px;
-          background:white;
-          color:#0c00f6;
-          padding:10px 20px;
-          border-radius:6px;
-          font-weight:bold;
-          text-decoration:none;
-          border:none;
-          cursor:pointer;
-          transition:0.3s;
-        }
-        .quete-btn:hover {
-          background:#dcdcff;
-        }
+          .hub-container { height:100vh; display:flex; flex-direction:column; color:white; position:relative; overflow:hidden; }
+          header { text-align:center; padding:40px 0; }
+          header h1 { font-size:28px; margin-bottom:10px; background: linear-gradient(90deg, #00d4ff, #00ffaa); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+          header p { font-size:16px; color:#ccc; }
+          .quete-btn { position:absolute; right:20px; top:20px; background: rgba(255,255,255,0.1); backdrop-filter: blur(10px); border-radius:10px; padding:10px 20px; color:white; font-weight:bold; text-decoration:none; border:none; transition:0.3s; }
+          .quete-btn:hover { background: rgba(255,255,255,0.2); }
 
-        header p { font-size:18px; margin-top:10px; }
-        main { display:flex; flex-wrap:wrap; justify-content:center; margin:50px 20px; gap:30px; }
-        .game-card { background:white; border-radius:10px; padding:20px; width:250px; box-shadow:0 5px 15px rgba(0,0,0,0.1); transition: transform 0.3s; }
-        .game-card:hover { transform: translateY(-10px); }
-        .game-card h2 { margin-bottom:10px; color:#0c00f6; }
-        .game-card p { font-size:14px; margin-bottom:20px; }
-        .btn, .logout-btn, .modal button { 
-          display:inline-block; padding:10px 20px; background:#0c00f6; color:white; text-decoration:none; border:none; border-radius:6px; cursor:pointer; font-weight:bold; transition: background 0.3s;
-        }
-        .btn:hover, .logout-btn:hover, .modal button:hover { background:#0500a8; }
-        .logout-container { display:flex; justify-content:center; margin:40px 0; }
-        footer { background:#333; color:white; padding:20px 0; margin-top:auto; }
+          .search-container { display:flex; justify-content:center; margin-bottom:20px; }
+          .search-input { width:300px; max-width:80%; padding:10px 15px; border-radius:25px; border:none; outline:none; background: rgba(255,255,255,0.1); color:white; text-align:center; transition:0.3s; }
+          .search-input:focus { background: rgba(255,255,255,0.2); box-shadow:0 0 10px #00d4ff; }
+.main-scroll {flex:1; display:flex; flex-wrap:wrap; justify-content:center; margin:0 20px; gap:30px; overflow-y:auto; padding-bottom:20px;
 
-        .btn.blocked {
-          background: #999;
-          cursor: not-allowed;
-          opacity: 0.6;
-        }
+  /* Masquer la scrollbar */
+  scrollbar-width: none; /* Firefox */
+}
+.main-scroll::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Edge */
+}
 
-        .modal-overlay { 
-          position: fixed; top:0; left:0; width:100%; height:100%; 
-          background: rgba(0,0,0,0.5); display:flex; justify-content:center; align-items:center; 
-        }
-        .modal { 
-          background:white; border-radius:10px; padding:30px; width:300px; text-align:center; 
-          box-shadow:0 5px 15px rgba(0,0,0,0.3); 
-        }
-        .modal p { margin-bottom:20px; font-size:16px; }
-        .modal button { margin:0 10px; }
-      `}</style>
+          .game-card { background: rgba(255,255,255,0.05); backdrop-filter: blur(15px); border:1px solid rgba(255,255,255,0.1); border-radius:20px; padding:20px; width:250px; transform: translateY(20px); opacity:0; transition: transform 0.3s, opacity 0.5s; }
+          .game-card.visible { transform: translateY(0); opacity:1; }
+          .game-card:hover { transform: translateY(-5px); box-shadow:0 0 35px rgba(0,180,255,0.3); }
+          .game-card h2 { margin-bottom:10px; background: linear-gradient(90deg, #00d4ff, #00ffaa); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+          .game-card p { font-size:14px; margin-bottom:15px; color:white; }
 
-      <header>
-        <h1>🎮 Bienvenue {playerName} 🎮</h1>
-        <p>Choisis un jeu et amuse-toi !</p>
+          .btn, .logout-btn, .modal button { font-weight:bold; cursor:pointer; transition: all 0.3s; }
+          .btn.blocked { background: rgba(255,255,255,0.1); cursor:not-allowed; opacity:0.6; color:#ccc; }
+          .btn { display:inline-block; padding:10px 20px; background: linear-gradient(90deg, #00d4ff, #00ffaa); color:#000; text-decoration:none; border:none; border-radius:10px; transition: all 0.3s ease; }
+          .btn:hover { transform: scale(1.05); box-shadow:0 0 25px rgba(0,180,255,0.3); }
 
-        {/* 🔥 Bouton pour accéder aux quêtes */}
-        <Link to="/profile" className="quete-btn">Profile ⭐</Link>
-      </header>
+          .bottom-bar { display:flex; justify-content:center; align-items:center; background: rgba(255,255,255,0.05); backdrop-filter: blur(15px); padding:15px 20px; }
+          .logout-btn { padding:10px 20px; background: linear-gradient(90deg, #00d4ff, #00ffaa); color:#000; border:none; border-radius:10px; font-weight:bold; cursor:pointer; transition: all 0.3s ease; }
+          .logout-btn:hover { transform: scale(1.05); box-shadow:0 0 25px rgba(0,180,255,0.3); }
 
-     <main>
-  {jeux.map((jeu, index) => {
-    // Définir ici les jeux bloqués
-    const blockedGames = ['Cemantix', 'Arrow Rush'];
-    const isBlocked = blockedGames.includes(jeu.nom);
+          .modal-overlay { position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.5); display:flex; justify-content:center; align-items:center; }
+          .modal { background:white; border-radius:10px; padding:30px; width:300px; text-align:center; box-shadow:0 5px 15px rgba(0,0,0,0.3); }
+          .modal p { margin-bottom:20px; font-size:16px; }
+          .modal button { margin:0 10px; }
+        `}</style>
 
-    return (
-      <div className="game-card" key={index}>
-        <h2>{jeu.nom}</h2>
-        <p>{jeu.description}</p>
-        {isBlocked ? (
-          <button className="btn blocked" disabled>
-            Jouer
-          </button>
-        ) : (
-          <Link to={jeu.lien} className="btn">
-            Jouer
-          </Link>
+        <header>
+          <h1>🎮 Bienvenue {playerName} 🎮</h1>
+          <p>Choisis un jeu et amuse-toi !</p>
+          <Link to="/profile" className="quete-btn">Profile ⭐</Link>
+        </header>
+
+        <div className="search-container">
+          <input
+            type="text"
+            placeholder="🔍 Rechercher un jeu..."
+            className="search-input"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </div>
+
+        <div className="main-scroll">
+          {filteredJeux.map((jeu, index) => {
+            const isBlocked = blockedGames.includes(jeu.nom);
+            return (
+              <div
+                className="game-card"
+                key={index}
+                ref={el => cardRefs.current[index] = el}
+                style={{ animationDelay: `${index * 0.05}s` }}
+              >
+                <h2>{jeu.nom}</h2>
+                <p>{jeu.description}</p>
+                {isBlocked ? (
+                  <button className="btn blocked" disabled>Bientôt disponible</button>
+                ) : (
+                  <Link to={jeu.lien} className="btn">Jouer</Link>
+                )}
+              </div>
+            );
+          })}
+        </div>
+
+        <div className="bottom-bar">
+          <button className="logout-btn" onClick={() => setShowLogoutModal(true)}>🚪 Se déconnecter</button>
+        </div>
+
+        {showLogoutModal && (
+          <div className="modal-overlay">
+            <div className="modal">
+              <p>Voulez-vous vraiment vous déconnecter ?</p>
+              <button className="yes" onClick={handleLogout}>Oui</button>
+              <button className="no" onClick={() => setShowLogoutModal(false)}>Non</button>
+            </div>
+          </div>
         )}
       </div>
-    );
-  })}
-</main>
-
-
-      <div className="logout-container">
-        <button className="logout-btn" onClick={() => setShowLogoutModal(true)}>
-          🚪 Se déconnecter
-        </button>
-      </div>
-
-      <footer>
-        <p>© 2025 Mon Hub de Jeux</p>
-      </footer>
-
-      {showLogoutModal && (
-        <div className="modal-overlay">
-          <div className="modal">
-            <p>Voulez-vous vraiment vous déconnecter ?</p>
-            <button className="yes" onClick={handleLogout}>Oui</button>
-            <button className="no" onClick={() => setShowLogoutModal(false)}>Non</button>
-          </div>
-        </div>
-      )}
-    </div>
+    </ProtectedRoute>
   );
 }
