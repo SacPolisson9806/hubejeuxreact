@@ -70,14 +70,14 @@ export default function Login() {
 
         if (mode === "login") {
           // 🔹 Met à jour le contexte global
-          login(username, data.token);
+          await login(username, data.token);
 
           // 🔹 Stocke pseudo et token pour persistance locale
           localStorage.setItem("playerName", username);
           localStorage.setItem("token", data.token);
 
           // 🔹 Redirection immédiate vers hubjeux
-          navigate("/hubjeux");
+          navigate("../hubjeux");
         } else {
           // 🔹 Après signup, bascule en mode login et reset formulaire
           setMode("login");

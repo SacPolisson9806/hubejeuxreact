@@ -29,9 +29,9 @@ export default function ProtectedRoute({ children }) {
   }
 
   // 🔹 Si token présent mais 2FA pas validé, redirige vers 2FA
-  if (!twoFAValidated) {
-    return <Navigate to="/twofa" replace />;
-  }
+  //if (!twoFAValidated) {
+ //   return <Navigate to="/twofa" replace />;
+  //}
 
   // 🔹 Sinon, route accessible
   return children;
