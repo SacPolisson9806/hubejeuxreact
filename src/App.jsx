@@ -11,7 +11,7 @@ import Signup from "./auth/signup.jsx";
 // Pages protégées
 import Hubjeux from "./hubjeux";
 import Changepassword from "./auth/changepassword.jsx";
-import Profile from "./profile.jsx";
+import Profile from "./profile";
 import Twofa from "./auth/twofa.jsx";
 
 // Jeux
@@ -36,7 +36,7 @@ import Sudokuaccueil from "./sudoku/sudokuaccueil";
 import Sudokugame from "./sudoku/sudokugame";
 import Leaderboard from "./Leaderboard.jsx";
 import ChiffreMystereLeaderboard from "./chiffremystere/chiffremystereleaderboard.jsx";
-import Quete from "./quete.jsx";
+import Quete from "./quetes/quete.jsx";
 import Quetemedaillon from "./quetemedaillon.jsx";
 import Snake from "./snake/snake";
 

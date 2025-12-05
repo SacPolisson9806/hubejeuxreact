@@ -32,43 +32,39 @@ export default function Connexion() {
     }
   }, [jeu, navigate]);
 
-  const handleSubmit = (e) => {
+const handleSubmit = (e) => {
   e.preventDefault();
 
-  // 🔹 Vérification des champs en mode multi
   if (mode === 'multi' && (!username || !room)) {
     alert("Remplis ton pseudo et le code du salon !");
     return;
   }
 
-  // 🔹 Détermination de la route du jeu
   let gameRoute = routesJeux[jeu?.toLowerCase()];
 
-  // 🔹 Cas particuliers pour le Quizz
-  if (jeu === 'Quizz' && mode === 'solo') {
+  // Cas particuliers pour Quizz
+  if (jeu.toLowerCase() === 'quizz' && mode === 'solo') {
     gameRoute = '/quizzsolo';
-  } else if (jeu === 'Quizz' && mode === 'multi') {
+  } else if (jeu.toLowerCase() === 'quizz' && mode === 'multi') {
     gameRoute = '/quizzmulti';
   }
-  if (jeu === 'accueil' && mode === 'solo') {
-    gameRoute = '/accueil';
-  } else if (jeu === 'accueil' && mode === 'multi') {
-    gameRoute = '/accueil';
-  }
 
-  // 🔹 Vérifie que le jeu existe
+  // Vérifie que le jeu existe
   if (!gameRoute) {
     alert("Jeu inconnu !");
     return;
   }
 
-  // 🔹 Redirection dynamique selon le mode
+  // Redirection avec navigate
   if (mode === 'solo') {
-    window.location.href = `${gameRoute}?mode=solo`;
+    navigate(`${gameRoute}?mode=solo`);
   } else {
-    window.location.href = `${gameRoute}?mode=multi&username=${encodeURIComponent(username)}&room=${encodeURIComponent(room)}&type=${multiAction}`;
+    navigate(
+      `${gameRoute}?mode=multi&username=${encodeURIComponent(username)}&room=${encodeURIComponent(room)}&type=${multiAction}`
+    );
   }
 };
+
 
 
   return (
