@@ -25,12 +25,34 @@ export default function QuizzMulti() {
     // 🔹 Background de la page
     document.body.style.backgroundColor = '#eef3ff';
 
-    // 🔹 Création du socket
-    const newSocket = io('https://server-rv2z.onrender.com', {
-      transports: ['polling'], // fallback si websocket bloque
-      upgrade: false,
-      auth: { token: localStorage.getItem('token') } // 🔐 JWT obligatoire
-    });
+    // Récupère le token
+const token = localStorage.getItem('token');
+if (!token) {
+  alert("Token manquant ! Connecte-toi d'abord.");
+  navigate('/login'); // ou autre action
+  return; // stoppe la création de la socket
+}
+
+// Crée la socket seulement si le token existe
+const socket = io('https://server-rv2z.onrender.com', {
+  transports: ['websocket'],
+  auth: { token }
+});
+
+socket.on('connect', () => {
+  console.log("✅ Socket connecté :", socket.id);
+
+  if (type === 'create') {
+    socket.emit('createRoom', { username, room });
+  } else {
+    socket.emit('joinRoom', { username, room });
+  }
+});
+
+socket.on('connect_error', (err) => {
+  console.error("Erreur socket :", err.message);
+});
+
 
     setSocket(newSocket);
 
