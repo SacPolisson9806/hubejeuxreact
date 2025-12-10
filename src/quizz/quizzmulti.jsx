@@ -6,33 +6,39 @@ export default function QuizzMulti() {
   const navigate = useNavigate();
   const location = useLocation();
 
+  // ⚡ Récupération des paramètres passés via l'URL
   const searchParams = new URLSearchParams(location.search);
-  const mode = searchParams.get('mode') || 'multi';
   const username = searchParams.get('username') || '';
   const room = searchParams.get('room') || '';
-  const type = searchParams.get('type') || '';
+  const type = searchParams.get('type') || 'join'; // create / join
 
+  // ⚡ State React
   const [socket, setSocket] = useState(null);
   const [players, setPlayers] = useState([]);
-
-  const themes = ['Minecraft', 'HarryPotter', 'StarWars', 'Marvel', 'Geographie'];
   const [selectedTheme, setSelectedTheme] = useState('');
   const [pointsToWin, setPointsToWin] = useState(100);
   const [timePerQuestion, setTimePerQuestion] = useState(30);
 
+  const themes = ['Minecraft', 'HarryPotter', 'StarWars', 'Marvel', 'Geographie'];
+
   useEffect(() => {
+    // 🔹 Background de la page
     document.body.style.backgroundColor = '#eef3ff';
 
+    // 🔹 Création du socket
     const newSocket = io('https://server-rv2z.onrender.com', {
-      transports: ['polling'],
-      upgrade: false
+      transports: ['polling'], // fallback si websocket bloque
+      upgrade: false,
+      auth: { token: localStorage.getItem('token') } // 🔐 JWT obligatoire
     });
 
-    setSocket(newSocket); // ✅ Stocker le socket
+    setSocket(newSocket);
 
+    // ⚡ Quand le socket se connecte
     newSocket.on('connect', () => {
-      console.log("✅ Socket connecté avec polling :", newSocket.id);
+      console.log("✅ Socket connecté :", newSocket.id);
 
+      // 🔹 Créer ou rejoindre la room
       if (type === 'create') {
         newSocket.emit('createRoom', { username, room });
       } else {
@@ -40,96 +46,71 @@ export default function QuizzMulti() {
       }
     });
 
-    newSocket.on('updatePlayers', (updatedList) => {
-      setPlayers(updatedList);
-    });
+    // 🔹 Mise à jour des joueurs connectés
+    newSocket.on('updatePlayers', (list) => setPlayers(list));
 
-    newSocket.on('message', (msg) => {
-      console.log('💬', msg);
-    });
+    // 🔹 Messages du serveur (ex : "X a rejoint la room")
+    newSocket.on('message', (msg) => console.log('💬', msg));
 
-    newSocket.on('launchGame', () => {
+    // 🔹 Quand le serveur lance le jeu
+    newSocket.on('launchGame', ({ selectedTheme, pointsToWin, timePerQuestion }) => {
       navigate('/startquizzmulti', {
         state: {
           selectedThemes: [selectedTheme],
           pointsToWin,
           timePerQuestion,
-          mode: 'multi',
           username,
           room
         }
       });
     });
 
-    return () => {
-      newSocket.disconnect();
-    };
-  }, [username, room, type, selectedTheme, pointsToWin, timePerQuestion, navigate]);
+    // 🔹 Nettoyage à la fermeture du composant
+    return () => newSocket.disconnect();
+  }, [username, room, type, navigate]);
 
-  const handleSubmit = (e) => {
+  // 🔹 Fonction pour lancer la partie (uniquement si créateur)
+  const handleStartGame = (e) => {
     e.preventDefault();
+    if (!socket) return;
+    if (!selectedTheme) return alert("Choisis un thème !");
 
-    if (type !== 'create') {
-      alert("Seul le créateur peut lancer la partie !");
-      return;
-    }
-
-    if (!selectedTheme) {
-      alert('Choisis un thème !');
-      return;
-    }
-
-    if (!socket) {
-      console.warn("⚠️ socket est null dans handleSubmit");
-      return;
-    }
-
+    // 🔹 Envoi au serveur
     socket.emit('startGame', { room, selectedTheme, pointsToWin, timePerQuestion });
 
+    // 🔹 Naviguer vers la page de quizz multi
     navigate('/startquizzmulti', {
-      state: {
-        selectedThemes: [selectedTheme],
-        pointsToWin,
-        timePerQuestion,
-        mode: 'multi',
-        username,
-        room
-      }
+      state: { selectedThemes: [selectedTheme], pointsToWin, timePerQuestion, username, room }
     });
   };
 
   return (
     <>
+      {/* 🔹 CSS intégré */}
       <style>{`
+        body {
+          margin: 0;
+          font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          min-height: 100vh;
+          background: linear-gradient(135deg, #1e1e2f, #2c3e50);
+        }
         .container {
           max-width: 700px;
           margin: 40px auto;
-          background: white;
+          background: #fff;
           padding: 40px 30px;
           border-radius: 12px;
           box-shadow: 0 5px 15px rgba(34, 17, 223, 0.1);
+          text-align: center;
         }
-        h1 {
-          font-size: 28px;
-          color: #0c00f6;
-          margin-bottom: 20px;
-          font-weight: bold;
-        }
-        .players {
-          background: #e9f2ff;
-          padding: 10px;
-          border-radius: 8px;
-          margin-bottom: 20px;
-        }
-        .players ul {
-          list-style: none;
-          padding: 0;
-        }
-        .players li {
-          margin: 5px 0;
-          font-weight: bold;
-          color: #333;
-        }
+        h1 { font-size: 28px; color: #0c00f6; margin-bottom: 20px; font-weight: bold; }
+        .players { background: #e9f2ff; padding: 10px; border-radius: 8px; margin-bottom: 20px; }
+        .players ul { list-style: none; padding: 0; }
+        .players li { margin: 5px 0; font-weight: bold; color: #333; }
+        select { padding: 10px; border-radius: 6px; border: none; margin-bottom: 10px; font-size: 16px; width: 100%; }
         button {
           padding: 12px 25px;
           background: #0c00f6;
@@ -141,47 +122,37 @@ export default function QuizzMulti() {
           cursor: pointer;
           transition: background 0.3s;
         }
-        button:hover {
-          background: #0a00d0;
-        }
+        button:hover { background: #0a00d0; }
+        label { font-weight: bold; display: block; margin-top: 10px; margin-bottom: 5px; color: #333; }
       `}</style>
 
+      {/* 🔹 HTML */}
       <div className="container">
         <h1>Salon Multijoueur : {room}</h1>
-        <p><strong>Joueur :</strong> {username}</p>
+        <p><strong>Pseudo :</strong> {username}</p>
+
         <div className="players">
           <h3>👥 Joueurs connectés :</h3>
-          <ul>
-            {players.map((p, i) => (
-              <li key={i}>{p}</li>
-            ))}
-          </ul>
+          <ul>{players.map((p, i) => <li key={i}>{p}</li>)}</ul>
         </div>
 
+        {/* 🔹 Créateur choisi les options */}
         {type === 'create' ? (
-          <form onSubmit={handleSubmit}>
-            <label>Choisir le thème :</label>
+          <form onSubmit={handleStartGame}>
+            <label>Thème :</label>
             <select value={selectedTheme} onChange={(e) => setSelectedTheme(e.target.value)} required>
               <option value="">-- Sélectionner --</option>
-              {themes.map((theme) => (
-                <option key={theme} value={theme}>{theme}</option>
-              ))}
+              {themes.map(t => <option key={t} value={t}>{t}</option>)}
             </select>
 
-            <label>Nombre de points à atteindre :</label>
+            <label>Points pour gagner :</label>
             <select value={pointsToWin} onChange={(e) => setPointsToWin(parseInt(e.target.value))}>
-              {[...Array(10)].map((_, i) => {
-                const val = 50 + i * 50;
-                return <option key={val} value={val}>{val}</option>;
-              })}
+              {[50,100,150,200,250,300,350,400,450,500].map(v => <option key={v} value={v}>{v}</option>)}
             </select>
 
-            <label>Temps par question (secondes) :</label>
+            <label>Temps par question :</label>
             <select value={timePerQuestion} onChange={(e) => setTimePerQuestion(parseInt(e.target.value))}>
-              {[...Array(12)].map((_, i) => {
-                const val = 5 + i * 5;
-                return <option key={val} value={val}>{val} secondes</option>;
-              })}
+              {[10,15,20,25,30,35,40,45,50,55,60].map(v => <option key={v} value={v}>{v} secondes</option>)}
             </select>
 
             <button type="submit">🚀 Lancer la partie</button>
