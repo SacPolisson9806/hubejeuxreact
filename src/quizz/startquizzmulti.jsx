@@ -31,7 +31,7 @@ export default function StartQuizzMulti() {
   };
 
   useEffect(() => {
-    const newSocket = io('http://localhost:5000', {
+    const newSocket = io('https://server-rv2z.onrender.com', {
       transports: ['polling'],
       upgrade: false
     });
