@@ -23,7 +23,7 @@ export default function QuizzMulti() {
   useEffect(() => {
     document.body.style.backgroundColor = '#eef3ff';
 
-    const newSocket = io('http://localhost:5000', {
+    const newSocket = io('https://chic-torte-4d4c16.netlify.app', {
       transports: ['polling'],
       upgrade: false
     });
