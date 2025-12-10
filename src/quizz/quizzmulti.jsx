@@ -25,36 +25,19 @@ export default function QuizzMulti() {
     // 🔹 Background de la page
     document.body.style.backgroundColor = '#eef3ff';
 
-    // Récupère le token
-const token = localStorage.getItem('token');
-if (!token) {
-  alert("Token manquant ! Connecte-toi d'abord.");
-  navigate('/login'); // ou autre action
-  return; // stoppe la création de la socket
-}
+    // ⚡ Vérifie token avant création de la socket
+    const token = localStorage.getItem('token');
+    if (!token) {
+      alert("Token manquant ! Connecte-toi d'abord.");
+      navigate('/login');
+      return;
+    }
 
-// Crée la socket seulement si le token existe
-const socket = io('https://server-rv2z.onrender.com', {
-  transports: ['websocket'],
-  auth: { token }
-});
-
-socket.on('connect', () => {
-  console.log("✅ Socket connecté :", socket.id);
-
-  if (type === 'create') {
-    socket.emit('createRoom', { username, room });
-  } else {
-    socket.emit('joinRoom', { username, room });
-  }
-});
-
-socket.on('connect_error', (err) => {
-  console.error("Erreur socket :", err.message);
-});
-
-
-    setSocket(newSocket);
+    // ⚡ Crée la socket
+    const newSocket = io('https://server-rv2z.onrender.com', {
+      transports: ['websocket', 'polling'],
+      auth: { token }
+    });
 
     // ⚡ Quand le socket se connecte
     newSocket.on('connect', () => {
@@ -62,19 +45,25 @@ socket.on('connect_error', (err) => {
 
       // 🔹 Créer ou rejoindre la room
       if (type === 'create') {
-        newSocket.emit('createRoom', { username, room });
+        newSocket.emit('createRoom', { room });
       } else {
-        newSocket.emit('joinRoom', { username, room });
+        newSocket.emit('joinRoom', { room });
       }
     });
 
-    // 🔹 Mise à jour des joueurs connectés
+    // ⚡ Gestion des erreurs de connexion
+    newSocket.on('connect_error', (err) => {
+      console.error("Erreur socket :", err.message);
+      alert("Erreur de connexion au serveur. Vérifie ton token ou le serveur.");
+    });
+
+    // ⚡ Mise à jour des joueurs connectés
     newSocket.on('updatePlayers', (list) => setPlayers(list));
 
-    // 🔹 Messages du serveur (ex : "X a rejoint la room")
+    // ⚡ Messages du serveur
     newSocket.on('message', (msg) => console.log('💬', msg));
 
-    // 🔹 Quand le serveur lance le jeu
+    // ⚡ Quand le serveur lance le jeu
     newSocket.on('launchGame', ({ selectedTheme, pointsToWin, timePerQuestion }) => {
       navigate('/startquizzmulti', {
         state: {
@@ -87,7 +76,10 @@ socket.on('connect_error', (err) => {
       });
     });
 
-    // 🔹 Nettoyage à la fermeture du composant
+    // ⚡ Sauvegarde la socket dans le state
+    setSocket(newSocket);
+
+    // ⚡ Cleanup à la fermeture du composant
     return () => newSocket.disconnect();
   }, [username, room, type, navigate]);
 
@@ -98,12 +90,7 @@ socket.on('connect_error', (err) => {
     if (!selectedTheme) return alert("Choisis un thème !");
 
     // 🔹 Envoi au serveur
-    socket.emit('startGame', { room, selectedTheme, pointsToWin, timePerQuestion });
-
-    // 🔹 Naviguer vers la page de quizz multi
-    navigate('/startquizzmulti', {
-      state: { selectedThemes: [selectedTheme], pointsToWin, timePerQuestion, username, room }
-    });
+    socket.emit('startGame', { room, theme: selectedTheme, pointsToWin, timePerQuestion });
   };
 
   return (
